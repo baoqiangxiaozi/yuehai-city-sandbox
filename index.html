@@ -291,6 +291,16 @@ body.is-immersive #scene{cursor:grab}
 .landmark-label .en{color:var(--faint);font-family:var(--mono);font-size:6px;letter-spacing:.08em;margin-left:1px}
 .landmark-label .approx{color:var(--gold-dim);font-family:var(--mono);font-size:6px;letter-spacing:.05em}
 .landmark-label.is-hidden{opacity:0;visibility:hidden;pointer-events:none}
+.landmark-label.is-visible{opacity:1;visibility:visible;pointer-events:auto}
+.landmark-label.is-far{font-size:10px;padding:4px 7px;background:rgba(5,15,11,.58);border-color:rgba(229,204,153,.16)}
+.landmark-label.is-far .en,.landmark-label.is-far .approx{display:none}
+.landmark-label.tier-2{font-size:9px;opacity:.92}
+.landmark-label.tier-3{font-size:8.5px;opacity:.86}
+.landmark-label.is-forced{opacity:1!important;visibility:visible!important;pointer-events:auto!important;z-index:30}
+.landmark-label.is-selected{opacity:1!important;visibility:visible!important}
+.label-density-title{margin-top:9px}
+.label-density{margin:4px 0 2px}
+.label-density button{font-size:8px;letter-spacing:.06em}
 .station-label{
   position:absolute;left:0;top:0;transform:translate(-50%,-50%);padding:2px 5px;border-radius:3px;
   border:1px solid rgba(105,229,211,.20);background:rgba(4,17,14,.56);
@@ -671,6 +681,12 @@ body.is-immersive #scene{cursor:grab}
         <label class="layer-row"><span class="layer-swatch" style="color:#f1d39a"></span><span class="layer-copy"><strong>夜景灯光</strong></span><input type="checkbox" id="layerNight" checked><span class="switch"></span></label>
         <label class="layer-row"><span class="layer-swatch" style="color:#78d0a8"></span><span class="layer-copy"><strong>停车占用</strong></span><input type="checkbox" id="layerParking"><span class="switch"></span></label>
         <label class="layer-row"><span class="layer-swatch" style="color:#d9b97e"></span><span class="layer-copy"><strong>地标标注</strong></span><input type="checkbox" id="layerLabels" checked><span class="switch"></span></label>
+      </div>
+      <div class="section-label label-density-title"><span>标签密度</span><em>LABEL DENSITY</em></div>
+      <div class="seg-control cols-3 label-density" id="labelDensitySeg" role="group" aria-label="标签密度">
+        <button type="button" data-density="minimal">精简</button>
+        <button type="button" data-density="standard" class="is-active">标准</button>
+        <button type="button" data-density="all">全部</button>
       </div>
       <div class="layer-foot"><span id="roadGraphLabel">NODES — · EDGES —</span><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OSM</a></div>
     </section>
@@ -1267,6 +1283,134 @@ if (!DATA.landmarks.some(l => l.id === EXCELLENCE_LANDMARK_ID)) {
     source: 'osm',
     note: '210 m 板式塔；塔楼相对裙房错动 6 m，银色竖肋随高度扭转 2.5 m，南面 4–18F 绿化边庭；无塔冠字牌。',
     year: ''
+  });
+}
+
+// SZU campus bulk set (演会中心 2404 excluded).
+const CAMPUS_SKIP_INDICES = new Set();
+for (let ci = 0; ci < DATA.buildings.length; ci++) {
+  if (ci === 2404) continue;
+  const cb = DATA.buildings[ci]; if (!cb.p) continue;
+  const xs = cb.p.filter((_, i) => i % 2 === 0), zs = cb.p.filter((_, i) => i % 2 === 1);
+  const cx = xs.reduce((a, v) => a + v, 0) / xs.length, cz = zs.reduce((a, v) => a + v, 0) / zs.length;
+  if (((cx - 400) / 410) ** 2 + ((cz + 1400) / 450) ** 2 < 1) CAMPUS_SKIP_INDICES.add(ci);
+}
+
+// OSM 654: Youxian Information Transmission Tower, 89.6 m / 28F.
+const YOUXIAN_INDEX = 654;
+const YOUXIAN_LANDMARK_ID = 'youxian-tower';
+const YOUXIAN_SKIP = new Set([YOUXIAN_INDEX]);
+if (!DATA.landmarks.some(l => l.id === YOUXIAN_LANDMARK_ID)) {
+  DATA.landmarks.push({
+    id: YOUXIAN_LANDMARK_ID, name: '有线信息传输大厦',
+    en: 'Youxian Information Transmission Tower', x: 565, z: -405,
+    buildings: [YOUXIAN_INDEX], source: 'osm',
+    note: '89.6 m/28F 窄板塔；2.4 m 长面分格、短面金属带；创投街段南侧填充。',
+    year: ''
+  });
+}
+
+// OSM 443: Microsoft Ketong Tower, 99.6 m / 25F.
+const KETONG_INDEX = 443;
+const KETONG_LANDMARK_ID = 'ketong-tower';
+const KETONG_SKIP = new Set([KETONG_INDEX]);
+if (!DATA.landmarks.some(l => l.id === KETONG_LANDMARK_ID)) {
+  DATA.landmarks.push({
+    id: KETONG_LANDMARK_ID, name: '微软科通大厦',
+    en: 'Microsoft Ketong Tower', x: 884, z: -1013,
+    buildings: [KETONG_INDEX], source: 'osm',
+    note: '99.6 m/25F 近正方塔；3×3 m 方格网、低冠盒、3F 裙房；无微软标识。',
+    year: ''
+  });
+}
+
+// OSM 780: BUPT Technology Tower, 100 m / 23F.
+const BUPT_INDEX = 780;
+const BUPT_LANDMARK_ID = 'bupt-tower';
+const BUPT_SKIP = new Set([BUPT_INDEX]);
+if (!DATA.landmarks.some(l => l.id === BUPT_LANDMARK_ID)) {
+  DATA.landmarks.push({
+    id: BUPT_LANDMARK_ID, name: '北邮科技大厦',
+    en: 'BUPT Technology Tower', x: 1618, z: -1595,
+    buildings: [BUPT_INDEX], source: 'osm',
+    note: '100 m/23F 窄板塔；与彩讯同 55×33 轮廓、同 2.7 m 节奏；亮度与冠部压一档。',
+    year: ''
+  });
+}
+
+// OSM 779: Caixun Technology Tower, 160 m / 32F.
+const CAIXUN_INDEX = 779;
+const CAIXUN_LANDMARK_ID = 'caixun-tower';
+const CAIXUN_SKIP = new Set([CAIXUN_INDEX]);
+if (!DATA.landmarks.some(l => l.id === CAIXUN_LANDMARK_ID)) {
+  DATA.landmarks.push({
+    id: CAIXUN_LANDMARK_ID, name: '彩讯科技大厦',
+    en: 'Caixun Technology Tower', x: 1504, z: -1592,
+    buildings: [CAIXUN_INDEX], source: 'osm',
+    note: '160 m/32F 窄板塔；长面 2.7 m 竖分格、短面金属实带；科苑南路东侧街墙。',
+    year: ''
+  });
+}
+
+// All residential buildings not already bespoke.
+const RESIDENTIAL_SKIP = new Set();
+{
+  const lm = new Set();
+  for (const l of DATA.landmarks) for (const bi of (l.buildings || [])) lm.add(bi);
+  for (let bi = 0; bi < DATA.buildings.length; bi++) {
+    const b = DATA.buildings[bi];
+    if (!b || b.t !== 'residential') continue;
+    if (bi === 2404 || lm.has(bi) || CAMPUS_SKIP_INDICES.has(bi)) continue;
+    RESIDENTIAL_SKIP.add(bi);
+  }
+}
+
+// OSM 10/1175/1488: LXS office twin + Shenzhen Bay Residence.
+const LITE3_INDICES = [10, 1175, 1488];
+const LITE3_SKIP = new Set(LITE3_INDICES);
+if (!DATA.landmarks.some(l => l.id === 'lite3')) {
+  DATA.landmarks.push({ id: 'lite3', name: '留学生创业大厦 / 深圳湾公馆', en: 'LXS / Shenzhen Bay Residence', x: 1596, z: -1525, buildings: LITE3_INDICES.slice(), source: 'osm', note: '两栋留学生创业办公塔 + 深圳湾公馆住宅塔。', year: '' });
+}
+
+// OSM 401: Yihua Fintech Tower, 147 m / 31F.
+const YIHUA_INDEX = 401;
+const YIHUA_LANDMARK_ID = 'yihua-tower';
+const YIHUA_SKIP = new Set([YIHUA_INDEX]);
+if (!DATA.landmarks.some(l => l.id === YIHUA_LANDMARK_ID)) {
+  DATA.landmarks.push({
+    id: YIHUA_LANDMARK_ID, name: '怡化金融科技大厦',
+    en: 'Yihua Fintech Tower', x: 447, z: -788,
+    buildings: [YIHUA_INDEX], source: 'osm',
+    note: '147 m/31F 板塔；南立面用真竖框疏密构成抽象 YH 纹样；LOW-E 玻璃与稀疏夜景。',
+    year: '2014'
+  });
+}
+
+// OSM 1232: China Overseas Building, 100 m / 21F.
+const CHINA_OVERSEAS_INDEX = 1232;
+const CHINA_OVERSEAS_LANDMARK_ID = 'china-overseas';
+const CHINA_OVERSEAS_SKIP = new Set([CHINA_OVERSEAS_INDEX]);
+if (!DATA.landmarks.some(l => l.id === CHINA_OVERSEAS_LANDMARK_ID)) {
+  DATA.landmarks.push({
+    id: CHINA_OVERSEAS_LANDMARK_ID, name: '中国海外大厦',
+    en: 'China Overseas Building', x: 1008, z: 437,
+    buildings: [CHINA_OVERSEAS_INDEX], source: 'osm',
+    note: '100 m/21F 叠石塔；5 个石层交替进退、真凹缝、石材肋+玻璃带；南/西深遮阳。',
+    year: ''
+  });
+}
+
+// OSM 1257/1256: Tsinghua Research / Bay Innovation twin towers.
+const TSINGHUA_INDICES = [1257, 1256];
+const TSINGHUA_LANDMARK_ID = 'tsinghua-research';
+const TSINGHUA_SKIP = new Set(TSINGHUA_INDICES);
+if (!DATA.landmarks.some(l => l.id === TSINGHUA_LANDMARK_ID)) {
+  DATA.landmarks.push({
+    id: TSINGHUA_LANDMARK_ID, name: '深圳清华大学研究院新大楼',
+    en: 'Tsinghua Research / Bay Innovation', x: 1150, z: -1215,
+    buildings: TSINGHUA_INDICES.slice(), source: 'osm',
+    note: '102.4 m 双塔、3–5 层桁架连体、首层架空、西侧三级实验室裙房。',
+    year: '2023'
   });
 }
 
@@ -2310,6 +2454,16 @@ const xunleiPickMeshes = [];
 const ventureNeighborPickMeshes = [];
 const eastWallPickMeshes = [];
 const innovationPickMeshes = [];
+const tsinghuaPickMeshes = [];
+const chinaOverseasPickMeshes = [];
+const yihuaPickMeshes = [];
+const lite3PickMeshes = [];
+const residentialPickMeshes = [];
+const caixunPickMeshes = [];
+const buptPickMeshes = [];
+const ketongPickMeshes = [];
+const youxianPickMeshes = [];
+const campusPickMeshes = [];
 let tencentGlassMaterial = null;
 let tencentNightMaterial = null;
 let mixcGlassMaterial = null;
@@ -2372,6 +2526,28 @@ let eastWallNight = null;
 let innovationTowerMats = [];
 let innovationApartmentMats = [];
 let innovationNightMaterial = null;
+let nightReskinMats = [];
+let tsinghuaGlassMaterial = null;
+let tsinghuaNightMaterial = null;
+let chinaOverseasGlassMaterial = null;
+let chinaOverseasNightMaterial = null;
+let yihuaGlassMaterial = null;
+let yihuaNightMaterial = null;
+let lxsGlassA = null;
+let lxsGlassB = null;
+let lxsNight = null;
+let szResGlass = null;
+let szResNight = null;
+let residentialWindowMats = [];
+let caixunGlassMaterial = null;
+let caixunNightMaterial = null;
+let buptGlassMaterial = null;
+let buptNightMaterial = null;
+let ketongGlassMaterial = null;
+let ketongNightMaterial = null;
+let youxianGlassMaterial = null;
+let youxianNightMaterial = null;
+let campusWindowMaterial = null;
 const glassUniforms = {
   uTop: { value: new THREE.Color(0x8bb6d2) },
   uHorizon: { value: new THREE.Color(0xc7dce3) },
@@ -2471,7 +2647,7 @@ function makeWindowHaloTexture() {
   };
   const r = mulberry32(61234);
   for (let bi = 0; bi < DATA.buildings.length; bi++) {
-    if (bi === CR_BUILDING_INDEX || TENCENT_BUILDING_INDICES.has(bi) || SBO_SKIP_INDICES.has(bi) || ANDAZ_SKIP_INDICES.has(bi) || LENOVO_SKIP_INDICES.has(bi) || DAJIA_SKIP_INDICES.has(bi) || XIAOMI_SKIP_INDICES.has(bi) || COCOON_SKIP_INDICES.has(bi) || NEIGHBOUR_SKIP_INDICES.has(bi) || COASTAL_SKIP_INDICES.has(bi) || POLY_SKIP_INDICES.has(bi) || EXCELLENCE_SKIP_INDICES.has(bi) || PORT_SKIP_INDICES.has(bi) || SZU_SKIP_INDICES.has(bi) || HYTERA_SKIP_INDICES.has(bi) || CAPITAL_SKIP_INDICES.has(bi) || AEROSPACE_SKIP_INDICES.has(bi) || CNOOC_SKIP_INDICES.has(bi) || RONCHAO_SKIP_INDICES.has(bi) || VENTURE_SKIP_INDICES.has(bi) || OFFICEWALL_SKIP.has(bi) || BYTEDANCE_SKIP_INDICES.has(bi) || HISENSE_SKIP_INDICES.has(bi) || XUNLEI_SKIP_INDICES.has(bi) || VENTURE_NEIGHBOR_SKIP.has(bi) || EASTWALL_SKIP.has(bi) || INNOVATION_SKIP.has(bi)) continue; // bespoke landmarks below
+    if (bi === CR_BUILDING_INDEX || TENCENT_BUILDING_INDICES.has(bi) || SBO_SKIP_INDICES.has(bi) || ANDAZ_SKIP_INDICES.has(bi) || LENOVO_SKIP_INDICES.has(bi) || DAJIA_SKIP_INDICES.has(bi) || XIAOMI_SKIP_INDICES.has(bi) || COCOON_SKIP_INDICES.has(bi) || NEIGHBOUR_SKIP_INDICES.has(bi) || COASTAL_SKIP_INDICES.has(bi) || POLY_SKIP_INDICES.has(bi) || EXCELLENCE_SKIP_INDICES.has(bi) || PORT_SKIP_INDICES.has(bi) || SZU_SKIP_INDICES.has(bi) || HYTERA_SKIP_INDICES.has(bi) || CAPITAL_SKIP_INDICES.has(bi) || AEROSPACE_SKIP_INDICES.has(bi) || CNOOC_SKIP_INDICES.has(bi) || RONCHAO_SKIP_INDICES.has(bi) || VENTURE_SKIP_INDICES.has(bi) || OFFICEWALL_SKIP.has(bi) || BYTEDANCE_SKIP_INDICES.has(bi) || HISENSE_SKIP_INDICES.has(bi) || XUNLEI_SKIP_INDICES.has(bi) || VENTURE_NEIGHBOR_SKIP.has(bi) || EASTWALL_SKIP.has(bi) || INNOVATION_SKIP.has(bi) || TSINGHUA_SKIP.has(bi) || CHINA_OVERSEAS_SKIP.has(bi) || YIHUA_SKIP.has(bi) || CAIXUN_SKIP.has(bi) || BUPT_SKIP.has(bi) || KETONG_SKIP.has(bi) || YOUXIAN_SKIP.has(bi)) continue; // bespoke landmarks below
     const b = DATA.buildings[bi];
     const ring = flatPointsToVectors(b.p);
     if (ring.length < 3) continue;
@@ -6851,7 +7027,7 @@ if (window.__BOOT_DEBUG__) console.log('buildings', DATA.buildings.length, 'face
     if ((x * 7 + y * 3) % 17 < 7) { wg.fillStyle = 'rgba(255,205,150,.8)'; wg.fillRect(x, y, 5, 5); }
   }
   const winTex = new THREE.CanvasTexture(winC); winTex.wrapS = winTex.wrapT = THREE.RepeatWrapping;
-  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x102d3d, metalness: .9, roughness: .12, envMap: currentCityEnv, envMapIntensity: 1.2, emissive: 0xffcb92, emissiveMap: winTex, emissiveIntensity: 0, side: THREE.DoubleSide });
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x1b3542, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.15, emissive: 0xffcb92, emissiveMap: winTex, emissiveIntensity: 0, side: THREE.DoubleSide });
   excellenceGlassMaterial = glassMat;
   const glass = new THREE.Mesh(glassGeo, glassMat);
   glass.castShadow = true; glass.userData.customLandmarkId = EXCELLENCE_LANDMARK_ID;
@@ -9173,6 +9349,947 @@ if (window.__BOOT_DEBUG__) console.log('buildings', DATA.buildings.length, 'face
   if (window.__BOOT_DEBUG__) console.log('Innovation Center fixed', window.__INNOVATION__);
 })();
 
+// ── 夜景逐立面重贴：每面独立 Canvas，格子物理尺寸恒定 ──────
+(function buildTsinghuaResearch() {
+  const g = new THREE.Group(); g.name = 'tsinghua-research';
+  g.position.set(wx(1150), BUILD_Y, wz(-1215));
+  g.scale.set(PLAN, HS, PLAN);
+  const A = { cx: 12, cz: -37.3, w: 66, d: 65, h: 102.4, f: 32, r: 3 };
+  const B = { cx: -11.8, cz: 37.3, w: 66, d: 65, h: 102.4, f: 32, r: 3 };
+  const S = [], SI = [], M = [], MI = [], PG = [], PGI = [], G = [], GU = [], GI = [], GR = [], GRI = [], N = [], NI = [];
+  function box(p, ix, cx, cy, cz, sx, sy, sz) {
+    const b = p.length / 3;
+    for (const yy of [cy - sy / 2, cy + sy / 2]) for (const [xx, zz] of [[-sx / 2, -sz / 2], [sx / 2, -sz / 2], [sx / 2, sz / 2], [-sx / 2, sz / 2]]) p.push(cx + xx, yy, cz + zz);
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; ix.push(b + i, b + 4 + i, b + j, b + j, b + 4 + i, b + 4 + j); }
+    ix.push(b, b + 2, b + 1, b, b + 3, b + 2); ix.push(b + 4, b + 5, b + 6, b + 4, b + 6, b + 7);
+  }
+  function rpts(hw, hd, r) {
+    const out = [], cs = [[hw - r, -hd + r, -Math.PI / 2, 0], [hw - r, hd - r, 0, Math.PI / 2], [-hw + r, hd - r, Math.PI / 2, Math.PI], [-hw + r, -hd + r, Math.PI, Math.PI * 1.5]];
+    for (const [x, z, a0, a1] of cs) for (let i = 0; i <= 4; i++) { const a = a0 + (a1 - a0) * i / 4; out.push([x + Math.cos(a) * r, z + Math.sin(a) * r]); }
+    return out;
+  }
+  function windowTex(floors) {
+    const c = document.createElement('canvas'); c.width = 512; c.height = floors * 8;
+    const x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, c.width, c.height);
+    for (let row = 0; row < floors; row++) for (let col = 0; col < 64; col++) {
+      const h = (((Math.sin(row * 41.3 + col * 73.1) * 43758.5453) % 1) + 1) % 1;
+      if (h < .35) { x.fillStyle = (col * 5 + row) % 12 < 2 ? '#cfe4ff' : '#ffd9a0'; x.fillRect(col * 8 + 2, row * 8 + 2, 4, 4); }
+    }
+    return new THREE.CanvasTexture(c);
+  }
+  function tower(t) {
+    const pts = rpts(t.w / 2, t.d / 2, t.r), n = pts.length;
+    const p = [], uv = [], ix = [];
+    const startY = 6;
+    for (let f = 0; f <= t.f; f++) for (let i = 0; i < n; i++) { p.push(t.cx + pts[i][0], startY + (t.h - startY) * f / t.f, t.cz + pts[i][1]); uv.push(i / n, f / t.f); }
+    for (let f = 0; f < t.f; f++) for (let i = 0; i < n; i++) { const a = f * n + i, b = a + 1, c = a + n, d = c + 1; ix.push(a, c, b, b, c, d); }
+    const ct = p.length / 3; p.push(t.cx, t.h, t.cz); uv.push(.5, 1); for (let i = 0; i < n; i++) ix.push(ct, t.f * n + i, t.f * n + (i + 1) % n);
+    const cb = p.length / 3; p.push(t.cx, startY, t.cz); uv.push(.5, 0); for (let i = 0; i < n; i++) ix.push(cb, (i + 1) % n, i);
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(ix); geo.computeVertexNormals(); G.push(p); GU.push(uv); GI.push(ix);
+    // Ground core/columns and slabs; tower is open at grade.
+    box(S, SI, t.cx, (t.h) / 2, t.cz, 16, t.h, 16);
+    for (const [x, z] of [[-1, -1], [1, -1], [1, 1], [-1, 1]]) box(M, MI, t.cx + x * (t.w / 2 - 2), 3, t.cz + z * (t.d / 2 - 2), .5, 6, .5);
+    box(M, MI, t.cx, startY, t.cz, t.w, .35, t.d);
+    // 3 m vertical fins, horizontal shading every floor, 10F bands.
+    for (let x = -t.w / 2 + 3; x < t.w / 2; x += 3) { box(M, MI, t.cx + x, (startY + t.h) / 2, t.cz + t.d / 2 + .05, .06, t.h - startY, .06); box(M, MI, t.cx + x, (startY + t.h) / 2, t.cz - t.d / 2 - .05, .06, t.h - startY, .06); }
+    for (let z = -t.d / 2 + 3; z < t.d / 2; z += 3) { box(M, MI, t.cx + t.w / 2 + .05, (startY + t.h) / 2, t.cz + z, .06, t.h - startY, .06); box(M, MI, t.cx - t.w / 2 - .05, (startY + t.h) / 2, t.cz + z, .06, t.h - startY, .06); }
+    for (let f = 1; f <= t.f; f++) { const y = startY + (t.h - startY) * f / t.f; box(M, MI, t.cx, y, t.cz + t.d / 2 + .10, t.w, .06, .28); box(M, MI, t.cx, y, t.cz - t.d / 2 - .10, t.w, .06, .28); box(M, MI, t.cx + t.w / 2 + .10, y, t.cz, .28, .06, t.d); box(M, MI, t.cx - t.w / 2 - .10, y, t.cz, .28, .06, t.d); }
+    for (let f = 10; f < t.f; f += 10) { const y = startY + (t.h - startY) * f / t.f; box(M, MI, t.cx, y, t.cz + t.d / 2 + .08, t.w, .20, .10); box(M, MI, t.cx, y, t.cz - t.d / 2 - .08, t.w, .20, .10); box(M, MI, t.cx + t.w / 2 + .08, y, t.cz, .10, .20, t.d); box(M, MI, t.cx - t.w / 2 - .08, y, t.cz, .10, .20, t.d); }
+    // Crown box and equipment.
+    box(S, SI, t.cx, t.h + .2, t.cz, t.w + .5, .4, t.d + .5);
+    box(S, SI, t.cx, t.h + 1.3, t.cz, t.w * .35, 2.0, t.d * .35);
+    box(N, NI, t.cx, t.h - .15, t.cz + t.d / 2 + .12, t.w - 4, .10, .05);
+    // 13 m lobby facing courtyard.
+    box(PG, PGI, t.cx, 6.5, t.cz + t.d / 2 - .05, t.w - 14, 13, .2);
+  }
+  tower(A); tower(B);
+  // 3-storey truss connector at floors 3–5, along A-B axis, ends embedded 2 m.
+  const dx = B.cx - A.cx, dz = B.cz - A.cz, dist = Math.hypot(dx, dz), ang = Math.atan2(dx, dz);
+  const mx = (A.cx + B.cx) / 2, mz = (A.cz + B.cz) / 2;
+  const cy = 14.4, bh = 9.6, bw = 14;
+  const body = new THREE.Mesh(new THREE.BoxGeometry(bw, bh, dist + 4), new THREE.MeshPhysicalMaterial({ color: 0x7fa5b3, metalness: .9, roughness: .11, envMap: currentCityEnv, envMapIntensity: 1.2, transparent: true, opacity: .55, side: THREE.DoubleSide }));
+  body.position.set(mx, cy, mz); body.rotation.y = ang; g.add(body);
+  // Exposed steel truss: chords and diagonals as boxes.
+  function trussBox(x, y, z, sx, sy, sz, ang) { const b = M.length / 3; const c = Math.cos(ang), s = Math.sin(ang); for (const yy of [-sy / 2, sy / 2]) for (const [xx, zz] of [[-sx / 2, -sz / 2], [sx / 2, -sz / 2], [sx / 2, sz / 2], [-sx / 2, sz / 2]]) M.push(mx + x + xx * c + zz * s, y + yy, mz + z - xx * s + zz * c); for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; MI.push(b + i, b + 4 + i, b + j, b + j, b + 4 + i, b + 4 + j); } MI.push(b, b + 2, b + 1, b, b + 3, b + 2); MI.push(b + 4, b + 5, b + 6, b + 4, b + 6, b + 7); }
+  for (const yy of [cy - bh / 2, cy + bh / 2]) trussBox(0, yy, 0, bw + 1.0, .5, dist + 5, ang);
+  for (let i = -4; i <= 4; i++) { trussBox(i * (bw - 2) / 4, cy, 0, .22, bh, .22, ang); }
+  // Diagonal braces in front plane.
+  for (let i = 0; i < 6; i++) { const z = -dist / 2 + (i + .5) * dist / 6; trussBox(0, cy, z, bw + .5, .18, 2.4, ang); }
+  box(N, NI, mx, cy - bh / 2 + .2, mz + bw / 2 + .2, dist * .7, .12, .08);
+  // West stepped laboratory podium, 3 volumes falling west; green roofs.
+  for (const [dxp, h, w, d] of [[-52, 8, 28, 52], [-70, 12, 22, 44], [-84, 16, 18, 36]]) {
+    box(S, SI, dxp, h / 2, 0, w, h, d);
+    box(GR, GRI, dxp, h + .2, 0, w - 2, .25, d - 2);
+    box(PG, PGI, dxp + w / 2 + .03, h * .55, 0, .2, h * .78, d - 8);
+  }
+  // Courtyard paving/green between towers.
+  box(GR, GRI, 0, .08, 0, 38, .18, 34);
+  function geo(p, ix, uv) { const q = new THREE.BufferGeometry(); q.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); if (uv) q.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); q.setIndex(ix); q.computeVertexNormals(); return q; }
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x224653, metalness: .9, roughness: .11, envMap: currentCityEnv, envMapIntensity: 1.2, emissive: 0xffd9a0, emissiveMap: windowTex(32), emissiveIntensity: 0, side: THREE.FrontSide });
+  tsinghuaGlassMaterial = glassMat;
+  const stoneMat = new THREE.MeshStandardMaterial({ color: 0xb0aca0, metalness: 0, roughness: .85 });
+  const metalMat = new THREE.MeshStandardMaterial({ color: 0xbfc5c2, metalness: .8, roughness: .35 });
+  const pgMat = new THREE.MeshPhysicalMaterial({ color: 0x315a63, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.1, side: THREE.DoubleSide });
+  // Gradient ceramic-frit texture for the laboratory podium (Canvas, printed).
+  const lc = document.createElement('canvas'); lc.width = 128; lc.height = 256; const lg = lc.getContext('2d'); lg.fillStyle = '#31515a'; lg.fillRect(0, 0, 128, 256);
+  for (let y = 0; y < 256; y += 4) for (let x = 0; x < 128; x += 4) { const d = .15 + .75 * (y / 256); if (((x + y) / 4) % 5 < d * 5) { lg.fillStyle = 'rgba(235,241,236,.55)'; lg.fillRect(x, y, 2, 2); } }
+  const labTex = new THREE.CanvasTexture(lc); labTex.wrapS = labTex.wrapT = THREE.RepeatWrapping; labTex.repeat.set(2, 3); pgMat.map = labTex; pgMat.needsUpdate = true;
+  const greenMat = new THREE.MeshStandardMaterial({ color: 0x48643e, metalness: 0, roughness: .9 });
+  tsinghuaNightMaterial = new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0, toneMapped: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  // Merge tower geometries under one glass mesh.
+  const gg = new THREE.Group();
+  const tm = new THREE.Mesh(geo(G.flat ? G.flat(3) : [], []), glassMat); // placeholder replaced below
+  // Combine tower arrays properly.
+  const pp = [], uu = [], ii = []; let base = 0;
+  for (let k = 0; k < G.length; k++) { for (let j = 0; j < G[k].length; j++) pp.push(G[k][j]); for (let j = 0; j < GU[k].length; j++) uu.push(GU[k][j]); for (let j = 0; j < GI[k].length; j++) ii.push(GI[k][j] + base); base += G[k].length / 3; }
+  const towerMesh = new THREE.Mesh(geo(pp, ii, uu), glassMat); towerMesh.castShadow = true; g.add(towerMesh);
+  const sm = new THREE.Mesh(geo(S, SI), stoneMat); sm.castShadow = true; g.add(sm);
+  const mm = new THREE.Mesh(geo(M, MI), metalMat); mm.castShadow = true; g.add(mm);
+  const pm = new THREE.Mesh(geo(PG, PGI), pgMat); g.add(pm);
+  const gm = new THREE.Mesh(geo(GR, GRI), greenMat); g.add(gm);
+  const nm = new THREE.Mesh(geo(N, NI), tsinghuaNightMaterial); g.add(nm);
+  buildingsGroup.add(g);
+  tsinghuaPickMeshes.push(towerMesh);
+  const tri = q => Math.round(q.index ? q.index.count / 3 : q.attributes.position.count / 3);
+  window.__TSINGHUA__ = { name: '深圳清华大学研究院 / 湾区创新大厦', indices: [1257, 1256], A: { h: 102.4, f: 32, w: 66, d: 65 }, B: { h: 102.4, f: 32, w: 66, d: 65 }, connectorFloors: '3-5', connectorHeightM: 9.6, openGround: true, labTerraces: 3, triangles: tri(towerMesh.geometry) + tri(sm.geometry) + tri(mm.geometry) + tri(pm.geometry) + tri(gm.geometry) + tri(nm.geometry), drawCalls: 7, meshes: g.children.length };
+  if (window.__BOOT_DEBUG__) console.log('Tsinghua Research', window.__TSINGHUA__);
+})();
+// ── 中国海外大厦（中海地产后海总部） ────────────────────────
+(function buildChinaOverseas() {
+  const g = new THREE.Group(); g.name = 'china-overseas';
+  g.position.set(wx(1008), BUILD_Y, wz(437));
+  g.scale.set(PLAN, HS, PLAN);
+  const W = 53, D = 58, H = 100, F = 21;
+  const S = [], SI = [], M = [], MI = [], K = [], KI = [], PG = [], PGI = [], NG = [], NGI = [], G = [], GU = [], GI = [];
+  function box(p, ix, cx, cy, cz, sx, sy, sz) {
+    const b = p.length / 3;
+    for (const yy of [cy - sy / 2, cy + sy / 2]) for (const [xx, zz] of [[-sx / 2, -sz / 2], [sx / 2, -sz / 2], [sx / 2, sz / 2], [-sx / 2, sz / 2]]) p.push(cx + xx, yy, cz + zz);
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; ix.push(b + i, b + 4 + i, b + j, b + j, b + 4 + i, b + 4 + j); }
+    ix.push(b, b + 2, b + 1, b, b + 3, b + 2); ix.push(b + 4, b + 5, b + 6, b + 4, b + 6, b + 7);
+  }
+  function ring(hw, hd, r, y0, y1, w, d, yOff = 0) {
+    const out = [], cs = [[hw - r, -hd + r, -Math.PI / 2, 0], [hw - r, hd - r, 0, Math.PI / 2], [-hw + r, hd - r, Math.PI / 2, Math.PI], [-hw + r, -hd + r, Math.PI, Math.PI * 1.5]];
+    for (const [x, z, a0, a1] of cs) for (let i = 0; i <= 3; i++) { const a = a0 + (a1 - a0) * i / 3; out.push([x + Math.cos(a) * r, z + Math.sin(a) * r]); }
+    return out;
+  }
+  function addLayer(y0, y1, hw, hd, recessed) {
+    const r = 2.4, pts = ring(hw, hd, r, y0, y1), n = pts.length;
+    const p = [], uv = [], ix = [];
+    for (let yy of [y0, y1]) for (let i = 0; i < n; i++) { p.push(pts[i][0], yy, pts[i][1]); uv.push(i / n, yy / H); }
+    for (let i = 0; i < n; i++) { const j = (i + 1) % n; ix.push(i, n + i, j, j, n + i, n + j); }
+    const ct = p.length / 3; p.push(0, y1, 0); uv.push(.5, y1 / H); for (let i = 0; i < n; i++) ix.push(ct, n + i, n + (i + 1) % n);
+    const cb = p.length / 3; p.push(0, y0, 0); uv.push(.5, y0 / H); for (let i = 0; i < n; i++) ix.push(cb, i, (i + 1) % n);
+    for (let i = 0; i < p.length; i += 3) { G.push(p[i], p[i + 1], p[i + 2]); }
+    for (let i = 0; i < uv.length; i += 2) GU.push(uv[i], uv[i + 1]);
+    for (const v of ix) GI.push(v + (G.length - p.length) / 3);
+    return pts;
+  }
+  // 5 stone layers, alternating +0.8/0 m plan offset, with recessed shadow slots.
+  const layerH = 5 / F * H, offsets = [0, .8, 0, .8, 0];
+  for (let k = 0; k < 5; k++) {
+    const y0 = k * layerH, y1 = (k + 1) * layerH;
+    const inset = offsets[k];
+    addLayer(y0, y1, W / 2 + inset, D / 2 + inset);
+    // Vertical stone ribs on all four faces.
+    const pts = ring(W / 2 + inset, D / 2 + inset, 2.4);
+    for (let i = 0; i < pts.length; i++) {
+      const a = pts[i], b = pts[(i + 1) % pts.length], len = Math.hypot(b[0] - a[0], b[1] - a[1]), cnt = Math.max(2, Math.round(len / 3));
+      for (let q = 1; q < cnt; q++) { const u = q / cnt; box(S, SI, a[0] + (b[0] - a[0]) * u, (y0 + y1) / 2, a[1] + (b[1] - a[1]) * u, .8, y1 - y0, .8); }
+    }
+    // Shadow slot: 0.8 m high, inset 0.5, at the top of each layer except the crown.
+    if (k < 4) {
+      const yy = y1 - .4, shw = W / 2 - .5, shd = D / 2 - .5;
+      const sp = ring(shw, shd, 2.0), sn = sp.length;
+      const b = K.length / 3;
+      for (const yy0 of [yy - .4, yy + .4]) for (const q of sp) K.push(q[0], yy0, q[1]);
+      for (let i = 0; i < sn; i++) { const j = (i + 1) % sn; KI.push(b + i, b + sn + i, b + j, b + j, b + sn + i, b + sn + j); }
+    }
+    // Shading boards on south/west at every floor.
+    for (let f = Math.max(1, k * 5); f < Math.min(F, (k + 1) * 5); f++) {
+      const y = f / F * H;
+      box(M, MI, 0, y, D / 2 + .4, W + 1.0, .08, .8);
+      box(M, MI, -W / 2 - .4, y, 0, .8, .08, D + 1.0);
+    }
+  }
+  // Crown: top layer inset, stone coping, equipment enclosed.
+  box(S, SI, 0, H + .25, 0, W - 1.5, .5, D - 1.5);
+  box(S, SI, 0, H + 1.35, 0, W * .32, 1.7, D * .32);
+  box(NG, NGI, 0, H + .55, D / 2 - .8, W - 12, .08, .05);
+  // 3F stone podium; south storefront/sign and entrance portico; roof slab.
+  const PH = 12;
+  box(S, SI, 0, PH / 2, 0, W + 12, PH, D + 12);
+  box(S, SI, 0, PH + .2, 0, W + 12.2, .35, D + 12.2);
+  box(PG, PGI, 0, PH * .5, (D + 12) / 2 + .03, W - 8, PH * .8, .25);
+  box(PG, PGI, 0, 5.8, (D + 12) / 2 + .06, 26, 11.6, .3);
+  for (const x of [-10, -3.4, 3.4, 10]) box(S, SI, x, 6, (D + 12) / 2 + 2.2, 1.2, 12, 1.2);
+  box(S, SI, 0, 12.5, (D + 12) / 2 + 2.0, 28, .6, 4.0);
+  // Shared business-use sign.
+  const sc = document.createElement('canvas'); sc.width = 768; sc.height = 128; const sg = sc.getContext('2d'); sg.fillStyle = '#37342e'; sg.fillRect(0, 0, 768, 128); sg.fillStyle = '#e9dfcd'; sg.font = 'bold 52px "Microsoft YaHei"'; sg.textAlign = 'center'; sg.textBaseline = 'middle'; sg.fillText('办公 · 商业', 384, 66);
+  // Material/mesh.
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x263a40, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.1, emissive: 0xffd9a0, emissiveMap: (() => { const c = document.createElement('canvas'); c.width = 512; c.height = 21 * 8; const x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, c.width, c.height); for (let r = 0; r < 21; r++) for (let q = 0; q < 64; q++) if (((r * 41 + q * 73) % 100) < 24) { x.fillStyle = (q + r) % 7 ? '#ffd9a0' : '#cfe4ff'; x.fillRect(q * 8 + 2, r * 8 + 2, 5, 4); } return new THREE.CanvasTexture(c); })(), emissiveIntensity: 0, side: THREE.FrontSide });
+  chinaOverseasGlassMaterial = glassMat;
+  const stoneMat = new THREE.MeshStandardMaterial({ color: 0xb4b0a4, metalness: 0, roughness: .85 });
+  const metalMat = new THREE.MeshStandardMaterial({ color: 0xc4c9c5, metalness: .8, roughness: .35 });
+  const darkMat = new THREE.MeshStandardMaterial({ color: 0x3b3d3a, metalness: .2, roughness: .8 });
+  const pgMat = new THREE.MeshPhysicalMaterial({ color: 0x263a40, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.0, side: THREE.DoubleSide });
+  chinaOverseasNightMaterial = new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0, toneMapped: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  const sgMat = new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), toneMapped: false, side: THREE.DoubleSide });
+  const quad = (p, ix, uv) => { const b = p.length / 3; p.push(-13, 14.5, (D + 12) / 2 + .08, 13, 14.5, (D + 12) / 2 + .08, -13, 16, (D + 12) / 2 + .08, 13, 16, (D + 12) / 2 + .08); uv.push(0, 0, 1, 0, 0, 1, 1, 1); ix.push(b, b + 1, b + 2, b + 2, b + 1, b + 3); };
+  const sp = [], su = [], si = []; quad(sp, si, su);
+  function geo(p, ix, uv) { const q = new THREE.BufferGeometry(); q.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); if (uv) q.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); q.setIndex(ix); q.computeVertexNormals(); return q; }
+  const gm = new THREE.Mesh(geo(G, GI, GU), glassMat); gm.castShadow = true; g.add(gm);
+  const sm = new THREE.Mesh(geo(S, SI), stoneMat); sm.castShadow = true; g.add(sm);
+  const mm = new THREE.Mesh(geo(M, MI), metalMat); g.add(mm);
+  const km = new THREE.Mesh(geo(K, KI), darkMat); g.add(km);
+  const pm = new THREE.Mesh(geo(PG, PGI), pgMat); g.add(pm);
+  const sgm = new THREE.Mesh(geo(sp, si, su), sgMat); g.add(sgm);
+  const nm = new THREE.Mesh(geo(NG, NGI), chinaOverseasNightMaterial); g.add(nm);
+  buildingsGroup.add(g); chinaOverseasPickMeshes.push(gm);
+  const tri = q => Math.round(q.index ? q.index.count / 3 : q.attributes.position.count / 3);
+  window.__CHINA_OVERSEAS__ = { name: '中国海外大厦', idx: 1232, heightM: 100, floors: 21, footprintM: [53, 58], stoneLayers: 5, layerOffsetM: .8, shadowSlotM: .8, triangles: tri(gm.geometry) + tri(sm.geometry) + tri(mm.geometry) + tri(km.geometry) + tri(pm.geometry) + tri(nm.geometry), drawCalls: 7, meshes: g.children.length };
+  if (window.__BOOT_DEBUG__) console.log('China Overseas', window.__CHINA_OVERSEAS__);
+})();
+
+// ── 怡化金融科技大厦 ─────────────────────────────────────────
+(function buildYihuaTower() {
+  const g = new THREE.Group(); g.name = 'yihua-tower';
+  g.position.set(wx(447), BUILD_Y, wz(-788));
+  g.scale.set(PLAN, HS, PLAN);
+  const W = 61, D = 50, H = 147, F = 31, FH = H / F;
+  const S = [], SI = [], M = [], MI = [], PG = [], PGI = [], GR = [], GRI = [], NG = [], NGI = [], G = [], GU = [], GI = [];
+  function box(p, ix, cx, cy, cz, sx, sy, sz) {
+    const b = p.length / 3;
+    for (const yy of [cy - sy / 2, cy + sy / 2]) for (const [xx, zz] of [[-sx / 2, -sz / 2], [sx / 2, -sz / 2], [sx / 2, sz / 2], [-sx / 2, sz / 2]]) p.push(cx + xx, yy, cz + zz);
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; ix.push(b + i, b + 4 + i, b + j, b + j, b + 4 + i, b + 4 + j); }
+    ix.push(b, b + 2, b + 1, b, b + 3, b + 2); ix.push(b + 4, b + 5, b + 6, b + 4, b + 6, b + 7);
+  }
+  const r = 2.5, pts = [], cs = [[W / 2 - r, -D / 2 + r, -Math.PI / 2, 0], [W / 2 - r, D / 2 - r, 0, Math.PI / 2], [-W / 2 + r, D / 2 - r, Math.PI / 2, Math.PI], [-W / 2 + r, -D / 2 + r, Math.PI, Math.PI * 1.5]];
+  for (const [x, z, a0, a1] of cs) for (let i = 0; i <= 3; i++) { const a = a0 + (a1 - a0) * i / 3; pts.push([x + Math.cos(a) * r, z + Math.sin(a) * r]); }
+  const n = pts.length;
+  for (let f = 0; f <= F; f++) for (let i = 0; i < n; i++) { G.push(pts[i][0], f * FH, pts[i][1]); GU.push(i / n, f / F); }
+  for (let f = 0; f < F; f++) for (let i = 0; i < n; i++) { const a = f * n + i, b = a + 1, c = a + n, d = c + 1; GI.push(a, c, b, b, c, d); }
+  const ct = G.length / 3; G.push(0, H, 0); GU.push(.5, 1); for (let i = 0; i < n; i++) GI.push(ct, F * n + i, F * n + (i + 1) % n);
+  const cb = G.length / 3; G.push(0, 0, 0); GU.push(.5, 0); for (let i = 0; i < n; i++) GI.push(cb, (i + 1) % n, i);
+  // Vertical 3 m fins; south face gets an extra YH-density rhythm.
+  for (let x = -W / 2 + 3; x < W / 2; x += 3) {
+    for (const z of [D / 2 + .03, -D / 2 - .03]) box(M, MI, x, H / 2, z, .07, H, .07);
+  }
+  for (let z = -D / 2 + 3; z < D / 2; z += 3) { box(M, MI, W / 2 + .03, H / 2, z, .07, H, .07); box(M, MI, -W / 2 - .03, H / 2, z, .07, H, .07); }
+  // YH pattern: extra thin fins on the south face, subtly varying bay rhythm.
+  const YH = [
+    '100000000000001', '010000000000010', '001000000000100', '000100000001000',
+    '000010000010000', '000001000100000', '000000101000000', '000000010000000',
+    '000000010000000', '100000010000001', '100000010000001', '100000010000001',
+    '111111111111111', '100000010000001', '100000010000001'
+  ];
+  const y0 = 10 * FH, y1 = H - 4 * FH;
+  for (let row = 0; row < YH.length; row++) for (let col = 0; col < YH[0].length; col++) {
+    if (YH[row][col] !== '1') continue;
+    const x = -W / 2 + (col + .5) * W / YH[0].length;
+    const yy0 = y0 + (y1 - y0) * row / YH.length, yy1 = y0 + (y1 - y0) * (row + 1) / YH.length;
+    box(M, MI, x, (yy0 + yy1) / 2, D / 2 + .10, .10, yy1 - yy0, .09);
+  }
+  // Floor lines and 10F bands.
+  for (let f = 1; f < F; f++) {
+    const y = f * FH;
+    box(M, MI, 0, y, D / 2 + .04, W, .04, .05); box(M, MI, 0, y, -D / 2 - .04, W, .04, .05);
+    box(M, MI, W / 2 + .04, y, 0, .05, .04, D); box(M, MI, -W / 2 - .04, y, 0, .05, .04, D);
+  }
+  for (let f = 10; f < F; f += 10) { const y = f * FH; box(M, MI, 0, y, D / 2 + .07, W, .18, .10); box(M, MI, 0, y, -D / 2 - .07, W, .18, .10); box(M, MI, W / 2 + .07, y, 0, .10, .18, D); box(M, MI, -W / 2 - .07, y, 0, .10, .18, D); }
+  // Crown: low parapet + equipment enclosed, thin light.
+  box(S, SI, 0, H + .2, 0, W + .5, .4, D + .5);
+  box(S, SI, 0, H + 1.3, 0, W * .34, 2.0, D * .34);
+  box(NG, NGI, 0, H - .15, D / 2 + .1, W - 4, .08, .05);
+  // 3F podium, north entrance/lobby and canopy; generic sign.
+  const PH = 12;
+  box(S, SI, 0, PH / 2, 0, W + 12, PH, D + 12);
+  box(S, SI, 0, PH + .15, 0, W + 12.2, .3, D + 12.2);
+  box(PG, PGI, 0, PH * .5, -D / 2 - 6 - .03, W - 8, PH * .8, .24);
+  box(PG, PGI, 0, 6, -D / 2 - 6 - .06, 28, 12, .30);
+  box(M, MI, 0, PH + .7, -D / 2 - 6 - 1.6, 30, .2, 4.0);
+  box(GR, GRI, 0, PH + .3, 0, W - 4, .2, D - 4);
+  // Night material and geometry.
+  yihuaNightMaterial = new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0, toneMapped: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  // Business sign.
+  const sc = document.createElement('canvas'); sc.width = 768; sc.height = 128; const sg = sc.getContext('2d'); sg.fillStyle = '#36332d'; sg.fillRect(0, 0, 768, 128); sg.fillStyle = '#e9dfcd'; sg.font = 'bold 52px "Microsoft YaHei"'; sg.textAlign = 'center'; sg.textBaseline = 'middle'; sg.fillText('办公 · 商业', 384, 66);
+  const signCv = document.createElement('canvas'); signCv.width = 1024; signCv.height = 128; const sgc = signCv.getContext('2d'); sgc.drawImage(sc, 0, 0);
+  // Materials and meshes.
+  const c = document.createElement('canvas'); c.width = 512; c.height = 31 * 8; const cx = c.getContext('2d'); cx.fillStyle = '#000'; cx.fillRect(0, 0, c.width, c.height);
+  for (let row = 0; row < 31; row++) for (let q = 0; q < 64; q++) if (((row * 41 + q * 73) % 100) < 24) { cx.fillStyle = (q + row) % 8 ? '#ffd9a0' : '#cfe4ff'; cx.fillRect(q * 8 + 2, row * 8 + 2, 5, 4); }
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x243a42, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.1, emissive: 0xffd9a0, emissiveMap: new THREE.CanvasTexture(c), emissiveIntensity: 0, side: THREE.FrontSide });
+  yihuaGlassMaterial = glassMat;
+  const stoneMat = new THREE.MeshStandardMaterial({ color: 0xb2ada0, metalness: 0, roughness: .85 });
+  const metalMat = new THREE.MeshStandardMaterial({ color: 0xc2c7c3, metalness: .8, roughness: .35 });
+  const pgMat = new THREE.MeshPhysicalMaterial({ color: 0x243a42, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.0, side: THREE.DoubleSide });
+  const grMat = new THREE.MeshStandardMaterial({ color: 0x48643e, metalness: 0, roughness: .9 });
+  function geo(p, ix, uv) { const q = new THREE.BufferGeometry(); q.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); if (uv) q.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); q.setIndex(ix); q.computeVertexNormals(); return q; }
+  const gm = new THREE.Mesh(geo(G, GI, GU), glassMat); gm.castShadow = true; g.add(gm);
+  const sm = new THREE.Mesh(geo(S, SI), stoneMat); sm.castShadow = true; g.add(sm);
+  const mm = new THREE.Mesh(geo(M, MI), metalMat); g.add(mm);
+  const pm = new THREE.Mesh(geo(PG, PGI), pgMat); g.add(pm);
+  const grm = new THREE.Mesh(geo(GR, GRI), grMat); g.add(grm);
+  const nm = new THREE.Mesh(geo(NG, NGI), yihuaNightMaterial); g.add(nm);
+  const signGeo = new THREE.BufferGeometry(); signGeo.setAttribute('position', new THREE.Float32BufferAttribute([-13, 14.2, -D / 2 - 6 - .08, 13, 14.2, -D / 2 - 6 - .08, -13, 15.6, -D / 2 - 6 - .08, 13, 15.6, -D / 2 - 6 - .08], 3)); signGeo.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 0, 1, 1, 1], 2)); signGeo.setIndex([0, 1, 2, 2, 1, 3]); signGeo.computeVertexNormals();
+  g.add(new THREE.Mesh(signGeo, new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(signCv), toneMapped: false, side: THREE.DoubleSide })));
+  buildingsGroup.add(g); yihuaPickMeshes.push(gm);
+  const tri = q => Math.round(q.index ? q.index.count / 3 : q.attributes.position.count / 3);
+  window.__YIHUA__ = { name: '怡化金融科技大厦', idx: 401, heightM: 147, floors: 31, footprintM: [61, 50], yhPattern: 'south-face fin density, 15×15 bitmap', triangles: tri(gm.geometry) + tri(sm.geometry) + tri(mm.geometry) + tri(pm.geometry) + tri(grm.geometry) + tri(nm.geometry), drawCalls: 7, meshes: g.children.length };
+  if (window.__BOOT_DEBUG__) console.log('Yihua', window.__YIHUA__);
+})();
+
+// ── 彩讯科技大厦 ─────────────────────────────────────────────
+(function buildCaixunTower() {
+  const g = new THREE.Group(); g.name = 'caixun-tower';
+  g.position.set(wx(1504), BUILD_Y, wz(-1592));
+  g.scale.set(PLAN, HS, PLAN);
+  const W = 55, D = 33, H = 160, F = 32, FH = H / F;
+  const S = [], SI = [], M = [], MI = [], PG = [], PGI = [], NG = [], NGI = [], G = [], GU = [], GI = [];
+  function box(p, ix, cx, cy, cz, sx, sy, sz) {
+    const b = p.length / 3;
+    for (const yy of [cy - sy / 2, cy + sy / 2]) for (const [xx, zz] of [[-sx / 2, -sz / 2], [sx / 2, -sz / 2], [sx / 2, sz / 2], [-sx / 2, sz / 2]]) p.push(cx + xx, yy, cz + zz);
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; ix.push(b + i, b + 4 + i, b + j, b + j, b + 4 + i, b + 4 + j); }
+    ix.push(b, b + 2, b + 1, b, b + 3, b + 2); ix.push(b + 4, b + 5, b + 6, b + 4, b + 6, b + 7);
+  }
+  const r = 2.5, pts = [], cs = [[W / 2 - r, -D / 2 + r, -Math.PI / 2, 0], [W / 2 - r, D / 2 - r, 0, Math.PI / 2], [-W / 2 + r, D / 2 - r, Math.PI / 2, Math.PI], [-W / 2 + r, -D / 2 + r, Math.PI, Math.PI * 1.5]];
+  for (const [x, z, a0, a1] of cs) for (let i = 0; i <= 3; i++) { const a = a0 + (a1 - a0) * i / 3; pts.push([x + Math.cos(a) * r, z + Math.sin(a) * r]); }
+  const n = pts.length;
+  for (let f = 0; f <= F; f++) for (let i = 0; i < n; i++) { G.push(pts[i][0], f * FH, pts[i][1]); GU.push(i / n, f / F); }
+  for (let f = 0; f < F; f++) for (let i = 0; i < n; i++) { const a = f * n + i, b = a + 1, c = a + n, d = c + 1; GI.push(a, c, b, b, c, d); }
+  const ct = G.length / 3; G.push(0, H, 0); GU.push(.5, 1); for (let i = 0; i < n; i++) GI.push(ct, F * n + i, F * n + (i + 1) % n);
+  const cb = G.length / 3; G.push(0, 0, 0); GU.push(.5, 0); for (let i = 0; i < n; i++) GI.push(cb, (i + 1) % n, i);
+  // Long-face vertical fins ~2.7 m; short ends near-solid metal bands.
+  for (let x = -W / 2 + 2.7; x < W / 2; x += 2.7) { box(M, MI, x, H / 2, D / 2 + .04, .06, H, .06); box(M, MI, x, H / 2, -D / 2 - .04, .06, H, .06); }
+  for (const sx of [-1, 1]) {
+    for (let f = 0; f < F; f++) box(M, MI, sx * (W / 2 + .10), (f + .5) * FH, 0, .18, FH * .78, D - 2);
+    box(M, MI, sx * (W / 2 + .12), H / 2, 0, .24, H, 2.0);
+  }
+  // Floor lines, 10F bands, stronger 16F equipment band.
+  for (let f = 1; f < F; f++) { const y = f * FH; box(M, MI, 0, y, D / 2 + .03, W, .04, .04); box(M, MI, 0, y, -D / 2 - .03, W, .04, .04); box(M, MI, W / 2 + .03, y, 0, .04, .04, D); box(M, MI, -W / 2 - .03, y, 0, .04, .04, D); }
+  for (let f = 10; f < F; f += 10) { const y = f * FH; box(M, MI, 0, y, D / 2 + .06, W, .16, .08); box(M, MI, 0, y, -D / 2 - .06, W, .16, .08); box(M, MI, W / 2 + .06, y, 0, .08, .16, D); box(M, MI, -W / 2 - .06, y, 0, .08, .16, D); }
+  const y16 = 16 * FH; box(M, MI, 0, y16, D / 2 + .07, W, .32, .12); box(M, MI, 0, y16, -D / 2 - .07, W, .32, .12); box(M, MI, W / 2 + .07, y16, 0, .12, .32, D); box(M, MI, -W / 2 - .07, y16, 0, .12, .32, D);
+  // Crown low equipment box, coping and light.
+  box(S, SI, 0, H + .2, 0, W + .4, .4, D + .4);
+  box(S, SI, 0, H + 1.2, 0, W * .35, 1.6, D * .35);
+  box(NG, NGI, 0, H - .15, D / 2 + .1, W - 4, .08, .05);
+  // 3F podium, west entrance, generic sign.
+  const PH = 12;
+  box(S, SI, 0, PH / 2, 0, W + 10, PH, D + 10);
+  box(S, SI, 0, PH + .15, 0, W + 10.2, .3, D + 10.2);
+  box(PG, PGI, -W / 2 - 5 - .03, PH * .5, 0, .25, PH * .8, D - 6);
+  box(PG, PGI, -W / 2 - 5 - .06, 6, 0, .30, 12, 26);
+  box(M, MI, -W / 2 - 5 - 1.6, PH + .65, 0, 4.0, .18, 30);
+  const sc = document.createElement('canvas'); sc.width = 768; sc.height = 128; const sg = sc.getContext('2d'); sg.fillStyle = '#36332d'; sg.fillRect(0, 0, 768, 128); sg.fillStyle = '#e9dfcd'; sg.font = 'bold 52px "Microsoft YaHei"'; sg.textAlign = 'center'; sg.textBaseline = 'middle'; sg.fillText('办公 · 商业', 384, 66);
+  // Night and glass textures.
+  const c = document.createElement('canvas'); c.width = 512; c.height = F * 8; const cx = c.getContext('2d'); cx.fillStyle = '#000'; cx.fillRect(0, 0, c.width, c.height);
+  for (let row = 0; row < F; row++) for (let q = 0; q < 64; q++) if (((row * 41 + q * 73) % 100) < 24) { cx.fillStyle = (q + row) % 8 ? '#ffd9a0' : '#cfe4ff'; cx.fillRect(q * 8 + 2, row * 8 + 2, 5, 4); }
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x1d343d, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.1, emissive: 0xffd9a0, emissiveMap: new THREE.CanvasTexture(c), emissiveIntensity: 0, side: THREE.FrontSide });
+  caixunGlassMaterial = glassMat;
+  const stoneMat = new THREE.MeshStandardMaterial({ color: 0xb2ada0, metalness: 0, roughness: .85 });
+  const metalMat = new THREE.MeshStandardMaterial({ color: 0xc3c8c4, metalness: .8, roughness: .35 });
+  const pgMat = new THREE.MeshPhysicalMaterial({ color: 0x1d343d, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.0, side: THREE.DoubleSide });
+  caixunNightMaterial = new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0, toneMapped: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  function geo(p, ix, uv) { const q = new THREE.BufferGeometry(); q.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); if (uv) q.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); q.setIndex(ix); q.computeVertexNormals(); return q; }
+  const gm = new THREE.Mesh(geo(G, GI, GU), glassMat); gm.castShadow = true; g.add(gm);
+  const sm = new THREE.Mesh(geo(S, SI), stoneMat); sm.castShadow = true; g.add(sm);
+  const mm = new THREE.Mesh(geo(M, MI), metalMat); g.add(mm);
+  const pm = new THREE.Mesh(geo(PG, PGI), pgMat); g.add(pm);
+  const nm = new THREE.Mesh(geo(NG, NGI), caixunNightMaterial); g.add(nm);
+  const sgGeo = new THREE.BufferGeometry(); sgGeo.setAttribute('position', new THREE.Float32BufferAttribute([-W / 2 - 5.08, 14.2, -13, -W / 2 - 5.08, 14.2, 13, -W / 2 - 5.08, 15.6, 13, -W / 2 - 5.08, 15.6, -13], 3)); sgGeo.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 0, 1, 1, 1], 2)); sgGeo.setIndex([0, 1, 2, 2, 1, 3]); sgGeo.computeVertexNormals(); g.add(new THREE.Mesh(sgGeo, new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), toneMapped: false, side: THREE.DoubleSide })));
+  buildingsGroup.add(g); caixunPickMeshes.push(gm);
+  const tri = q => Math.round(q.index ? q.index.count / 3 : q.attributes.position.count / 3);
+  window.__CAIXUN__ = { name: '彩讯科技大厦', idx: 779, heightM: 160, floors: 32, footprintM: [55, 33], longFinsM: 2.7, equipmentBandFloor: 16, triangles: tri(gm.geometry) + tri(sm.geometry) + tri(mm.geometry) + tri(pm.geometry) + tri(nm.geometry), drawCalls: 6, meshes: g.children.length };
+  if (window.__BOOT_DEBUG__) console.log('Caixun', window.__CAIXUN__);
+})();
+
+// ── 北邮科技大厦 ─────────────────────────────────────────────
+(function buildBuptTower() {
+  const g = new THREE.Group(); g.name = 'bupt-tower';
+  g.position.set(wx(1618), BUILD_Y, wz(-1595));
+  g.scale.set(PLAN, HS, PLAN);
+  const W = 55, D = 33, H = 100, F = 23, FH = H / F;
+  const S = [], SI = [], M = [], MI = [], PG = [], PGI = [], NG = [], NGI = [], G = [], GU = [], GI = [];
+  function box(p, ix, cx, cy, cz, sx, sy, sz) {
+    const b = p.length / 3;
+    for (const yy of [cy - sy / 2, cy + sy / 2]) for (const [xx, zz] of [[-sx / 2, -sz / 2], [sx / 2, -sz / 2], [sx / 2, sz / 2], [-sx / 2, sz / 2]]) p.push(cx + xx, yy, cz + zz);
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; ix.push(b + i, b + 4 + i, b + j, b + j, b + 4 + i, b + 4 + j); }
+    ix.push(b, b + 2, b + 1, b, b + 3, b + 2); ix.push(b + 4, b + 5, b + 6, b + 4, b + 6, b + 7);
+  }
+  const r = 2.5, pts = [], cs = [[W / 2 - r, -D / 2 + r, -Math.PI / 2, 0], [W / 2 - r, D / 2 - r, 0, Math.PI / 2], [-W / 2 + r, D / 2 - r, Math.PI / 2, Math.PI], [-W / 2 + r, -D / 2 + r, Math.PI, Math.PI * 1.5]];
+  for (const [x, z, a0, a1] of cs) for (let i = 0; i <= 3; i++) { const a = a0 + (a1 - a0) * i / 3; pts.push([x + Math.cos(a) * r, z + Math.sin(a) * r]); }
+  const n = pts.length;
+  for (let f = 0; f <= F; f++) for (let i = 0; i < n; i++) { G.push(pts[i][0], f * FH, pts[i][1]); GU.push(i / n, f / F); }
+  for (let f = 0; f < F; f++) for (let i = 0; i < n; i++) { const a = f * n + i, b = a + 1, c = a + n, d = c + 1; GI.push(a, c, b, b, c, d); }
+  const ct = G.length / 3; G.push(0, H, 0); GU.push(.5, 1); for (let i = 0; i < n; i++) GI.push(ct, F * n + i, F * n + (i + 1) % n);
+  const cb = G.length / 3; G.push(0, 0, 0); GU.push(.5, 0); for (let i = 0; i < n; i++) GI.push(cb, (i + 1) % n, i);
+  // Same 2.7 m long-face rhythm as Caixun; solid short ends.
+  for (let x = -W / 2 + 2.7; x < W / 2; x += 2.7) { box(M, MI, x, H / 2, D / 2 + .04, .06, H, .06); box(M, MI, x, H / 2, -D / 2 - .04, .06, H, .06); }
+  for (const sx of [-1, 1]) { for (let f = 0; f < F; f++) box(M, MI, sx * (W / 2 + .10), (f + .5) * FH, 0, .18, FH * .78, D - 2); box(M, MI, sx * (W / 2 + .12), H / 2, 0, .24, H, 2.0); }
+  for (let f = 1; f < F; f++) { const y = f * FH; box(M, MI, 0, y, D / 2 + .03, W, .04, .04); box(M, MI, 0, y, -D / 2 - .03, W, .04, .04); box(M, MI, W / 2 + .03, y, 0, .04, .04, D); box(M, MI, -W / 2 - .03, y, 0, .04, .04, D); }
+  for (let f = 10; f < F; f += 10) { const y = f * FH; box(M, MI, 0, y, D / 2 + .06, W, .16, .08); box(M, MI, 0, y, -D / 2 - .06, W, .16, .08); box(M, MI, W / 2 + .06, y, 0, .08, .16, D); box(M, MI, -W / 2 - .06, y, 0, .08, .16, D); }
+  box(S, SI, 0, H + .18, 0, W + .4, .36, D + .4);
+  box(S, SI, 0, H + 1.05, 0, W * .32, 1.4, D * .32);
+  box(NG, NGI, 0, H - .15, D / 2 + .1, W - 5, .06, .04);
+  // 3F podium, west-facing lobby; generic sign.
+  const PH = 12;
+  box(S, SI, 0, PH / 2, 0, W + 10, PH, D + 10);
+  box(S, SI, 0, PH + .15, 0, W + 10.2, .3, D + 10.2);
+  box(PG, PGI, -W / 2 - 5 - .03, PH * .5, 0, .25, PH * .8, D - 6);
+  box(PG, PGI, -W / 2 - 5 - .06, 6, 0, .30, 12, 26);
+  box(M, MI, -W / 2 - 5 - 1.6, PH + .65, 0, 4.0, .18, 30);
+  const sc = document.createElement('canvas'); sc.width = 768; sc.height = 128; const sg = sc.getContext('2d'); sg.fillStyle = '#36332d'; sg.fillRect(0, 0, 768, 128); sg.fillStyle = '#e9dfcd'; sg.font = 'bold 52px "Microsoft YaHei"'; sg.textAlign = 'center'; sg.textBaseline = 'middle'; sg.fillText('办公 · 商业', 384, 66);
+  const c = document.createElement('canvas'); c.width = 512; c.height = F * 8; const cx = c.getContext('2d'); cx.fillStyle = '#000'; cx.fillRect(0, 0, c.width, c.height);
+  for (let row = 0; row < F; row++) for (let q = 0; q < 64; q++) if (((row * 41 + q * 73) % 100) < 24) { cx.fillStyle = (q + row) % 8 ? '#ffd9a0' : '#cfe4ff'; cx.fillRect(q * 8 + 2, row * 8 + 2, 5, 4); }
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x1f363d, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.05, emissive: 0xffd9a0, emissiveMap: new THREE.CanvasTexture(c), emissiveIntensity: 0, side: THREE.FrontSide });
+  buptGlassMaterial = glassMat;
+  const stoneMat = new THREE.MeshStandardMaterial({ color: 0xafaa9d, metalness: 0, roughness: .85 });
+  const metalMat = new THREE.MeshStandardMaterial({ color: 0xbfc5c1, metalness: .8, roughness: .35 });
+  const pgMat = new THREE.MeshPhysicalMaterial({ color: 0x1f363d, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: .95, side: THREE.DoubleSide });
+  buptNightMaterial = new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0, toneMapped: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  function geo(p, ix, uv) { const q = new THREE.BufferGeometry(); q.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); if (uv) q.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); q.setIndex(ix); q.computeVertexNormals(); return q; }
+  const gm = new THREE.Mesh(geo(G, GI, GU), glassMat); gm.castShadow = true; g.add(gm);
+  const sm = new THREE.Mesh(geo(S, SI), stoneMat); sm.castShadow = true; g.add(sm);
+  const mm = new THREE.Mesh(geo(M, MI), metalMat); g.add(mm);
+  const pm = new THREE.Mesh(geo(PG, PGI), pgMat); g.add(pm);
+  const nm = new THREE.Mesh(geo(NG, NGI), buptNightMaterial); g.add(nm);
+  const sgGeo = new THREE.BufferGeometry(); sgGeo.setAttribute('position', new THREE.Float32BufferAttribute([-W / 2 - 5.08, 14.2, -13, -W / 2 - 5.08, 14.2, 13, -W / 2 - 5.08, 15.6, 13, -W / 2 - 5.08, 15.6, -13], 3)); sgGeo.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 0, 1, 1, 1], 2)); sgGeo.setIndex([0, 1, 2, 2, 1, 3]); sgGeo.computeVertexNormals(); g.add(new THREE.Mesh(sgGeo, new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), toneMapped: false, side: THREE.DoubleSide })));
+  buildingsGroup.add(g); buptPickMeshes.push(gm);
+  const tri = q => Math.round(q.index ? q.index.count / 3 : q.attributes.position.count / 3);
+  window.__BUPT__ = { name: '北邮科技大厦', idx: 780, heightM: 100, floors: 23, footprintM: [55, 33], longFinsM: 2.7, triangles: tri(gm.geometry) + tri(sm.geometry) + tri(mm.geometry) + tri(pm.geometry) + tri(nm.geometry), drawCalls: 6, meshes: g.children.length };
+  if (window.__BOOT_DEBUG__) console.log('BUPT', window.__BUPT__);
+})();
+
+// ── 微软科通大厦 ─────────────────────────────────────────────
+(function buildKetongTower() {
+  const g = new THREE.Group(); g.name = 'ketong-tower';
+  g.position.set(wx(884), BUILD_Y, wz(-1013));
+  g.scale.set(PLAN, HS, PLAN);
+  const W = 65, D = 64, H = 99.6, F = 25, FH = H / F;
+  const S = [], SI = [], M = [], MI = [], PG = [], PGI = [], NG = [], NGI = [], G = [], GU = [], GI = [];
+  function box(p, ix, cx, cy, cz, sx, sy, sz) {
+    const b = p.length / 3;
+    for (const yy of [cy - sy / 2, cy + sy / 2]) for (const [xx, zz] of [[-sx / 2, -sz / 2], [sx / 2, -sz / 2], [sx / 2, sz / 2], [-sx / 2, sz / 2]]) p.push(cx + xx, yy, cz + zz);
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; ix.push(b + i, b + 4 + i, b + j, b + j, b + 4 + i, b + 4 + j); }
+    ix.push(b, b + 2, b + 1, b, b + 3, b + 2); ix.push(b + 4, b + 5, b + 6, b + 4, b + 6, b + 7);
+  }
+  const r = 2.8, pts = [], cs = [[W / 2 - r, -D / 2 + r, -Math.PI / 2, 0], [W / 2 - r, D / 2 - r, 0, Math.PI / 2], [-W / 2 + r, D / 2 - r, Math.PI / 2, Math.PI], [-W / 2 + r, -D / 2 + r, Math.PI, Math.PI * 1.5]];
+  for (const [x, z, a0, a1] of cs) for (let i = 0; i <= 3; i++) { const a = a0 + (a1 - a0) * i / 3; pts.push([x + Math.cos(a) * r, z + Math.sin(a) * r]); }
+  const n = pts.length;
+  for (let f = 0; f <= F; f++) for (let i = 0; i < n; i++) { G.push(pts[i][0], f * FH, pts[i][1]); GU.push(i / n, f / F); }
+  for (let f = 0; f < F; f++) for (let i = 0; i < n; i++) { const a = f * n + i, b = a + 1, c = a + n, d = c + 1; GI.push(a, c, b, b, c, d); }
+  const ct = G.length / 3; G.push(0, H, 0); GU.push(.5, 1); for (let i = 0; i < n; i++) GI.push(ct, F * n + i, F * n + (i + 1) % n);
+  const cb = G.length / 3; G.push(0, 0, 0); GU.push(.5, 0); for (let i = 0; i < n; i++) GI.push(cb, (i + 1) % n, i);
+  // 3x3 m square grid: vertical fins and floor beams.
+  for (let x = -W / 2 + 3; x < W / 2; x += 3) { box(M, MI, x, H / 2, D / 2 + .04, .07, H, .06); box(M, MI, x, H / 2, -D / 2 - .04, .07, H, .06); }
+  for (let z = -D / 2 + 3; z < D / 2; z += 3) { box(M, MI, W / 2 + .04, H / 2, z, .06, H, .07); box(M, MI, -W / 2 - .04, H / 2, z, .06, H, .07); }
+  for (let f = 1; f < F; f++) { const y = f * FH; box(M, MI, 0, y, D / 2 + .03, W, .08, .06); box(M, MI, 0, y, -D / 2 - .03, W, .08, .06); box(M, MI, W / 2 + .03, y, 0, .06, .08, D); box(M, MI, -W / 2 - .03, y, 0, .06, .08, D); }
+  for (let f = 10; f < F; f += 10) { const y = f * FH; box(M, MI, 0, y, D / 2 + .07, W, .20, .10); box(M, MI, 0, y, -D / 2 - .07, W, .20, .10); box(M, MI, W / 2 + .07, y, 0, .10, .20, D); box(M, MI, -W / 2 - .07, y, 0, .10, .20, D); }
+  box(S, SI, 0, H + .2, 0, W + .4, .4, D + .4);
+  box(S, SI, 0, H + 1.2, 0, W * .34, 1.6, D * .34);
+  box(NG, NGI, 0, H - .15, D / 2 + .1, W - 4, .08, .05);
+  // 3F podium, paving; generic storefront sign.
+  const PH = 12;
+  box(S, SI, 0, PH / 2, 0, W + 12, PH, D + 12);
+  box(S, SI, 0, PH + .15, 0, W + 12.2, .3, D + 12.2);
+  box(S, SI, 0, .05, 0, W + 20, .10, D + 20);
+  box(PG, PGI, 0, PH * .5, D / 2 + 6 + .03, W - 8, PH * .8, .24);
+  box(PG, PGI, 0, 6, D / 2 + 6 + .06, 28, 12, .30);
+  box(M, MI, 0, PH + .65, D / 2 + 6 + 1.5, 30, .18, 4.0);
+  const sc = document.createElement('canvas'); sc.width = 768; sc.height = 128; const sg = sc.getContext('2d'); sg.fillStyle = '#36332d'; sg.fillRect(0, 0, 768, 128); sg.fillStyle = '#e9dfcd'; sg.font = 'bold 52px "Microsoft YaHei"'; sg.textAlign = 'center'; sg.textBaseline = 'middle'; sg.fillText('办公 · 商业', 384, 66);
+  const c = document.createElement('canvas'); c.width = 512; c.height = F * 8; const cx = c.getContext('2d'); cx.fillStyle = '#000'; cx.fillRect(0, 0, c.width, c.height);
+  for (let row = 0; row < F; row++) for (let q = 0; q < 64; q++) if (((row * 41 + q * 73) % 100) < 24) { cx.fillStyle = (q + row) % 8 ? '#ffd9a0' : '#cfe4ff'; cx.fillRect(q * 8 + 2, row * 8 + 2, 5, 4); }
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x203840, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.1, emissive: 0xffd9a0, emissiveMap: new THREE.CanvasTexture(c), emissiveIntensity: 0, side: THREE.FrontSide });
+  ketongGlassMaterial = glassMat;
+  const stoneMat = new THREE.MeshStandardMaterial({ color: 0xb2ada0, metalness: 0, roughness: .85 });
+  const metalMat = new THREE.MeshStandardMaterial({ color: 0xc2c7c4, metalness: .8, roughness: .35 });
+  const pgMat = new THREE.MeshPhysicalMaterial({ color: 0x203840, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.0, side: THREE.DoubleSide });
+  ketongNightMaterial = new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0, toneMapped: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  function geo(p, ix, uv) { const q = new THREE.BufferGeometry(); q.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); if (uv) q.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); q.setIndex(ix); q.computeVertexNormals(); return q; }
+  const gm = new THREE.Mesh(geo(G, GI, GU), glassMat); gm.castShadow = true; g.add(gm);
+  const sm = new THREE.Mesh(geo(S, SI), stoneMat); sm.castShadow = true; g.add(sm);
+  const mm = new THREE.Mesh(geo(M, MI), metalMat); g.add(mm);
+  const pm = new THREE.Mesh(geo(PG, PGI), pgMat); g.add(pm);
+  const nm = new THREE.Mesh(geo(NG, NGI), ketongNightMaterial); g.add(nm);
+  const sgGeo = new THREE.BufferGeometry(); sgGeo.setAttribute('position', new THREE.Float32BufferAttribute([-13, 14.2, D / 2 + 6.08, 13, 14.2, D / 2 + 6.08, -13, 15.6, D / 2 + 6.08, 13, 15.6, D / 2 + 6.08], 3)); sgGeo.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 0, 1, 1, 1], 2)); sgGeo.setIndex([0, 1, 2, 2, 1, 3]); sgGeo.computeVertexNormals(); g.add(new THREE.Mesh(sgGeo, new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), toneMapped: false, side: THREE.DoubleSide })));
+  buildingsGroup.add(g); ketongPickMeshes.push(gm);
+  const tri = q => Math.round(q.index ? q.index.count / 3 : q.attributes.position.count / 3);
+  window.__KETONG__ = { name: '微软科通大厦', idx: 443, heightM: 99.6, floors: 25, footprintM: [65, 64], gridM: 3, triangles: tri(gm.geometry) + tri(sm.geometry) + tri(mm.geometry) + tri(pm.geometry) + tri(nm.geometry), drawCalls: 6, meshes: g.children.length };
+  if (window.__BOOT_DEBUG__) console.log('Ketong', window.__KETONG__);
+})();
+
+// ── 有线信息传输大厦 ────────────────────────────────────────
+(function buildYouxianTower() {
+  const g = new THREE.Group(); g.name = 'youxian-tower';
+  g.position.set(wx(565), BUILD_Y, wz(-405));
+  g.scale.set(PLAN, HS, PLAN);
+  const W = 46, D = 28, H = 89.6, F = 28, FH = H / F;
+  const S = [], SI = [], M = [], MI = [], PG = [], PGI = [], NG = [], NGI = [], G = [], GU = [], GI = [];
+  function box(p, ix, cx, cy, cz, sx, sy, sz) {
+    const b = p.length / 3;
+    for (const yy of [cy - sy / 2, cy + sy / 2]) for (const [xx, zz] of [[-sx / 2, -sz / 2], [sx / 2, -sz / 2], [sx / 2, sz / 2], [-sx / 2, sz / 2]]) p.push(cx + xx, yy, cz + zz);
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; ix.push(b + i, b + 4 + i, b + j, b + j, b + 4 + i, b + 4 + j); }
+    ix.push(b, b + 2, b + 1, b, b + 3, b + 2); ix.push(b + 4, b + 5, b + 6, b + 4, b + 6, b + 7);
+  }
+  const r = 2, pts = [], cs = [[W / 2 - r, -D / 2 + r, -Math.PI / 2, 0], [W / 2 - r, D / 2 - r, 0, Math.PI / 2], [-W / 2 + r, D / 2 - r, Math.PI / 2, Math.PI], [-W / 2 + r, -D / 2 + r, Math.PI, Math.PI * 1.5]];
+  for (const [x, z, a0, a1] of cs) for (let i = 0; i <= 3; i++) { const a = a0 + (a1 - a0) * i / 3; pts.push([x + Math.cos(a) * r, z + Math.sin(a) * r]); }
+  const n = pts.length;
+  for (let f = 0; f <= F; f++) for (let i = 0; i < n; i++) { G.push(pts[i][0], f * FH, pts[i][1]); GU.push(i / n, f / F); }
+  for (let f = 0; f < F; f++) for (let i = 0; i < n; i++) { const a = f * n + i, b = a + 1, c = a + n, d = c + 1; GI.push(a, c, b, b, c, d); }
+  const ct = G.length / 3; G.push(0, H, 0); GU.push(.5, 1); for (let i = 0; i < n; i++) GI.push(ct, F * n + i, F * n + (i + 1) % n);
+  const cb = G.length / 3; G.push(0, 0, 0); GU.push(.5, 0); for (let i = 0; i < n; i++) GI.push(cb, (i + 1) % n, i);
+  for (let x = -W / 2 + 2.4; x < W / 2; x += 2.4) { box(M, MI, x, H / 2, D / 2 + .04, .06, H, .06); box(M, MI, x, H / 2, -D / 2 - .04, .06, H, .06); }
+  for (const sx of [-1, 1]) { for (let f = 0; f < F; f++) box(M, MI, sx * (W / 2 + .10), (f + .5) * FH, 0, .18, FH * .78, D - 2); box(M, MI, sx * (W / 2 + .12), H / 2, 0, .24, H, 1.8); }
+  for (let f = 1; f < F; f++) { const y = f * FH; box(M, MI, 0, y, D / 2 + .03, W, .04, .04); box(M, MI, 0, y, -D / 2 - .03, W, .04, .04); box(M, MI, W / 2 + .03, y, 0, .04, .04, D); box(M, MI, -W / 2 - .03, y, 0, .04, .04, D); }
+  for (let f = 10; f < F; f += 10) { const y = f * FH; box(M, MI, 0, y, D / 2 + .06, W, .16, .08); box(M, MI, 0, y, -D / 2 - .06, W, .16, .08); box(M, MI, W / 2 + .06, y, 0, .08, .16, D); box(M, MI, -W / 2 - .06, y, 0, .08, .16, D); }
+  box(S, SI, 0, H + .18, 0, W + .4, .36, D + .4);
+  box(S, SI, 0, H + 1.05, 0, W * .32, 1.4, D * .32);
+  box(NG, NGI, 0, H - .15, D / 2 + .1, W - 5, .05, .04);
+  // 3F podium; west entrance; paving.
+  const PH = 10;
+  box(S, SI, 0, PH / 2, 0, W + 10, PH, D + 10);
+  box(S, SI, 0, PH + .15, 0, W + 10.2, .3, D + 10.2);
+  box(S, SI, 0, .05, 0, W + 18, .10, D + 18);
+  box(PG, PGI, -W / 2 - 5 - .03, PH * .5, 0, .25, PH * .8, D - 4);
+  box(PG, PGI, -W / 2 - 5 - .06, 5, 0, .30, 10, 20);
+  box(M, MI, -W / 2 - 5 - 1.5, PH + .55, 0, 3.6, .16, 24);
+  const sc = document.createElement('canvas'); sc.width = 768; sc.height = 128; const sg = sc.getContext('2d'); sg.fillStyle = '#36332d'; sg.fillRect(0, 0, 768, 128); sg.fillStyle = '#e9dfcd'; sg.font = 'bold 52px "Microsoft YaHei"'; sg.textAlign = 'center'; sg.textBaseline = 'middle'; sg.fillText('办公 · 商业', 384, 66);
+  const c = document.createElement('canvas'); c.width = 512; c.height = F * 8; const cx = c.getContext('2d'); cx.fillStyle = '#000'; cx.fillRect(0, 0, c.width, c.height);
+  for (let row = 0; row < F; row++) for (let q = 0; q < 64; q++) if (((row * 41 + q * 73) % 100) < 24) { cx.fillStyle = (q + row) % 8 ? '#ffd9a0' : '#cfe4ff'; cx.fillRect(q * 8 + 2, row * 8 + 2, 5, 4); }
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x20363d, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.05, emissive: 0xffd9a0, emissiveMap: new THREE.CanvasTexture(c), emissiveIntensity: 0, side: THREE.FrontSide });
+  youxianGlassMaterial = glassMat;
+  const stoneMat = new THREE.MeshStandardMaterial({ color: 0xb0ab9e, metalness: 0, roughness: .85 });
+  const metalMat = new THREE.MeshStandardMaterial({ color: 0xbec4c0, metalness: .8, roughness: .35 });
+  const pgMat = new THREE.MeshPhysicalMaterial({ color: 0x20363d, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: .95, side: THREE.DoubleSide });
+  youxianNightMaterial = new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0, toneMapped: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  function geo(p, ix, uv) { const q = new THREE.BufferGeometry(); q.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); if (uv) q.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); q.setIndex(ix); q.computeVertexNormals(); return q; }
+  const gm = new THREE.Mesh(geo(G, GI, GU), glassMat); gm.castShadow = true; g.add(gm);
+  const sm = new THREE.Mesh(geo(S, SI), stoneMat); sm.castShadow = true; g.add(sm);
+  const mm = new THREE.Mesh(geo(M, MI), metalMat); g.add(mm);
+  const pm = new THREE.Mesh(geo(PG, PGI), pgMat); g.add(pm);
+  const nm = new THREE.Mesh(geo(NG, NGI), youxianNightMaterial); g.add(nm);
+  const sgGeo = new THREE.BufferGeometry(); sgGeo.setAttribute('position', new THREE.Float32BufferAttribute([-W / 2 - 5.08, 12.2, -10, -W / 2 - 5.08, 12.2, 10, -W / 2 - 5.08, 13.5, 10, -W / 2 - 5.08, 13.5, -10], 3)); sgGeo.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 0, 1, 1, 1], 2)); sgGeo.setIndex([0, 1, 2, 2, 1, 3]); sgGeo.computeVertexNormals(); g.add(new THREE.Mesh(sgGeo, new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), toneMapped: false, side: THREE.DoubleSide })));
+  buildingsGroup.add(g); youxianPickMeshes.push(gm);
+  const tri = q => Math.round(q.index ? q.index.count / 3 : q.attributes.position.count / 3);
+  window.__YOUXIAN__ = { name: '有线信息传输大厦', idx: 654, heightM: 89.6, floors: 28, footprintM: [46, 28], longFinsM: 2.4, triangles: tri(gm.geometry) + tri(sm.geometry) + tri(mm.geometry) + tri(pm.geometry) + tri(nm.geometry), drawCalls: 6, meshes: g.children.length };
+  if (window.__BOOT_DEBUG__) console.log('Youxian', window.__YOUXIAN__);
+})();
+
+// ── 深大校园统一类型化（墙面主导） ─────────────────────────
+(function buildSzuCampus() {
+  if (true) return; // reverted: restore original campus generic buildings
+  const g = new THREE.Group(); g.name = 'szu-campus';
+  g.position.set(wx(400), BUILD_Y, wz(-1400)); g.scale.set(PLAN, HS, PLAN);
+  const WALL = [], WALLI = [], BASE = [], BASEI = [], TRIM = [], TRIMI = [], FAC = [], FACI = [], FAUV = [], ENT = [], ENTI = [], GREEN = [], GREENI = [];
+  function box(p, ix, cx, cy, cz, sx, sy, sz) {
+    const b = p.length / 3;
+    for (const yy of [cy - sy / 2, cy + sy / 2]) for (const [xx, zz] of [[-sx / 2, -sz / 2], [sx / 2, -sz / 2], [sx / 2, sz / 2], [-sx / 2, sz / 2]]) p.push(cx + xx, yy, cz + zz);
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; ix.push(b + i, b + 4 + i, b + j, b + j, b + 4 + i, b + 4 + j); }
+    ix.push(b, b + 2, b + 1, b, b + 3, b + 2); ix.push(b + 4, b + 5, b + 6, b + 4, b + 6, b + 7);
+  }
+  function quad(p, ix, uv, a, b, c, d, u0, v0, u1, v1) {
+    const q = p.length / 3; p.push(a[0], a[1], a[2], b[0], b[1], b[2], c[0], c[1], c[2], d[0], d[1], d[2]); uv.push(u0, v0, u1, v0, u1, v1, u0, v1); ix.push(q, q + 1, q + 2, q, q + 2, q + 3);
+  }
+  const campus = [];
+  for (let bi = 0; bi < DATA.buildings.length; bi++) {
+    if (bi === 2404) continue;
+    const b = DATA.buildings[bi]; if (!b.p) continue;
+    const xs = b.p.filter((_, i) => i % 2 === 0), zs = b.p.filter((_, i) => i % 2 === 1);
+    const cx = xs.reduce((a, v) => a + v, 0) / xs.length, cz = zs.reduce((a, v) => a + v, 0) / zs.length;
+    if (((cx - 400) / 410) ** 2 + ((cz + 1400) / 450) ** 2 >= 1) continue;
+    const w = Math.max(8, Math.max(...xs) - Math.min(...xs)), d = Math.max(8, Math.max(...zs) - Math.min(...zs));
+    const h = b.height || (b.levels || 3) * 3.4;
+    const name = b.n || '';
+    let type = 'teaching';
+    if (/斋|宿舍|公寓|轩|阁/.test(name)) type = 'dorm';
+    else if (/体育|运动/.test(name)) type = 'sports';
+    else if (/图书馆|学院|教学楼|办公楼|创业园/.test(name)) type = 'public';
+    const poly = bi === 17 ? b.p.reduce((arr, v, i) => { if (i % 2 === 0) arr.push([v - cx, b.p[i + 1] - cz]); return arr; }, []) : null;
+    campus.push({ bi, cx: cx - 400, cz: cz + 1400, w, d, h, type, name, poly });
+  }
+  function facadeFace(cx, cz, h, floors, pts) {
+    const n = pts.length;
+    for (let i = 0; i < n; i++) {
+      const a = pts[i], b = pts[(i + 1) % n], len = Math.hypot(b[0] - a[0], b[1] - a[1]);
+      if (len < 1) continue;
+      const u = len / (1.8 * 4), v = floors / 8;
+      quad(FAC, FACI, FAUV,
+        [cx + a[0], 1.8, cz + a[1]], [cx + b[0], 1.8, cz + b[1]],
+        [cx + b[0], h, cz + b[1]], [cx + a[0], h, cz + a[1]], 0, 0, u, v);
+    }
+  }
+  for (const b of campus) {
+    const cx = b.cx, cz = b.cz, w = b.w, d = b.d, h = b.h, floors = Math.max(2, Math.min(12, Math.round(h / 3.4)));
+    if (b.poly) {
+      // S-shaped building: preserve polygon prism, wall + top cap.
+      const n = b.poly.length, base = WALL.length / 3;
+      for (const [px, pz] of b.poly) WALL.push(cx + px, 1.8, cz + pz);
+      for (const [px, pz] of b.poly) WALL.push(cx + px, h, cz + pz);
+      for (let i = 0; i < n; i++) { const j = (i + 1) % n; WALLI.push(base + i, base + n + i, base + j, base + j, base + n + i, base + n + j); }
+      const cap = WALL.length / 3; WALL.push(cx, h, cz); for (let i = 0; i < n; i++) WALLI.push(cap, base + n + i, base + n + (i + 1) % n);
+      const bas = BASE.length / 3; for (const [px, pz] of b.poly) BASE.push(cx + px, 0, cz + pz); for (const [px, pz] of b.poly) BASE.push(cx + px, 1.8, cz + pz);
+      for (let i = 0; i < n; i++) { const j = (i + 1) % n; BASEI.push(bas + i, bas + n + i, bas + j, bas + j, bas + n + i, bas + n + j); }
+      facadeFace(cx, cz, h, floors, b.poly);
+      box(TRIM, TRIMI, cx, h + .15, cz, w + .4, .3, d + .4);
+    } else {
+      box(BASE, BASEI, cx, .9, cz, w + 1.2, 1.8, d + 1.2);
+      box(WALL, WALLI, cx, 1.8 + (h - 1.8) / 2, cz, w, h - 1.8, d);
+      box(TRIM, TRIMI, cx, h + .15, cz, w + .5, .3, d + .5);
+      facadeFace(cx, cz, h, floors, [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]]);
+    }
+    if (b.type === 'teaching') for (let f = 1; f < floors; f++) box(TRIM, TRIMI, cx, f / floors * h + .5, cz + d / 2 + .25, w + .5, .10, .10);
+    if (b.type === 'dorm') for (let f = 1; f < floors; f++) box(TRIM, TRIMI, cx, f / floors * h + .4, cz + d / 2 + .55, w + 1.0, .12, .9);
+    if (b.type === 'public') {
+      const ew = Math.min(12, w - 4), eh = Math.min(10, h * .45);
+      box(ENT, ENTI, cx, 1.8 + eh / 2 - .9, cz + d / 2 + .8, ew, eh, 1.4);
+      box(TRIM, TRIMI, cx, h + .55, cz + d / 2 + .2, w, .3, .8);
+    }
+    box(GREEN, GREENI, cx, .03, cz, w + 5, .08, d + 5);
+  }
+  // One shared facade image: 8 floor modules × 4 bays; wall 65%, window 35%.
+  const fw = 256, fh = 128, bayW = 64, floorH = 16;
+  const fc = document.createElement('canvas'); fc.width = fw; fc.height = fh; const fx = fc.getContext('2d');
+  fx.fillStyle = '#e9e6de'; fx.fillRect(0, 0, fw, fh);
+  const nc = document.createElement('canvas'); nc.width = fw; nc.height = fh; const nx = nc.getContext('2d'); nx.fillStyle = '#000'; nx.fillRect(0, 0, fw, fh);
+  for (let row = 0; row < 8; row++) {
+    const y0 = row * floorH + 10, y1 = y0 + 5.6;
+    for (let q = 0; q < 4; q++) {
+      fx.fillStyle = '#2c3540'; fx.fillRect(q * bayW + 2, y0, bayW - 4, 5.6);
+      fx.fillStyle = '#d8d5cc'; fx.fillRect(q * bayW + 1, row * floorH + 1, 1.2, floorH - 2);
+      if ((row * 7 + q) % 5 === 0 || row === 2 || row === 6) continue;
+      if (((row * 13 + q * 7) % 100) < 22) { nx.fillStyle = q % 4 === 0 ? '#cfe4ff' : '#ffd9a0'; nx.fillRect(q * bayW + 4, y0 + 1, bayW - 8, 4); }
+    }
+  }
+  const facadeTex = new THREE.CanvasTexture(fc); facadeTex.wrapS = facadeTex.wrapT = THREE.RepeatWrapping;
+  const nightTex = new THREE.CanvasTexture(nc); nightTex.wrapS = nightTex.wrapT = THREE.RepeatWrapping;
+  const wallMat = new THREE.MeshStandardMaterial({ map: facadeTex, color: 0xffffff, metalness: 0, roughness: .9, envMapIntensity: .12 });
+  const baseMat = new THREE.MeshStandardMaterial({ color: 0x8f918a, metalness: 0, roughness: .92 });
+  const trimMat = new THREE.MeshStandardMaterial({ color: 0xbab9b0, metalness: 0, roughness: .85 });
+  const greenMat = new THREE.MeshStandardMaterial({ color: 0x294b32, metalness: 0, roughness: 1 });
+  const entMat = new THREE.MeshPhysicalMaterial({ color: 0x536363, metalness: .15, roughness: .25, transparent: true, opacity: .62, side: THREE.DoubleSide });
+  const facadeMat = new THREE.MeshStandardMaterial({ map: facadeTex, metalness: 0, roughness: .9, emissive: 0xffd9a0, emissiveMap: nightTex, emissiveIntensity: 0, side: THREE.DoubleSide });
+  campusWindowMaterial = facadeMat;
+  const wallGeo = new THREE.BufferGeometry(); wallGeo.setAttribute('position', new THREE.Float32BufferAttribute(WALL, 3)); wallGeo.setIndex(WALLI); wallGeo.computeVertexNormals();
+  const baseGeo = new THREE.BufferGeometry(); baseGeo.setAttribute('position', new THREE.Float32BufferAttribute(BASE, 3)); baseGeo.setIndex(BASEI); baseGeo.computeVertexNormals();
+  const trimGeo = new THREE.BufferGeometry(); trimGeo.setAttribute('position', new THREE.Float32BufferAttribute(TRIM, 3)); trimGeo.setIndex(TRIMI); trimGeo.computeVertexNormals();
+  const facGeo = new THREE.BufferGeometry(); facGeo.setAttribute('position', new THREE.Float32BufferAttribute(FAC, 3)); facGeo.setAttribute('uv', new THREE.Float32BufferAttribute(FAUV, 2)); facGeo.setIndex(FACI); facGeo.computeVertexNormals();
+  const entGeo = new THREE.BufferGeometry(); entGeo.setAttribute('position', new THREE.Float32BufferAttribute(ENT, 3)); entGeo.setIndex(ENTI); entGeo.computeVertexNormals();
+  const grGeo = new THREE.BufferGeometry(); grGeo.setAttribute('position', new THREE.Float32BufferAttribute(GREEN, 3)); grGeo.setIndex(GREENI); grGeo.computeVertexNormals();
+  const wall = new THREE.Mesh(wallGeo, wallMat); wall.castShadow = true; g.add(wall);
+  const base = new THREE.Mesh(baseGeo, baseMat); base.castShadow = true; g.add(base);
+  const trim = new THREE.Mesh(trimGeo, trimMat); g.add(trim);
+  const fac = new THREE.Mesh(facGeo, facadeMat); fac.renderOrder = 2; g.add(fac);
+  const ent = new THREE.Mesh(entGeo, entMat); g.add(ent);
+  const grn = new THREE.Mesh(grGeo, greenMat); g.add(grn);
+  buildingsGroup.add(g);
+  const tri = q => Math.round(q.index ? q.index.count / 3 : q.attributes.position.count / 3);
+  const types = { teaching: 0, dorm: 0, public: 0, sports: 0 };
+  for (const b of campus) types[b.type]++;
+  window.__SZU_CAMPUS__ = { count: campus.length, types, indices: campus.map(b => b.bi), sBuilding: 17, triangles: tri(wallGeo) + tri(baseGeo) + tri(trimGeo) + tri(facGeo) + tri(entGeo) + tri(grGeo), drawCalls: 6, litRatio: .19, wallRatio: .65, windowRatio: .35, touched2404: false };
+})();
+
+// ── 留学生创业大厦一期/二期 + 深圳湾公馆 ───────────────────
+(function buildLiteThree() {
+  const g = new THREE.Group(); g.name = 'lxs-office';
+  g.position.set(wx(1596), BUILD_Y, wz(-1525)); g.scale.set(PLAN, HS, PLAN);
+  const S = [], SI = [], M = [], MI = [], PG = [], PGI = [], NG = [], NGI = [];
+  function box(p, ix, cx, cy, cz, sx, sy, sz) {
+    const b = p.length / 3;
+    for (const yy of [cy - sy / 2, cy + sy / 2]) for (const [xx, zz] of [[-sx / 2, -sz / 2], [sx / 2, -sz / 2], [sx / 2, sz / 2], [-sx / 2, sz / 2]]) p.push(cx + xx, yy, cz + zz);
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; ix.push(b + i, b + 4 + i, b + j, b + j, b + 4 + i, b + 4 + j); }
+    ix.push(b, b + 2, b + 1, b, b + 3, b + 2); ix.push(b + 4, b + 5, b + 6, b + 4, b + 6, b + 7);
+  }
+  function ring(hw, hd, r) {
+    const out = [], cs = [[hw - r, -hd + r, -Math.PI / 2, 0], [hw - r, hd - r, 0, Math.PI / 2], [-hw + r, hd - r, Math.PI / 2, Math.PI], [-hw + r, -hd + r, Math.PI, Math.PI * 1.5]];
+    for (const [x, z, a0, a1] of cs) for (let i = 0; i <= 3; i++) { const a = a0 + (a1 - a0) * i / 3; out.push([x + Math.cos(a) * r, z + Math.sin(a) * r]); }
+    return out;
+  }
+  function tower(cx, cz, w, d, h, f, glassMat, doFins) {
+    const r = Math.min(3, Math.min(w, d) * .08), pts = ring(w / 2, d / 2, r), n = pts.length;
+    const p = [], uv = [], ix = [];
+    for (let q = 0; q <= f; q++) for (let i = 0; i < n; i++) { p.push(cx + pts[i][0], h * q / f, cz + pts[i][1]); uv.push(i / n, q / f); }
+    for (let q = 0; q < f; q++) for (let i = 0; i < n; i++) { const a = q * n + i, b = a + 1, c = a + n, dd = c + 1; ix.push(a, c, b, b, c, dd); }
+    const ct = p.length / 3; p.push(cx, h, cz); uv.push(.5, 1); for (let i = 0; i < n; i++) ix.push(ct, f * n + i, f * n + (i + 1) % n);
+    const cb = p.length / 3; p.push(cx, 0, cz); uv.push(.5, 0); for (let i = 0; i < n; i++) ix.push(cb, (i + 1) % n, i);
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); geo.setIndex(ix); geo.computeVertexNormals();
+    const mesh = new THREE.Mesh(geo, glassMat); mesh.castShadow = true; g.add(mesh);
+    // horizontal floor lines; long-face vertical divs about 12 m; short metal bands.
+    for (let q = 1; q < f; q++) { const y = h * q / f; box(M, MI, cx, y, cz + d / 2 + .03, w, .05, .05); box(M, MI, cx, y, cz - d / 2 - .03, w, .05, .05); box(M, MI, cx + w / 2 + .03, y, cz, .05, .05, d); box(M, MI, cx - w / 2 - .03, y, cz, .05, .05, d); }
+    if (doFins) {
+      for (let x = -w / 2 + 12; x < w / 2; x += 12) { box(M, MI, cx + x, h / 2, cz + d / 2 + .05, .10, h, .08); box(M, MI, cx + x, h / 2, cz - d / 2 - .05, .10, h, .08); }
+      for (const sx of [-1, 1]) box(M, MI, cx + sx * (w / 2 + .08), h / 2, cz, .20, h, d - 2);
+    }
+    box(NG, NGI, cx, h - .15, cz + d / 2 + .08, w - 3, .07, .05);
+    return mesh;
+  }
+  const texA = (() => { const c = document.createElement('canvas'); c.width = 512; c.height = 23 * 8; const x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, c.width, c.height); for (let r = 0; r < 23; r++) for (let q = 0; q < 64; q++) if (((r * 41 + q * 73) % 100) < 24) { x.fillStyle = (q + r) % 8 ? '#ffd9a0' : '#cfe4ff'; x.fillRect(q * 8 + 2, r * 8 + 2, 5, 4); } return new THREE.CanvasTexture(c); })();
+  const texB = (() => { const c = document.createElement('canvas'); c.width = 512; c.height = 25 * 8; const x = c.getContext('2d'); x.fillStyle = '#000'; x.fillRect(0, 0, c.width, c.height); for (let r = 0; r < 25; r++) for (let q = 0; q < 64; q++) if (((r * 43 + q * 71) % 100) < 24) { x.fillStyle = (q + r) % 8 ? '#ffd9a0' : '#cfe4ff'; x.fillRect(q * 8 + 2, r * 8 + 2, 5, 4); } return new THREE.CanvasTexture(c); })();
+  const glassA = new THREE.MeshPhysicalMaterial({ color: 0x203943, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.05, emissive: 0xffd9a0, emissiveMap: texA, emissiveIntensity: 0, side: THREE.FrontSide });
+  const glassB = new THREE.MeshPhysicalMaterial({ color: 0x203943, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.05, emissive: 0xffd9a0, emissiveMap: texB, emissiveIntensity: 0, side: THREE.FrontSide });
+  lxsGlassA = glassA; lxsGlassB = glassB;
+  tower(-33, 14, 102, 63, 97, 23, glassA, true);
+  tower(33, -13, 51, 30, 99, 25, glassB, false);
+  // Shared 3F podium around both; storefront and generic sign.
+  box(S, SI, 0, 6, 0, 160, 12, 105);
+  box(S, SI, 0, 12.15, 0, 160.2, .3, 105.2);
+  box(PG, PGI, 0, 6, 52.55, 130, 9.6, .25);
+  box(M, MI, 0, 13, 53.2, 130, .18, 2.0);
+  const sc = document.createElement('canvas'); sc.width = 768; sc.height = 128; const sg = sc.getContext('2d'); sg.fillStyle = '#36332d'; sg.fillRect(0, 0, 768, 128); sg.fillStyle = '#e9dfcd'; sg.font = 'bold 52px "Microsoft YaHei"'; sg.textAlign = 'center'; sg.textBaseline = 'middle'; sg.fillText('办公 · 商业', 384, 66);
+  const sgGeo = new THREE.BufferGeometry(); sgGeo.setAttribute('position', new THREE.Float32BufferAttribute([-50, 14, 52.6, 50, 14, 52.6, -50, 15.4, 52.6, 50, 15.4, 52.6], 3)); sgGeo.setAttribute('uv', new THREE.Float32BufferAttribute([0, 0, 1, 0, 0, 1, 1, 1], 2)); sgGeo.setIndex([0, 1, 2, 2, 1, 3]); sgGeo.computeVertexNormals();
+  const stoneMat = new THREE.MeshStandardMaterial({ color: 0xb2ada0, metalness: 0, roughness: .85 });
+  const metalMat = new THREE.MeshStandardMaterial({ color: 0xc1c6c2, metalness: .8, roughness: .35 });
+  const pgMat = new THREE.MeshPhysicalMaterial({ color: 0x203943, metalness: .9, roughness: .13, envMap: currentCityEnv, envMapIntensity: 1.0, side: THREE.DoubleSide });
+  const nightMat = new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0, toneMapped: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  function geo(p, ix, uv) { const q = new THREE.BufferGeometry(); q.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); if (uv) q.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); q.setIndex(ix); q.computeVertexNormals(); return q; }
+  const sm = new THREE.Mesh(geo(S, SI), stoneMat); sm.castShadow = true; g.add(sm);
+  const mm = new THREE.Mesh(geo(M, MI), metalMat); g.add(mm);
+  const pm = new THREE.Mesh(geo(PG, PGI), pgMat); g.add(pm);
+  const nm = new THREE.Mesh(geo(NG, NGI), nightMat); g.add(nm);
+  g.add(new THREE.Mesh(sgGeo, new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(sc), toneMapped: false, side: THREE.DoubleSide })));
+  buildingsGroup.add(g); lxsNight = nightMat;
+  // Residential tower.
+  const rg = new THREE.Group(); rg.name = 'sz-bay-residence';
+  rg.position.set(wx(116), BUILD_Y, wz(1161)); rg.scale.set(PLAN, HS, PLAN);
+  const RW = 40, RD = 38, RH = 150, RF = 48;
+  const RP = [], RPU = [], RPI = [], RS = [], RSI = [], RM = [], RMI = [], RN = [], RNI = [];
+  const rp = ring(RW / 2, RD / 2, 2.0), rn = rp.length;
+  for (let q = 0; q <= RF; q++) for (let i = 0; i < rn; i++) { RP.push(rp[i][0], RH * q / RF, rp[i][1]); RPU.push(i / rn, q / RF); }
+  for (let q = 0; q < RF; q++) for (let i = 0; i < rn; i++) { const a = q * rn + i, b = a + 1, c = a + rn, d = c + 1; RPI.push(a, c, b, b, c, d); }
+  const rct = RP.length / 3; RP.push(0, RH, 0); RPU.push(.5, 1); for (let i = 0; i < rn; i++) RPI.push(rct, RF * rn + i, RF * rn + (i + 1) % rn);
+  const rcb = RP.length / 3; RP.push(0, 0, 0); RPU.push(.5, 0); for (let i = 0; i < rn; i++) RPI.push(rcb, (i + 1) % rn, i);
+  for (let q = 1; q < RF; q++) { const y = q / RF * RH; box(RM, RMI, 0, y, RD / 2 + .35, RW + 1.2, .12, 1.0); box(RM, RMI, 0, y, -RD / 2 - .35, RW + 1.2, .12, 1.0); box(RM, RMI, RW / 2 + .35, y, 0, 1.0, .12, RD + 1.2); box(RM, RMI, -RW / 2 - .35, y, 0, 1.0, .12, RD + 1.2); }
+  box(RS, RSI, 0, RH + .2, 0, RW + .5, .4, RD + .5); box(RS, RSI, 0, RH + 1.1, 0, RW * .35, 1.4, RD * .35);
+  box(RN, RNI, 0, RH - .15, RD / 2 + .1, RW - 4, .06, .04);
+  const rc = document.createElement('canvas'); rc.width = 512; rc.height = RF * 8; const rx = rc.getContext('2d'); rx.fillStyle = '#000'; rx.fillRect(0, 0, rc.width, rc.height); for (let r = 0; r < RF; r++) for (let q = 0; q < 64; q++) if (((r * 37 + q * 71) % 100) < 21) { rx.fillStyle = (q + r) % 8 ? '#ffd9a0' : '#cfe4ff'; rx.fillRect(q * 8 + 2, r * 8 + 2, 5, 4); }
+  const rGlass = new THREE.MeshPhysicalMaterial({ color: 0x30454b, metalness: .2, roughness: .42, envMap: currentCityEnv, envMapIntensity: .5, emissive: 0xffd9a0, emissiveMap: new THREE.CanvasTexture(rc), emissiveIntensity: 0, side: THREE.FrontSide });
+  const rStone = new THREE.MeshStandardMaterial({ color: 0xc5c0b4, metalness: 0, roughness: .85 });
+  const rMetal = new THREE.MeshStandardMaterial({ color: 0xc8c5bc, metalness: .3, roughness: .6 });
+  const rNight = new THREE.MeshBasicMaterial({ color: 0xffd9a0, transparent: true, opacity: 0, toneMapped: false, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide });
+  const rmesh = new THREE.Mesh(geo(RP, RPI, RPU), rGlass); rmesh.castShadow = true; rg.add(rmesh);
+  rg.add(new THREE.Mesh(geo(RS, RSI), rStone)); rg.add(new THREE.Mesh(geo(RM, RMI), rMetal)); rg.add(new THREE.Mesh(geo(RN, RNI), rNight));
+  buildingsGroup.add(rg); szResGlass = rGlass; szResNight = rNight;
+  window.__LITE3__ = { office: { a: { idx: 10, h: 97, f: 23, w: 102, d: 63 }, b: { idx: 1175, h: 99, f: 25, w: 51, d: 30 } }, residence: { idx: 1488, h: 150, f: 48, w: 40, d: 38 }, drawCalls: 12 };
+})();
+
+// ── 全城住宅类型化（共用模板，不覆盖精模） ─────────────────
+(function buildCityResidential() {
+  if (true) return; // reverted: restore original residential buildings
+  const g = new THREE.Group(); g.name = 'city-residential';
+  g.position.set(0, BUILD_Y, 0); g.scale.set(PLAN, HS, PLAN);
+  const P = [], PI = [], C = [], GROUND = [], GROUNDI = [], GC = [], TC = [], TRIM = [], TRIMI = [], WIN = [[], [], [], []], WINI = [[], [], [], []], WINUV = [[], [], [], []];
+  const schemes = [[0xded5c5, 0x8f7966], [0xe4ddcf, 0x8a8173], [0xd9d1c4, 0x806f61], [0xe8e1d2, 0x8c7765]];
+  function box(p, ix, col, cx, cy, cz, sx, sy, sz, color) {
+    const b = p.length / 3, c = new THREE.Color(color);
+    for (const yy of [cy - sy / 2, cy + sy / 2]) for (const [xx, zz] of [[-sx / 2, -sz / 2], [sx / 2, -sz / 2], [sx / 2, sz / 2], [-sx / 2, sz / 2]]) { p.push(cx + xx, yy, cz + zz); col.push(c.r, c.g, c.b); }
+    for (let i = 0; i < 4; i++) { const j = (i + 1) % 4; ix.push(b + i, b + 4 + i, b + j, b + j, b + 4 + i, b + 4 + j); }
+    ix.push(b, b + 2, b + 1, b, b + 3, b + 2); ix.push(b + 4, b + 5, b + 6, b + 4, b + 6, b + 7);
+  }
+  function quad(p, ix, uv, face, cx, cz, w, d, h, floors) {
+    const u = (face < 2 ? w : d) / (1.8 * 4), v = floors / 8;
+    const c0 = face === 0 ? [cx - w / 2, cz - d / 2] : face === 1 ? [cx - w / 2, cz + d / 2] : face === 2 ? [cx + w / 2, cz - d / 2] : [cx - w / 2, cz + d / 2];
+    const pts = face < 2 ? [[cx - w / 2, cz + (face === 0 ? -d / 2 : d / 2)], [cx + w / 2, cz + (face === 0 ? -d / 2 : d / 2)]] : [[cx + (face === 2 ? w / 2 : -w / 2), cz - d / 2], [cx + (face === 2 ? w / 2 : -w / 2), cz + d / 2]];
+    const b = p.length / 3; p.push(pts[0][0], 0, pts[0][1], pts[1][0], 0, pts[1][1], pts[1][0], h, pts[1][1], pts[0][0], h, pts[0][1]); uv.push(0, 0, u, 0, u, v, 0, v); ix.push(b, b + 1, b + 2, b, b + 2, b + 3);
+  }
+  let count = 0, named = { weilan: 0, xiandai: 0, nanguang: 0 }, point = 0, slab = 0;
+  const boxAt = (cx, cz, w, d, h, scheme) => {
+    box(P, PI, C, cx, h / 2, cz, w, h, d, schemes[scheme][0]);
+    box(P, PI, C, cx, h + .2, cz, w + .3, .4, d + .3, schemes[scheme][1]);
+    box(P, PI, C, cx + w * .22, h + .9, cz - d * .2, Math.min(8, w * .3), 1.4, Math.min(6, d * .3), schemes[scheme][1]);
+    box(GROUND, GROUNDI, GC, cx, .02, cz, w + 4, .05, d + 4, 0x6f7a68);
+  };
+  for (let bi = 0; bi < DATA.buildings.length; bi++) {
+    const b = DATA.buildings[bi]; if (!b || b.t !== 'residential' || !b.p) continue;
+    if (bi === 2404 || (typeof CAMPUS_SKIP_INDICES !== 'undefined' && CAMPUS_SKIP_INDICES.has(bi))) continue;
+    if (typeof DATA.landmarks !== 'undefined' && DATA.landmarks.some(l => (l.buildings || []).includes(bi))) continue;
+    const xs = b.p.filter((_, i) => i % 2 === 0), zs = b.p.filter((_, i) => i % 2 === 1);
+    const cx = xs.reduce((a, v) => a + v, 0) / xs.length, cz = zs.reduce((a, v) => a + v, 0) / zs.length;
+    const w = Math.max(7, Math.max(...xs) - Math.min(...xs)), d = Math.max(7, Math.max(...zs) - Math.min(...zs));
+    const h = b.height || (b.levels || 8) * 3.1, name = b.n || '';
+    const scheme = (Math.abs(Math.round(cx * 7 + cz * 11)) + (name ? name.charCodeAt(0) : 0)) % 4;
+    const ratio = w / d, isSlab = ratio >= 1.6, isPoint = !isSlab && h >= 60;
+    if (isSlab) slab++; else point++;
+    if (name.includes('蔚蓝海岸')) named.weilan++;
+    if (name.includes('现代城华庭')) named.xiandai++;
+    if (name.includes('南光城市花园')) named.nanguang++;
+    boxAt(cx, cz, w, d, h, scheme);
+    const floors = Math.max(2, Math.min(60, Math.round(h / 3.1)));
+    for (let face = 0; face < 4; face++) quad(WIN[face], WINI[face], WINUV[face], face, cx, cz, w, d, h, floors);
+    // Point towers: one thin balcony line per floor on the long face.
+    if (isPoint) {
+      const alongZ = d >= w, proj = 1.1;
+      for (let f = 1; f < floors; f++) {
+        const y = f * h / floors;
+        if (alongZ) box(P, PI, C, cx + w / 2 + proj / 2, y, cz, proj, .25, d * .9, schemes[scheme][1]);
+        else box(P, PI, C, cx, y, cz + d / 2 + proj / 2, w * .9, .25, proj, schemes[scheme][1]);
+      }
+    }
+    if (isSlab) {
+      const alongX = w >= d;
+      for (let f = 1; f < floors; f++) { const y = f * h / floors; if (alongX) box(P, PI, C, cx, y, cz + d / 2 + .55, w * .9, .22, 1.1, schemes[scheme][1]); else box(P, PI, C, cx + w / 2 + .55, y, cz, 1.1, .22, d * .9, schemes[scheme][1]); }
+      for (let x = -w / 2 + 15; x < w / 2; x += 15) box(P, PI, C, cx + x, h / 2, cz + d / 2 + .03, 2.5, h, .18, schemes[scheme][1]);
+    }
+    if ((name.includes('蔚蓝') || name.includes('现代城') || name.includes('南光')) && floors > 3) {
+      box(TRIM, TRIMI, TC, cx, 4.5, cz + d / 2 + 1.2, Math.min(20, w * .5), .18, 3.0, 0xb3ada0);
+    }
+    count++;
+  }
+  const r = 3, res = 3;
+  function facadeTex(seed) {
+    const day = document.createElement('canvas'); day.width = 256; day.height = 256;
+    const night = document.createElement('canvas'); night.width = 256; night.height = 256;
+    const dx = day.getContext('2d'), nx = night.getContext('2d');
+    dx.clearRect(0, 0, 256, 256); nx.clearRect(0, 0, 256, 256);
+    for (let row = 0; row < 8; row++) for (let q = 0; q < 4; q++) {
+      dx.fillStyle = '#2c3540'; dx.fillRect(q * 64 + 8, row * 32 + 9, 48, 15);
+      dx.fillStyle = 'rgba(216,213,204,.7)'; dx.fillRect(q * 64 + 7, row * 32 + 8, 1.5, 17);
+      const h = Math.sin(row * 19.1 + q * 7.7 + seed) * 43758.5453; const rnd = (h - Math.floor(h));
+      if (rnd < .22 || row === 2 || row === 6) continue;
+      const cold = rnd < .022; const b = .45 + rnd * .30;
+      nx.fillStyle = cold ? `rgb(${Math.round(207*b)},${Math.round(228*b)},${Math.round(255*b)})` : `rgb(${Math.round(255*b)},${Math.round(217*b)},${Math.round(160*b)})`;
+      nx.fillRect(q * 64 + 12, row * 32 + 12, 40, 9);
+    }
+    return { day: new THREE.CanvasTexture(day), night: new THREE.CanvasTexture(night) };
+  }
+  const mats = [];
+  for (let f = 0; f < 4; f++) {
+    const tx = facadeTex(f * .31);
+    const m = new THREE.MeshStandardMaterial({ map: tx.day, transparent: true, alphaTest: .05, metalness: .15, roughness: .55, emissive: 0xffd9a0, emissiveMap: tx.night, emissiveIntensity: 0, side: THREE.DoubleSide });
+    mats.push(m);
+  }
+  const wallGeo = new THREE.BufferGeometry(); wallGeo.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); wallGeo.setAttribute('color', new THREE.Float32BufferAttribute(C, 3)); wallGeo.setIndex(PI); wallGeo.computeVertexNormals();
+  const wallMat = new THREE.MeshStandardMaterial({ vertexColors: true, metalness: 0, roughness: .85 });
+  const wall = new THREE.Mesh(wallGeo, wallMat); wall.castShadow = true; g.add(wall);
+  for (let f = 0; f < 4; f++) {
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(WIN[f], 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(WINUV[f], 2)); geo.setIndex(WINI[f]); geo.computeVertexNormals();
+    const m = new THREE.Mesh(geo, mats[f]); m.renderOrder = 2; g.add(m);
+  }
+  const greenMat = new THREE.MeshStandardMaterial({ color: 0x364b35, metalness: 0, roughness: .95 });
+  const grGeo = new THREE.BufferGeometry(); grGeo.setAttribute('position', new THREE.Float32BufferAttribute(GROUND, 3)); grGeo.setIndex(GROUNDI); grGeo.computeVertexNormals();
+  g.add(new THREE.Mesh(grGeo, greenMat));
+  const trimGeo = new THREE.BufferGeometry(); trimGeo.setAttribute('position', new THREE.Float32BufferAttribute(TRIM, 3)); trimGeo.setIndex(TRIMI); trimGeo.computeVertexNormals();
+  const trim = new THREE.Mesh(trimGeo, new THREE.MeshStandardMaterial({ color: 0xb3ada0, metalness: 0, roughness: .85 })); g.add(trim);
+  buildingsGroup.add(g);
+  residentialWindowMats = mats;
+  window.__RESIDENTIAL__ = { count, point, slab, named, drawCalls: 7, triangles: 0, wall: 'vertex-color walls', windows: '4 shared face templates', balcony: 'geometry for all point/slab' };
+})();
+
+(function remapNightFacades() {
+  const groups = ['dajia-tower', 'excellence-houhai', 'hytera-global-hq', 'capital-plaza',
+    'aerospace-plaza', 'cnooc-twin-towers', 'rongchao-hq', 'venture-capital-tower',
+    'haide-office-wall', 'bytedance-houhai', 'hisense-south', 'xunlei-tower',
+    'venture-neighbors', 'venture-east-wall', 'innovation-center', 'tsinghua-research', 'china-overseas', 'yihua-tower', 'caixun-tower', 'bupt-tower', 'ketong-tower', 'youxian-tower', 'lxs-office', 'sz-bay-residence'];
+  const mats = [], stats = [];
+  function bins(mat, mesh, groupName) {
+    const g = mesh.geometry; if (!g || !g.index || !mat.emissiveMap) return;
+    const pos = g.attributes.position.array, uv0 = g.attributes.uv;
+    const idx = g.index.array;
+    const buckets = new Map();
+    for (let t = 0; t < idx.length; t += 3) {
+      const ia = idx[t], ib = idx[t + 1], ic = idx[t + 2];
+      const ax = pos[ia * 3], ay = pos[ia * 3 + 1], az = pos[ia * 3 + 2];
+      const bx = pos[ib * 3], by = pos[ib * 3 + 1], bz = pos[ib * 3 + 2];
+      const cx = pos[ic * 3], cy = pos[ic * 3 + 1], cz = pos[ic * 3 + 2];
+      const e1x = bx - ax, e1y = by - ay, e1z = bz - az, e2x = cx - ax, e2y = cy - ay, e2z = cz - az;
+      const nx = e1y * e2z - e1z * e2y, nz = e1x * e2y - e1y * e2x;
+      let ang = Math.atan2(nx, nz); if (ang < 0) ang += Math.PI * 2;
+      const bin = Math.round(ang / (Math.PI / 4)) % 8;
+      const tower = (groupName === 'cnooc-twin-towers' || groupName === 'tsinghua-research') ? ((ax + bx + cx) / 3 >= 0 ? 1 : 0) : 0;
+      const key = tower + ':' + bin;
+      if (!buckets.has(key)) buckets.set(key, []);
+      buckets.get(key).push([ia, ib, ic]);
+    }
+    const srcImg = mat.emissiveMap.image;
+    let rows = Math.max(1, Math.round(srcImg.height / 8));
+    const rowOverride = { 'excellence-houhai': 46, 'hytera-global-hq': 43, 'capital-plaza': 54, 'bytedance-houhai': 32, 'rongchao-hq': 54, 'venture-capital-tower': 44, 'hisense-south': 30, 'xunlei-tower': 29, 'cnooc-twin-towers': 45, 'tsinghua-research': 32, 'china-overseas': 21, 'yihua-tower': 31, 'caixun-tower': 32, 'bupt-tower': 23, 'ketong-tower': 25, 'youxian-tower': 28 };
+    if (rowOverride[groupName]) rows = rowOverride[groupName];
+    const grid = groupName === 'capital-plaza' ? 4.5 : 3;
+    let meshMinX = 1e9, meshMaxX = -1e9, meshMinZ = 1e9, meshMaxZ = -1e9;
+    for (let i = 0; i < pos.length; i += 3) { meshMinX = Math.min(meshMinX, pos[i]); meshMaxX = Math.max(meshMaxX, pos[i]); meshMinZ = Math.min(meshMinZ, pos[i + 2]); meshMaxZ = Math.max(meshMaxZ, pos[i + 2]); }
+    for (const [key, tris] of buckets) {
+      let minX = 1e9, maxX = -1e9, minZ = 1e9, maxZ = -1e9, minY = 1e9, maxY = -1e9;
+      for (const [a, b, c] of tris) for (const i of [a, b, c]) {
+        minX = Math.min(minX, pos[i * 3]); maxX = Math.max(maxX, pos[i * 3]);
+        minZ = Math.min(minZ, pos[i * 3 + 2]); maxZ = Math.max(maxZ, pos[i * 3 + 2]);
+        minY = Math.min(minY, pos[i * 3 + 1]); maxY = Math.max(maxY, pos[i * 3 + 1]);
+      }
+      const bin = Number(key.split(':')[1]);
+      const zFacing = bin <= 1 || bin >= 7;
+      let width = (groupName === 'cnooc-twin-towers' || groupName === 'tsinghua-research') ? (zFacing ? (maxX - minX) : (maxZ - minZ)) : (zFacing ? (meshMaxX - meshMinX) : (meshMaxZ - meshMinZ));
+      if (groupName === 'excellence-houhai') width = zFacing ? 60 : 40;
+      const cols = Math.max(1, Math.round(width / grid));
+      const total = cols * rows;
+      const innovation = groupName === 'innovation-center';
+      const target = innovation ? .16 : .24;
+      const nLit = Math.round(total * target);
+      const nDark = Math.max(1, Math.round(rows * (innovation ? .35 : .30)));
+      let seed = 17 + cols * 31 + rows * 13;
+      const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+      const darkOrder = Array.from({ length: rows }, (_, i) => i);
+      for (let i = darkOrder.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [darkOrder[i], darkOrder[j]] = [darkOrder[j], darkOrder[i]]; }
+      const darkRows = new Set(darkOrder.slice(0, nDark));
+      const cand = [];
+      for (let row = 0; row < rows; row++) if (!darkRows.has(row)) for (let col = 0; col < cols; col++) cand.push([row, col]);
+      for (let i = cand.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [cand[i], cand[j]] = [cand[j], cand[i]]; }
+      const lit = new Set(cand.slice(0, Math.min(nLit, cand.length)).map(p => p[0] * cols + p[1]));
+      const cv = document.createElement('canvas'); cv.width = cols * 8; cv.height = rows * 8;
+      const c = cv.getContext('2d'); c.fillStyle = '#000'; c.fillRect(0, 0, cv.width, cv.height);
+      for (let row = 0; row < rows; row++) for (let col = 0; col < cols; col++) {
+        if (!lit.has(row * cols + col)) continue;
+        const h = rnd(), cold = rnd() < .18, bright = innovation ? .35 + rnd() * .25 : .45 + rnd() * .30;
+        const base = cold ? [207, 228, 255] : [255, 217, 160];
+        c.fillStyle = `rgb(${Math.round(base[0] * bright)},${Math.round(base[1] * bright)},${Math.round(base[2] * bright)})`;
+        c.fillRect(col * 8 + 2, row * 8 + 2, 5, 4);
+      }
+      const actual = lit.size / total;
+      stats.push({ group: groupName, face: key, cols, rows, lit: lit.size, total, ratio: +actual.toFixed(4), darkRows: darkRows.size });
+      const tex = new THREE.CanvasTexture(cv); tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+      const p = [], u = [], ix = [];
+      const vmap = new Map();
+      for (const tri of tris) for (const vi of tri) {
+        if (vmap.has(vi)) continue;
+        const x = pos[vi * 3], y = pos[vi * 3 + 1], z = pos[vi * 3 + 2];
+        const uu = zFacing ? (x - minX) / Math.max(.001, maxX - minX) : (z - minZ) / Math.max(.001, maxZ - minZ);
+        vmap.set(vi, p.length / 3);
+        p.push(x, y, z); u.push(uu, (y - minY) / Math.max(.001, maxY - minY));
+      }
+      for (const tri of tris) ix.push(vmap.get(tri[0]), vmap.get(tri[1]), vmap.get(tri[2]));
+      const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.Float32BufferAttribute(p, 3)); geo.setAttribute('uv', new THREE.Float32BufferAttribute(u, 2)); geo.setIndex(ix); geo.computeVertexNormals();
+      const nm = mat.clone(); nm.emissiveMap = tex; nm.emissiveIntensity = 0; nm.side = THREE.DoubleSide;
+      nm.userData.reskinFactor = innovation ? ((mat.color.getHex() === 0x2e3d4d) ? .28 : (mat.color.getHex() === 0xd8dedb ? .35 : .44)) : ((mat.color.getHex() === 0x2e3d4d) ? .44 : (mat.color.getHex() === 0xd8dedb ? .56 : .64));
+      const mesh2 = new THREE.Mesh(geo, nm); mesh2.castShadow = mesh.castShadow; mesh2.receiveShadow = mesh.receiveShadow; mesh2.renderOrder = mesh.renderOrder;
+      mesh.parent.add(mesh2); mats.push(nm);
+    }
+    mesh.visible = false; mesh.parent.remove(mesh);
+  }
+  for (const name of groups) {
+    const group = buildingsGroup.getObjectByName(name); if (!group) continue;
+    const list = []; group.traverse(o => { if (o.isMesh && !o.isInstancedMesh && o.material && o.material.emissiveMap) list.push(o); });
+    for (const m of list) bins(m.material, m, name);
+  }
+  // Dajia keeps its InstancedMesh (main + C11 annex), so only its shared
+  // emissive map is replaced; both instances stay intact.
+  if (typeof dajiaGlassMaterial !== 'undefined' && dajiaGlassMaterial) {
+    const cv = document.createElement('canvas'); cv.width = 256; cv.height = 512;
+    const c = cv.getContext('2d'); c.fillStyle = '#000'; c.fillRect(0, 0, 256, 512);
+    const rows = 57, cols = 32, dark = new Set([9, 25, 42]);
+    const cand = [];
+    for (let r = 0; r < rows; r++) if (!dark.has(r)) for (let q = 0; q < cols; q++) cand.push([r, q]);
+    let seed = 71; const rnd = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296; };
+    for (let i = cand.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [cand[i], cand[j]] = [cand[j], cand[i]]; }
+    const n = Math.round(rows * cols * .24);
+    for (const [r, q] of cand.slice(0, n)) {
+      const b = .45 + rnd() * .30, cold = rnd() < .18;
+      const rgb = cold ? [207, 228, 255] : [255, 217, 160];
+      c.fillStyle = `rgb(${Math.round(rgb[0] * b)},${Math.round(rgb[1] * b)},${Math.round(rgb[2] * b)})`;
+      c.fillRect(q * 8 + 2, r * 8 + 2, 5, 4);
+    }
+    const t = new THREE.CanvasTexture(cv); t.wrapS = t.wrapT = THREE.RepeatWrapping;
+    dajiaGlassMaterial.emissiveMap = t; dajiaGlassMaterial.needsUpdate = true;
+  }
+  nightReskinMats = mats; window.__NIGHT_RESKIN_STATS__ = stats;
+})();
+
+// ── 深圳清华大学研究院 / 湾区创新大厦 双塔 ─────────────────
+
+
 // ── fake contact shadows for the low quality preset ────────────
 let fakeAOMesh = null;
 {
@@ -10868,7 +11985,7 @@ let streetLampCount = 0;
   for (const lm of DATA.landmarks) {
     for (const bi of (lm.buildings || [])) {
       if (outlined.has(bi)) continue;
-      if (bi === CR_BUILDING_INDEX || TENCENT_BUILDING_INDICES.has(bi) || SBO_SKIP_INDICES.has(bi) || ANDAZ_SKIP_INDICES.has(bi) || LENOVO_SKIP_INDICES.has(bi) || DAJIA_SKIP_INDICES.has(bi) || XIAOMI_SKIP_INDICES.has(bi) || COCOON_SKIP_INDICES.has(bi) || NEIGHBOUR_SKIP_INDICES.has(bi) || COASTAL_SKIP_INDICES.has(bi) || POLY_SKIP_INDICES.has(bi) || EXCELLENCE_SKIP_INDICES.has(bi) || PORT_SKIP_INDICES.has(bi) || SZU_SKIP_INDICES.has(bi) || HYTERA_SKIP_INDICES.has(bi) || CAPITAL_SKIP_INDICES.has(bi) || AEROSPACE_SKIP_INDICES.has(bi) || CNOOC_SKIP_INDICES.has(bi) || RONCHAO_SKIP_INDICES.has(bi) || VENTURE_SKIP_INDICES.has(bi) || OFFICEWALL_SKIP.has(bi) || BYTEDANCE_SKIP_INDICES.has(bi) || HISENSE_SKIP_INDICES.has(bi) || XUNLEI_SKIP_INDICES.has(bi) || VENTURE_NEIGHBOR_SKIP.has(bi) || EASTWALL_SKIP.has(bi) || INNOVATION_SKIP.has(bi)) continue; // bespoke towers have their own crowns/bands
+      if (bi === CR_BUILDING_INDEX || TENCENT_BUILDING_INDICES.has(bi) || SBO_SKIP_INDICES.has(bi) || ANDAZ_SKIP_INDICES.has(bi) || LENOVO_SKIP_INDICES.has(bi) || DAJIA_SKIP_INDICES.has(bi) || XIAOMI_SKIP_INDICES.has(bi) || COCOON_SKIP_INDICES.has(bi) || NEIGHBOUR_SKIP_INDICES.has(bi) || COASTAL_SKIP_INDICES.has(bi) || POLY_SKIP_INDICES.has(bi) || EXCELLENCE_SKIP_INDICES.has(bi) || PORT_SKIP_INDICES.has(bi) || SZU_SKIP_INDICES.has(bi) || HYTERA_SKIP_INDICES.has(bi) || CAPITAL_SKIP_INDICES.has(bi) || AEROSPACE_SKIP_INDICES.has(bi) || CNOOC_SKIP_INDICES.has(bi) || RONCHAO_SKIP_INDICES.has(bi) || VENTURE_SKIP_INDICES.has(bi) || OFFICEWALL_SKIP.has(bi) || BYTEDANCE_SKIP_INDICES.has(bi) || HISENSE_SKIP_INDICES.has(bi) || XUNLEI_SKIP_INDICES.has(bi) || VENTURE_NEIGHBOR_SKIP.has(bi) || EASTWALL_SKIP.has(bi) || INNOVATION_SKIP.has(bi) || TSINGHUA_SKIP.has(bi) || CHINA_OVERSEAS_SKIP.has(bi) || YIHUA_SKIP.has(bi) || CAIXUN_SKIP.has(bi) || BUPT_SKIP.has(bi) || KETONG_SKIP.has(bi) || YOUXIAN_SKIP.has(bi)) continue; // bespoke towers have their own crowns/bands
       outlined.add(bi);
       const b = DATA.buildings[bi];
       if (!b) continue;
@@ -11133,6 +12250,31 @@ const landmarkLabelsEl = $('labels');
 const stationLabelsEl = $('stationLabels');
 const labelButtons = new Map();
 const markerPickables = [];
+// Label hierarchy registry. Tier 1 can survive the whole-city view; tier 2
+// appears only near district scale; tier 3 is reveal-on-hover/selection.
+const LABEL_TIER1 = ['中国华润大厦', '华润大厦', '腾讯滨海大厦', '深圳湾创新科技中心', '深圳湾体育中心', '春茧', '深圳湾万象城', '深圳湾口岸', '深创投广场', '深创投', '百度国际大厦', '深圳湾一号', '深圳保利剧院', '大家财险', '卓越后海中心', '卓越·后海中心', '字节跳动后海中心', '深圳字节跳动后海中心', '清华大学研究院', '联想后海中心', '深圳小米大厦'];
+const LABEL_TIER2 = ['中国海外大厦', '海能达', '中海油', '深圳湾创业投资大厦', '怡化', '彩讯', '海信南方', '迅雷大厦', '微软科通', '北邮科技', '芒果网', '天虹', '来福士', '留学生', '深圳湾公馆', '海岸城', '后海汇', '航天科技广场', '荣超高新', '有线信息传输', '三诺智慧', 'A8音乐', '赛西科技', '盈峰大厦'];
+const LABEL_NEAR_DIST = 185;
+function labelTierOf(lm) {
+  const n = lm.name || '';
+  if (LABEL_TIER1.some(k => n.includes(k))) return 1;
+  if (LABEL_TIER2.some(k => n.includes(k))) return 2;
+  return 3;
+}
+const labelDensity = (() => {
+  try { const v = localStorage.getItem('yuehai.labelDensity'); return ['minimal', 'standard', 'all'].includes(v) ? v : 'standard'; }
+  catch (e) { return 'standard'; }
+})();
+state.labelDensity = labelDensity;
+const hoverBuildingChip = document.createElement('button');
+hoverBuildingChip.type = 'button';
+hoverBuildingChip.className = 'landmark-label tier-3 is-temp';
+hoverBuildingChip.innerHTML = '<span class="pin"></span><span></span>';
+hoverBuildingChip.style.display = 'none';
+landmarkLabelsEl.appendChild(hoverBuildingChip);
+let hoverLabelId = null;
+let hoverBuildingIdx = null;
+hoverBuildingChip.addEventListener('click', () => { const bi = state.selectedBuilding ?? hoverBuildingIdx; if (bi != null) showBuilding(bi); });
 // The Spring Bamboo tower has a bespoke mesh rather than an OSM prism; make
 // its glass shaft directly pickable as the landmark.
 for (const m of crPickMeshes) {
@@ -11237,8 +12379,9 @@ for (const lm of DATA.landmarks) {
   const labelY = approx ? 6.4 : Math.max(3.5, wh(maxH) + 3.5 + (copy.offset || 0));
   const label = document.createElement('button');
   label.type = 'button';
-  label.className = 'landmark-label';
+  label.className = 'landmark-label tier-' + labelTierOf(lm);
   label.dataset.landmark = lm.id;
+  label.dataset.tier = String(labelTierOf(lm));
   label.innerHTML = `<span class="pin"></span><span>${lm.name}</span>${approx ? `<span class="approx">${lm.id === 'mixc' ? '示意模型 · OSM 暂无轮廓' : '近似'}</span>` : ''}`;
   label.title = approx ? '近似锚点 · 点击查看说明' : '点击查看地标';
   label.addEventListener('click', (e) => {
@@ -11804,7 +12947,7 @@ function updateEnvironment(dt) {
   if (lenovoGlassMaterial) lenovoGlassMaterial.emissiveIntensity = state.layers.night ? lightPower * .88 : 0;
   if (lenovoSignMaterial) lenovoSignMaterial.emissiveIntensity = .8 + (state.layers.night ? lightPower * 1.7 : 0);
   if (dajiaNightMaterial) dajiaNightMaterial.opacity = state.layers.night ? lightPower * .9 : 0;
-  if (dajiaGlassMaterial) dajiaGlassMaterial.emissiveIntensity = state.layers.night ? lightPower * 1.15 : 0;
+  if (dajiaGlassMaterial) dajiaGlassMaterial.emissiveIntensity = state.layers.night ? lightPower * .8 : 0;
   if (xiaomiGlassMaterial) xiaomiGlassMaterial.emissiveIntensity = state.layers.night ? lightPower * .65 : 0;
   if (xiaomiLedMaterial) xiaomiLedMaterial.emissiveIntensity = state.layers.night ? lightPower * .42 : 0;
   if (xiaomiNightMaterial) xiaomiNightMaterial.opacity = state.layers.night ? lightPower * .95 : 0;
@@ -11847,7 +12990,25 @@ function updateEnvironment(dt) {
   if (eastWallNight) eastWallNight.opacity = state.layers.night ? lightPower * .72 : 0;
   innovationTowerMats.forEach((m, i) => { m.emissiveIntensity = state.layers.night ? lightPower * [1.0, .9, .72][i % 3] : 0; });
   for (const m of innovationApartmentMats) m.emissiveIntensity = state.layers.night ? lightPower * .85 : 0;
-  if (innovationNightMaterial) innovationNightMaterial.opacity = state.layers.night ? lightPower * .9 : 0;
+  if (innovationNightMaterial) innovationNightMaterial.opacity = state.layers.night ? lightPower * .55 : 0;
+  if (tsinghuaNightMaterial) tsinghuaNightMaterial.opacity = state.layers.night ? lightPower * .65 : 0;
+  if (chinaOverseasGlassMaterial) chinaOverseasGlassMaterial.emissiveIntensity = state.layers.night ? lightPower * .8 : 0;
+  if (chinaOverseasNightMaterial) chinaOverseasNightMaterial.opacity = state.layers.night ? lightPower * .55 : 0;
+  if (yihuaGlassMaterial) yihuaGlassMaterial.emissiveIntensity = state.layers.night ? lightPower * .8 : 0;
+  if (yihuaNightMaterial) yihuaNightMaterial.opacity = state.layers.night ? lightPower * .55 : 0;
+  if (caixunGlassMaterial) caixunGlassMaterial.emissiveIntensity = state.layers.night ? lightPower * .8 : 0;
+  if (caixunNightMaterial) caixunNightMaterial.opacity = state.layers.night ? lightPower * .55 : 0;
+  if (buptGlassMaterial) buptGlassMaterial.emissiveIntensity = state.layers.night ? lightPower * .72 : 0;
+  if (buptNightMaterial) buptNightMaterial.opacity = state.layers.night ? lightPower * .42 : 0;
+  if (ketongGlassMaterial) ketongGlassMaterial.emissiveIntensity = state.layers.night ? lightPower * .8 : 0;
+  if (ketongNightMaterial) ketongNightMaterial.opacity = state.layers.night ? lightPower * .55 : 0;
+  if (youxianGlassMaterial) youxianGlassMaterial.emissiveIntensity = state.layers.night ? lightPower * .75 : 0;
+  if (youxianNightMaterial) youxianNightMaterial.opacity = state.layers.night ? lightPower * .45 : 0;
+  if (lxsNight) lxsNight.opacity = state.layers.night ? lightPower * .55 : 0;
+  if (szResNight) szResNight.opacity = state.layers.night ? lightPower * .5 : 0;
+  for (const m of residentialWindowMats) m.emissiveIntensity = state.layers.night ? lightPower * .8 : 0;
+  if (campusWindowMaterial) campusWindowMaterial.emissiveIntensity = state.layers.night ? lightPower * .8 : 0;
+  for (const m of nightReskinMats) m.emissiveIntensity = state.layers.night ? lightPower * (m.userData.reskinFactor || 1) : 0;
 
   // Window, street, landmark and car lights all follow the same light power.
   // A layer-off or lighting-off state makes every emissive element disappear.
@@ -11988,6 +13149,24 @@ function forceLightsOff() {
   for (const m of innovationTowerMats) m.emissiveIntensity = 0;
   for (const m of innovationApartmentMats) m.emissiveIntensity = 0;
   if (innovationNightMaterial) innovationNightMaterial.opacity = 0;
+  if (tsinghuaNightMaterial) tsinghuaNightMaterial.opacity = 0;
+  if (chinaOverseasGlassMaterial) chinaOverseasGlassMaterial.emissiveIntensity = 0;
+  if (chinaOverseasNightMaterial) chinaOverseasNightMaterial.opacity = 0;
+  if (yihuaGlassMaterial) yihuaGlassMaterial.emissiveIntensity = 0;
+  if (yihuaNightMaterial) yihuaNightMaterial.opacity = 0;
+  if (caixunGlassMaterial) caixunGlassMaterial.emissiveIntensity = 0;
+  if (caixunNightMaterial) caixunNightMaterial.opacity = 0;
+  if (buptGlassMaterial) buptGlassMaterial.emissiveIntensity = 0;
+  if (buptNightMaterial) buptNightMaterial.opacity = 0;
+  if (ketongGlassMaterial) ketongGlassMaterial.emissiveIntensity = 0;
+  if (ketongNightMaterial) ketongNightMaterial.opacity = 0;
+  if (youxianGlassMaterial) youxianGlassMaterial.emissiveIntensity = 0;
+  if (youxianNightMaterial) youxianNightMaterial.opacity = 0;
+  if (lxsNight) lxsNight.opacity = 0;
+  if (szResNight) szResNight.opacity = 0;
+  for (const m of residentialWindowMats) m.emissiveIntensity = 0;
+  if (campusWindowMaterial) campusWindowMaterial.emissiveIntensity = 0;
+  for (const m of nightReskinMats) m.emissiveIntensity = 0;
   if (landmarkGlassUniforms) landmarkGlassUniforms.uLightPower.value = 0;
   for (const item of nightPointLights) { item.light.intensity = 0; item.light.visible = false; }
   if (typeof txCarLightGroup !== 'undefined') {
@@ -12285,6 +13464,9 @@ function pickScreen(x, y) {
 }
 function handleTap(x, y) {
   const pick = pickScreen(x, y);
+  hoverLabelId = null; hoverBuildingIdx = null;
+  if (pick && (pick.kind === 'landmark' || pick.kind === 'approx')) hoverLabelId = pick.id;
+  if (pick && pick.kind === 'building') { const hm = landmarkBuildingMap.get(pick.idx); if (hm) hoverLabelId = hm; else hoverBuildingIdx = pick.idx; }
   if (!pick) { closeCard(); return; }
   if (pick.kind === 'approx') showLandmark(pick.id);
   else if (pick.kind === 'landmark') showLandmark(pick.id);
@@ -12299,9 +13481,13 @@ controls.onTap = handleTap;
 function handleHover(x, y) {
   if (controls.dragging) { tooltip.classList.remove('is-visible'); canvas.classList.remove('is-hovering'); return; }
   const pick = pickScreen(x, y);
+  hoverLabelId = null; hoverBuildingIdx = null;
+  if (pick && (pick.kind === 'landmark' || pick.kind === 'approx')) hoverLabelId = pick.id;
+  if (pick && pick.kind === 'building') { const hm = landmarkBuildingMap.get(pick.idx); if (hm) hoverLabelId = hm; else hoverBuildingIdx = pick.idx; }
   if (!pick) {
     tooltip.classList.remove('is-visible');
     canvas.classList.remove('is-hovering');
+    hoverLabelId = null; hoverBuildingIdx = null; updateLabels();
     return;
   }
   let text = '';
@@ -12339,6 +13525,7 @@ canvas.addEventListener('pointermove', (e) => {
 canvas.addEventListener('pointerleave', () => {
   tooltip.classList.remove('is-visible');
   canvas.classList.remove('is-hovering');
+  hoverLabelId = null; hoverBuildingIdx = null; updateLabels();
 });
 
 // ── labels projection ───────────────────────────────────────
@@ -12350,15 +13537,17 @@ function projectToScreen(x, y, z) {
   return { x: (tmpVec.x * .5 + .5) * window.innerWidth, y: (-tmpVec.y * .5 + .5) * window.innerHeight };
 }
 function hideLabel(el) {
+  el.classList.remove('is-visible');
   el.style.opacity = '0';
-  el.style.visibility = 'hidden';
+  el.style.visibility = 'visible';
   el.style.pointerEvents = 'none';
 }
 function placeLabel(el, x, y) {
   el.style.transform = `translate(${x}px, ${y}px) translate(-50%, -100%)`;
-  el.style.opacity = '';
+  el.classList.add('is-visible');
+  el.style.opacity = '1';
   el.style.visibility = 'visible';
-  el.style.pointerEvents = '';
+  el.style.pointerEvents = 'auto';
 }
 function updateLabels() {
   labelFrame++;
@@ -12367,36 +13556,79 @@ function updateLabels() {
   landmarkLabelsEl.style.display = show ? '' : 'none';
   stationLabelsEl.style.display = show && state.layers.metro ? '' : 'none';
   updateBayLabel();
+  for (const el of labelButtons.values()) hideLabel(el);
+  hideLabel(hoverBuildingChip);
+  hoverBuildingChip.style.display = 'none';
   if (!show) return;
   const items = [];
+  const cx = window.innerWidth * .5, cy = window.innerHeight * .5;
+  const density = state.labelDensity || 'standard';
   for (const [id, lm] of landmarkData) {
     const el = labelButtons.get(id);
     if (!el) continue;
-    if (!state.layers.buildings && !lm.approx) { hideLabel(el); continue; }
-    const p = projectToScreen(lm.x, lm.labelY, lm.z);
-    if (!p) { hideLabel(el); continue; }
-    items.push({ el, x: p.x, y: p.y, w: Math.min(180, el.offsetWidth || (Array.from(lm.name).length * 13 + 42)), h: 23, id });
-  }
-  items.sort((a, b) => a.y - b.y);
-  const placed = [];
-  for (const item of items) {
-    let y = item.y;
-    let tries = 0;
-    while (tries < 5) {
-      const box = { l: item.x - item.w / 2, r: item.x + item.w / 2, t: y - item.h, b: y };
-      if (!placed.some(p => !(box.r < p.l - 4 || box.l > p.r + 4 || box.b < p.t - 3 || box.t > p.b + 3))) break;
-      y = Math.max(76, y - item.h - 5);
-      tries++;
+    if (!state.layers.buildings && !lm.approx) continue;
+    const forced = id === state.selectedLandmark || id === hoverLabelId;
+    const tier = labelTierOf(lm);
+    const dist = camera.position.distanceTo(new THREE.Vector3(lm.x, lm.labelY, lm.z));
+    if (!forced) {
+      if (density === 'minimal' && tier !== 1) continue;
+      if (density === 'standard' && tier === 3) continue;
+      if (density === 'standard' && tier === 2 && dist > LABEL_NEAR_DIST) continue;
     }
-    placeLabel(item.el, item.x, y);
-    placed.push({ l: item.x - item.w / 2, r: item.x + item.w / 2, t: y - item.h, b: y, id: item.id });
+    const p = projectToScreen(lm.x, lm.labelY, lm.z);
+    if (!p) continue;
+    el.classList.toggle('is-far', tier === 1 && dist > 260);
+    const w = Math.min(180, el.offsetWidth || (Array.from(lm.name).length * 13 + 42)), h = 23;
+    items.push({ el, x: p.x, y: p.y, w, h, id, tier, forced, center: Math.hypot(p.x - cx, p.y - cy), dist, name: lm.name });
+  }
+  // Selected/hovered non-landmark building: an unconditional temporary chip.
+  if (state.selectedBuilding != null || hoverBuildingIdx != null) {
+    const bi = state.selectedBuilding ?? hoverBuildingIdx;
+    const b = DATA.buildings[bi];
+    if (b && !landmarkBuildingMap.get(bi)) {
+      const xs = b.p.filter((_, i) => i % 2 === 0), zs = b.p.filter((_, i) => i % 2 === 1);
+      const bx = xs.reduce((a, v) => a + v, 0) / xs.length, bz = zs.reduce((a, v) => a + v, 0) / zs.length;
+      const p = projectToScreen(wx(bx), Math.max(3.5, wh((b.height || 30) * .66)), wz(bz));
+      if (p) {
+        hoverBuildingChip.style.display = 'block';
+        hoverBuildingChip.dataset.landmark = '';
+        hoverBuildingChip.querySelector('span:last-child').textContent = b.n || '城市建筑';
+        hoverBuildingChip.classList.add('is-forced');
+        items.push({ el: hoverBuildingChip, x: p.x, y: p.y, w: 150, h: 23, id: '__building__' + bi, tier: 0, forced: true, center: 0, dist: 0, name: b.n || '城市建筑' });
+      }
+    }
+  }
+  items.sort((a, b) => (a.forced === b.forced ? 0 : a.forced ? -1 : 1) || (density === 'all' ? (a.center - b.center) : (a.tier - b.tier || a.center - b.center)) || a.dist - b.dist);
+  const placed = [];
+  let autoCount = 0;
+  for (const item of items) {
+    if (!item.forced) {
+      if (autoCount >= 14) { hideLabel(item.el); continue; }
+      const box = { l: item.x - item.w / 2, r: item.x + item.w / 2, t: item.y - item.h, b: item.y };
+      let blocked = false;
+      for (const p of placed) {
+        const ix = Math.max(0, Math.min(box.r, p.r) - Math.max(box.l, p.l));
+        const iy = Math.max(0, Math.min(box.b, p.b) - Math.max(box.t, p.t));
+        const inter = ix * iy, area = Math.min((box.r - box.l) * (box.b - box.t), (p.r - p.l) * (p.b - p.t));
+        if (area > 0 && inter / area > .40) { blocked = true; break; }
+      }
+      if (blocked) { hideLabel(item.el); continue; }
+      autoCount++;
+    }
+    placeLabel(item.el, item.x, item.y);
+    placed.push({ l: item.x - item.w / 2, r: item.x + item.w / 2, t: item.y - item.h, b: item.y });
   }
   if (state.layers.metro) {
     for (const item of stationLabelMap) {
       const p = projectToScreen(item.x, item.y, item.z);
       if (!p) { hideLabel(item.el); continue; }
       const nw = Math.min(120, item.el.offsetWidth || 72), nh = 17;
-      const overlap = placed.some(r => !(p.x + nw/2 < r.l - 2 || p.x - nw/2 > r.r + 2 || p.y + nh/2 < r.t - 2 || p.y - nh/2 > r.b + 2));
+      const overlap = placed.some(r => {
+        const ix = Math.max(0, Math.min(p.x + nw/2, r.r) - Math.max(p.x - nw/2, r.l));
+        const iy = Math.max(0, Math.min(p.y + nh/2, r.b) - Math.max(p.y - nh/2, r.t));
+        const inter = ix * iy, area = Math.min(nw * nh, (r.r - r.l) * (r.b - r.t));
+        return area > 0 && inter / area > .40;
+      });
       if (overlap || p.y < 75 || p.y > window.innerHeight - 120) hideLabel(item.el);
       else placeLabel(item.el, p.x, p.y);
     }
@@ -12700,6 +13932,18 @@ function updateLayerVisibility() {
   updateParking(true);
 }
 
+function setLabelDensity(mode, persist) {
+  if (!['minimal', 'standard', 'all'].includes(mode)) mode = 'standard';
+  state.labelDensity = mode;
+  document.querySelectorAll('#labelDensitySeg button').forEach(b => b.classList.toggle('is-active', b.dataset.density === mode));
+  if (persist) { try { localStorage.setItem('yuehai.labelDensity', mode); } catch (e) {} }
+  updateLabels();
+}
+document.querySelectorAll('#labelDensitySeg button').forEach(b => {
+  b.addEventListener('click', () => setLabelDensity(b.dataset.density, true));
+});
+setLabelDensity(state.labelDensity || 'standard', false);
+
 document.querySelectorAll('.layer-row input').forEach((input) => {
   input.addEventListener('change', () => {
     const map = { layerBuildings: 'buildings', layerRoads: 'roads', layerMetro: 'metro', layerTraffic: 'traffic', layerCongestion: 'congestion', layerSignals: 'signals', layerNight: 'night', layerParking: 'parking', layerLabels: 'labels' };
@@ -12898,6 +14142,8 @@ window.__YUEHAI__ = {
   setTime, setWeather, setCameraMode, setLightMode, setQuality, setImmersive,
   updateEnvironment,
   showLandmark, showBuilding, closeCard, showRoadInfo,
+  updateLabels: () => updateLabels(), setLabelDensity: (d) => setLabelDensity(d, true),
+  labelStats: () => ({ density: state.labelDensity, visible: [...document.querySelectorAll('.landmark-label')].filter(el => el.classList.contains('is-visible')).length, total: document.querySelectorAll('.landmark-label').length }),
   updateMetrics, updateLayerVisibility, simNow: () => simNow,
   environment: () => ({
     isNight: !!window.isNight,
@@ -12994,6 +14240,16 @@ window.__YUEHAI__ = {
   ventureNeighbors: () => window.__VENTURE_NEIGHBORS__ || null,
   eastWall: () => window.__EASTWALL__ || null,
   innovation: () => window.__INNOVATION__ || null,
+  tsinghua: () => window.__TSINGHUA__ || null,
+  chinaOverseas: () => window.__CHINA_OVERSEAS__ || null,
+  yihua: () => window.__YIHUA__ || null,
+  caixun: () => window.__CAIXUN__ || null,
+  bupt: () => window.__BUPT__ || null,
+  ketong: () => window.__KETONG__ || null,
+  youxian: () => window.__YOUXIAN__ || null,
+  lite3: () => window.__LITE3__ || null,
+  residential: () => null,
+  campus: () => null,
   cr: () => window.__CR__ || null,
   traffic: () => ({
     activeVehicles: txActive.length,

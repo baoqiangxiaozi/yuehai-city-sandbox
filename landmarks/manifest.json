@@ -1,100 +1,51 @@
 [
   {
     "id": "tencent-binhai",
-    "triangles": 28748,
-    "objects": 25,
-    "materials": 7,
-    "glbBytes": 1570952,
-    "inlineBytes": 1384144,
-    "boundsBlenderM": {
-      "min": [
-        -59.22060775756836,
-        -59.8126220703125,
-        0.0
-      ],
-      "max": [
-        66.884765625,
-        66.53964233398438,
-        245.8000030517578
-      ]
-    },
     "originRaw": [
-      371.58649574693254,
-      -605.0937312176508
+      372.1166666666667,
+      -605.3583333333333
     ],
     "scale": [
       0.058,
       0.112,
       0.058
-    ],
-    "buildings": [
-      {
-        "cx": 387.7635799814802,
-        "cz": -572.4196948085225,
-        "w": 95.4267512218218,
-        "d": 32.45389601694177,
-        "angle": -0.20809033924674808,
-        "height": 245.8,
-        "levels": 50,
-        "name": "南塔"
-      },
-      {
-        "cx": 355.40941151238496,
-        "cz": -637.767767626779,
-        "w": 79.30566634391187,
-        "d": 30.60212428920164,
-        "angle": 2.6371975095325286,
-        "height": 194.8,
-        "levels": 38,
-        "name": "北塔"
-      }
     ],
     "baselineBuildingIndices": [
       602,
       603
     ],
-    "bridgeLevelsM": [
+    "heightM": 245.8,
+    "members": [
       {
-        "name": "Podium_link",
-        "bottom": 14.748000000000001,
-        "top": 29.496000000000002
+        "name": "南塔",
+        "w": 95.4267512218218,
+        "d": 32.45389601694177,
+        "height": 245.8,
+        "cx": 387.7635799814802,
+        "cz": -572.4196948085225
       },
       {
-        "name": "Health_link",
-        "bottom": 103.236,
-        "top": 122.9
-      },
-      {
-        "name": "Knowledge_link",
-        "bottom": 172.06,
-        "top": 186.80800000000002
+        "name": "北塔",
+        "w": 79.30566634391187,
+        "d": 30.60212428920164,
+        "height": 194.8,
+        "cx": 355.40941151238496,
+        "cz": -637.767767626779
       }
     ],
-    "caution": "Building heights/OBB from supplied OSM and existing JS. Mid/top bridge levels interpret B+H L21-25/L35-38 using south tower average floor height; lowest link L3-6 is illustrative. Not survey dimensions.",
-    "blenderVersion": "5.0.1"
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "tencent-binhai",
+    "triangles": 2158,
+    "objects": 18,
+    "zMin": 0.0,
+    "zMax": 246.3000030517578
   },
   {
-    "id": "china-resources",
-    "triangles": 36036,
-    "objects": 15,
-    "materials": 7,
-    "glbBytes": 1975348,
-    "inlineBytes": 1727739,
-    "boundsBlenderM": {
-      "min": [
-        -37.18912887573242,
-        -37.18912887573242,
-        0.0
-      ],
-      "max": [
-        37.18912887573242,
-        37.18912887573242,
-        392.5
-      ]
-    },
+    "id": "baidu-intl",
     "originRaw": [
-      1525.1735294117648,
-      281.1411764705882
+      1175.35,
+      -804.24
     ],
     "scale": [
       0.058,
@@ -102,10 +53,1842 @@
       0.058
     ],
     "baselineBuildingIndices": [
-      423
+      462,
+      463
+    ],
+    "heightM": 181.0,
+    "members": [
+      {
+        "name": "百度国际大厦东塔",
+        "w": 66.95261510066257,
+        "d": 65.75126930212332,
+        "height": 181.0,
+        "cx": 1241.0300589609526,
+        "cz": -807.0145789298032,
+        "heightNote": "百度百科/悉地国际：东塔约180–181m、地上39层；OSM 12.8m 是占位"
+      },
+      {
+        "name": "百度国际大厦西塔",
+        "w": 88.24628039249592,
+        "d": 68.27601409936403,
+        "height": 160.0,
+        "cx": 1103.108633228986,
+        "cz": -799.7338608278843,
+        "heightNote": "百度百科：西塔地上约160m、33层；OSM 12.8m 是占位"
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "baidu-intl",
+    "triangles": 1248,
+    "objects": 11,
+    "zMin": 0.0,
+    "zMax": 184.1999969482422
+  },
+  {
+    "id": "software-base",
+    "originRaw": [
+      698.5317261904761,
+      -729.4103273809524
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      404,
+      405,
+      406,
+      407,
+      408,
+      425,
+      426,
+      427,
+      428,
+      430,
+      431,
+      432,
+      433,
+      434,
+      435,
+      436
+    ],
+    "heightM": 89.6,
+    "members": [
+      {
+        "name": "4D",
+        "w": 60.214032980105515,
+        "d": 32.80746866187644,
+        "height": 35.2,
+        "cx": 635.2423815186792,
+        "cz": 550.7498374104597
+      },
+      {
+        "name": "4A",
+        "w": 56.81065040993644,
+        "d": 48.510270171418256,
+        "height": 35.2,
+        "cx": 536.5696416675704,
+        "cz": -711.1005879254519
+      },
+      {
+        "name": "2A",
+        "w": 51.80241307120747,
+        "d": 44.202767096050934,
+        "height": 89.6,
+        "cx": 532.9866761195309,
+        "cz": -802.6496459834023
+      },
+      {
+        "name": "深圳市软件产业基地3栋",
+        "w": 77.1166000287875,
+        "d": 39.12335345274215,
+        "height": 6.4,
+        "cx": 475.5425340971957,
+        "cz": -682.1558618086186
+      },
+      {
+        "name": "1B",
+        "w": 54.4961486378844,
+        "d": 41.04187285013222,
+        "height": 48.0,
+        "cx": 882.2499463675165,
+        "cz": -791.993657958837
+      },
+      {
+        "name": "5E",
+        "w": 63.252521032393815,
+        "d": 48.78902113228514,
+        "height": 35.2,
+        "cx": 758.65,
+        "cz": -639.3000000000001
+      },
+      {
+        "name": "5A",
+        "w": 57.336985128567335,
+        "d": 23.50574687957078,
+        "height": 35.2,
+        "cx": 782.65,
+        "cz": -718.3
+      },
+      {
+        "name": "5B",
+        "w": 73.82657695137846,
+        "d": 23.726915847665396,
+        "height": 35.2,
+        "cx": 863.75,
+        "cz": -717.9
+      },
+      {
+        "name": "5D",
+        "w": 75.02079795235386,
+        "d": 24.30328937802676,
+        "height": 35.2,
+        "cx": 861.0999999999999,
+        "cz": -624.15
+      },
+      {
+        "name": "4B",
+        "w": 84.42138354706105,
+        "d": 24.587017089608594,
+        "height": 35.2,
+        "cx": 666.5233204994549,
+        "cz": -720.5596053442067
+      },
+      {
+        "name": "4C",
+        "w": 84.82174602439375,
+        "d": 24.333544776157737,
+        "height": 35.2,
+        "cx": 640.4499999999998,
+        "cz": -629.6
+      },
+      {
+        "name": "深圳市软件产业基地2栋",
+        "w": 219.48939829196354,
+        "d": 57.212441400067064,
+        "height": 22.4,
+        "cx": 616.7356233362972,
+        "cz": -795.5986643503854
+      },
+      {
+        "name": "深圳市软件产业基地1栋",
+        "w": 210.43252207186652,
+        "d": 54.72237353008279,
+        "height": 16.0,
+        "cx": 870.9677225914152,
+        "cz": -792.1888202846625
+      },
+      {
+        "name": "1A",
+        "w": 56.664709406438305,
+        "d": 39.6963563552614,
+        "height": 80.0,
+        "cx": 795.3000000000001,
+        "cz": -798.65
+      },
+      {
+        "name": "2C",
+        "w": 45.10389455428049,
+        "d": 44.50280890011311,
+        "height": 86.4,
+        "cx": 800.8994761423884,
+        "cz": 704.3966233274424
+      },
+      {
+        "name": "2B",
+        "w": 63.137715080835164,
+        "d": 49.9343387859808,
+        "height": 64.0,
+        "cx": 612.6498051352879,
+        "cz": -799.0346300458284
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "software-base-1",
+    "triangles": 3440,
+    "objects": 12,
+    "zMin": 0.0,
+    "zMax": 90.0999984741211
+  },
+  {
+    "id": "software-base",
+    "originRaw": [
+      950.95,
+      -747.4625
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      429,
+      437
+    ],
+    "heightM": 70.4,
+    "members": [
+      {
+        "name": "5C",
+        "w": 49.41949637683888,
+        "d": 49.00730116393936,
+        "height": 35.2,
+        "cx": 702.4048948013807,
+        "cz": 950.1013526439764
+      },
+      {
+        "name": "1C",
+        "w": 48.40371886539299,
+        "d": 43.20411838221719,
+        "height": 70.4,
+        "cx": 951.867773547539,
+        "cz": -792.5003995014766
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "software-base-2",
+    "triangles": 348,
+    "objects": 9,
+    "zMin": 0.0,
+    "zMax": 70.9000015258789
+  },
+  {
+    "id": "spring-cocoon",
+    "originRaw": [
+      1727.9348214285715,
+      -75.46160714285715
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      542,
+      543
+    ],
+    "heightM": 40.0,
+    "members": [
+      {
+        "name": "深圳湾体育馆",
+        "w": 170.8793396973291,
+        "d": 121.84638271497147,
+        "height": 40.0,
+        "cx": 1780.097499360112,
+        "cz": -63.35569972302494
+      },
+      {
+        "name": "深圳湾游泳馆",
+        "w": 143.99569438007512,
+        "d": 126.50753259272892,
+        "height": 40.0,
+        "cx": 1657.6593279111985,
+        "cz": -80.58550800684452
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "spring-cocoon",
+    "triangles": 2210,
+    "objects": 3,
+    "zMin": 0.0,
+    "zMax": 52.77794647216797
+  },
+  {
+    "id": "szbay-port",
+    "originRaw": [
+      1840.8049786324787,
+      1689.7734829059827
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      190,
+      191,
+      192,
+      193,
+      194,
+      195,
+      196,
+      197,
+      198,
+      760
+    ],
+    "heightM": 16.0,
+    "members": [
+      {
+        "name": "",
+        "w": 330.9594171887975,
+        "d": 105.98039512958735,
+        "height": 16.0,
+        "cx": 1844.3609723437576,
+        "cz": 1812.6418157018102
+      },
+      {
+        "name": "",
+        "w": 92.85301313366358,
+        "d": 26.701646990395602,
+        "height": 3.2,
+        "cx": 1942.5500000000002,
+        "cz": 1753.1500000000003
+      },
+      {
+        "name": "",
+        "w": 80.59204440308145,
+        "d": 18.200991079191,
+        "height": 3.2,
+        "cx": 1850.3038758917253,
+        "cz": 1606.7635556536472
+      },
+      {
+        "name": "",
+        "w": 94.51629507713915,
+        "d": 26.603006688927508,
+        "height": 3.2,
+        "cx": 1942.6499999999996,
+        "cz": 1717.3
+      },
+      {
+        "name": "",
+        "w": 89.71426865331955,
+        "d": 24.605004679134026,
+        "height": 3.2,
+        "cx": 1745.4694077267618,
+        "cz": 1754.7005456815743
+      },
+      {
+        "name": "",
+        "w": 17.832582248487597,
+        "d": 15.001300288672155,
+        "height": 3.2,
+        "cx": 1809.1,
+        "cz": 1679.3000000000002
+      },
+      {
+        "name": "",
+        "w": 89.53658792310034,
+        "d": 25.30315045777752,
+        "height": 3.2,
+        "cx": 1744.85,
+        "cz": 1720.3
+      },
+      {
+        "name": "",
+        "w": 67.20267851804715,
+        "d": 14.001227640759907,
+        "height": 3.2,
+        "cx": 1834.6003347947392,
+        "cz": 1613.7374970107612
+      },
+      {
+        "name": "",
+        "w": 83.21221742638977,
+        "d": 37.49868877667723,
+        "height": 3.2,
+        "cx": 1894.3998183922538,
+        "cz": 1659.0032557658105
+      },
+      {
+        "name": "",
+        "w": 83.50149699256917,
+        "d": 13.499757975600232,
+        "height": 3.2,
+        "cx": 1799.1904177124418,
+        "cz": 1573.5997579777697
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "szbay-port-1",
+    "triangles": 848,
+    "objects": 4,
+    "zMin": 0.0,
+    "zMax": 22.06999969482422
+  },
+  {
+    "id": "szbay-port",
+    "originRaw": [
+      1464.81875,
+      1556.190625
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      264,
+      265
+    ],
+    "heightM": 12.8,
+    "members": [
+      {
+        "name": "深圳湾海关",
+        "w": 43.6146772230918,
+        "d": 41.47487234190476,
+        "height": 9.6,
+        "cx": 1474.4922342858292,
+        "cz": 1565.6502213027354
+      },
+      {
+        "name": "深圳湾海关",
+        "w": 62.58104059592688,
+        "d": 62.323632787249835,
+        "height": 12.8,
+        "cx": 1454.9037145154655,
+        "cz": 1547.1633782772933
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "szbay-port-2",
+    "triangles": 256,
+    "objects": 5,
+    "zMin": 0.0,
+    "zMax": 13.300000190734863
+  },
+  {
+    "id": "excellence-houhai",
+    "originRaw": [
+      1163.84,
+      -167.66
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      634
+    ],
+    "heightM": 210.0,
+    "members": [
+      {
+        "name": "卓越·后海中心",
+        "w": 77.09524623916172,
+        "d": 56.53603282264356,
+        "height": 210.0,
+        "cx": 1163.6000000000001,
+        "cz": -171.3
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "excellence-houhai",
+    "triangles": 748,
+    "objects": 8,
+    "zMin": 0.0,
+    "zMax": 213.1999969482422
+  },
+  {
+    "id": "youxian-tower",
+    "originRaw": [
+      564.85,
+      -405.09999999999997
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      654
+    ],
+    "heightM": 89.6,
+    "members": [
+      {
+        "name": "有线信息传输大厦",
+        "w": 44.17540486814278,
+        "d": 27.80348188151379,
+        "height": 89.6,
+        "cx": 564.95,
+        "cz": -405.95
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "youxian-tower",
+    "triangles": 560,
+    "objects": 7,
+    "zMin": 0.0,
+    "zMax": 90.0999984741211
+  },
+  {
+    "id": "ketong-tower",
+    "originRaw": [
+      883.525,
+      -1012.75
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      443
+    ],
+    "heightM": 99.6,
+    "members": [
+      {
+        "name": "微软科通大厦",
+        "w": 47.72723283980929,
+        "d": 45.30299378026393,
+        "height": 99.6,
+        "cx": 883.4999999999999,
+        "cz": -1012.7499999999998
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "ketong-tower",
+    "triangles": 558,
+    "objects": 9,
+    "zMin": 0.0,
+    "zMax": 104.0
+  },
+  {
+    "id": "bupt-tower",
+    "originRaw": [
+      1618.15,
+      -1594.6999999999998
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      780
+    ],
+    "heightM": 100.0,
+    "members": [
+      {
+        "name": "北邮科技大厦",
+        "w": 54.89442678552723,
+        "d": 32.10376781451646,
+        "height": 100.0,
+        "cx": 1618.1499999999999,
+        "cz": -1594.6999999999998
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "bupt-tower",
+    "triangles": 618,
+    "objects": 7,
+    "zMin": 0.0,
+    "zMax": 100.5
+  },
+  {
+    "id": "caixun-tower",
+    "originRaw": [
+      1503.6999999999998,
+      -1591.825
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      779
+    ],
+    "heightM": 160.0,
+    "members": [
+      {
+        "name": "彩讯科技大厦",
+        "w": 54.80446794261502,
+        "d": 32.102492115099494,
+        "height": 160.0,
+        "cx": 1591.808565648137,
+        "cz": 1503.6998932629515
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "caixun-tower",
+    "triangles": 672,
+    "objects": 7,
+    "zMin": 0.0,
+    "zMax": 160.5
+  },
+  {
+    "id": "lite3",
+    "originRaw": [
+      1596.0311965811966,
+      -1524.6215811965812
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      10,
+      1175
+    ],
+    "heightM": 99.0,
+    "members": [
+      {
+        "name": "留学生创业大厦",
+        "w": 101.65690405301075,
+        "d": 62.929784334398846,
+        "height": 97.0,
+        "cx": 1510.1248158640224,
+        "cz": 1557.6422662889522
+      },
+      {
+        "name": "留学生创业大厦二期",
+        "w": 51.018723952815435,
+        "d": 29.922279656562523,
+        "height": 99.0,
+        "cx": 1623.89837016479,
+        "cz": -1538.990173708144
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "lite3-1",
+    "triangles": 1344,
+    "objects": 7,
+    "zMin": 0.0,
+    "zMax": 99.5
+  },
+  {
+    "id": "lite3",
+    "originRaw": [
+      115.5,
+      1161.2571428571428
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      1488
+    ],
+    "heightM": 150.0,
+    "members": [
+      {
+        "name": "深圳湾公馆",
+        "w": 39.45490330126296,
+        "d": 37.31957402607895,
+        "height": 150.0,
+        "cx": 118.0,
+        "cz": 1160.6
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "lite3-2",
+    "triangles": 468,
+    "objects": 7,
+    "zMin": 0.0,
+    "zMax": 150.5
+  },
+  {
+    "id": "yihua-tower",
+    "originRaw": [
+      447.16086956521735,
+      -788.0217391304348
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      401
+    ],
+    "heightM": 147.0,
+    "members": [
+      {
+        "name": "怡化金融科技大厦",
+        "w": 70.45753601162801,
+        "d": 39.76261342243549,
+        "height": 147.0,
+        "cx": 450.0692827275651,
+        "cz": -784.5814570601478
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "yihua-tower",
+    "triangles": 700,
+    "objects": 8,
+    "zMin": 0.0,
+    "zMax": 150.1999969482422
+  },
+  {
+    "id": "china-overseas",
+    "originRaw": [
+      1008.375,
+      437.20000000000005
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      1232
+    ],
+    "heightM": 100.0,
+    "members": [
+      {
+        "name": "中国海外大厦",
+        "w": 48.67985453530946,
+        "d": 42.03762317759083,
+        "height": 100.0,
+        "cx": 1008.35,
+        "cz": 437.20000000000005
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "china-overseas",
+    "triangles": 234,
+    "objects": 9,
+    "zMin": 0.0,
+    "zMax": 103.19999694824219
+  },
+  {
+    "id": "tsinghua-research",
+    "originRaw": [
+      1150.1,
+      -1215.0124999999998
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      1257,
+      1256
+    ],
+    "heightM": 102.4,
+    "members": [
+      {
+        "name": "深圳清华大学研究院",
+        "w": 47.05301994230331,
+        "d": 46.2425487436534,
+        "height": 102.4,
+        "cx": 1162.0,
+        "cz": -1252.3000000000002
+      },
+      {
+        "name": "湾区创新大厦",
+        "w": 47.130419088688996,
+        "d": 46.163660995684836,
+        "height": 102.4,
+        "cx": 1138.2,
+        "cz": -1177.7
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "tsinghua-research",
+    "triangles": 924,
+    "objects": 8,
+    "zMin": 0.0,
+    "zMax": 102.9000015258789
+  },
+  {
+    "id": "innovation-center",
+    "originRaw": [
+      1568.0099999999998,
+      -1200.525
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      658,
+      657,
+      659,
+      660,
+      661
+    ],
+    "heightM": 311.0,
+    "members": [
+      {
+        "name": "A座",
+        "w": 49.50090908256152,
+        "d": 48.00093663001212,
+        "height": 311.0,
+        "cx": 1517.3045452875929,
+        "cz": -1251.1500275471976
+      },
+      {
+        "name": "B座",
+        "w": 49.50090908256129,
+        "d": 48.00093663001212,
+        "height": 247.0,
+        "cx": 1579.3045452875926,
+        "cz": -1296.7500275471973
+      },
+      {
+        "name": "",
+        "w": 42.98729020772089,
+        "d": 24.400673773426433,
+        "height": 155.0,
+        "cx": 1623.5500000000002,
+        "cz": -1192.4500000000003
+      },
+      {
+        "name": "",
+        "w": 40.80992492412224,
+        "d": 22.805481797146967,
+        "height": 100.0,
+        "cx": 1130.8473696860162,
+        "cz": 1604.150057682324
+      },
+      {
+        "name": "",
+        "w": 44.86327386035646,
+        "d": 39.10460178035714,
+        "height": 100.0,
+        "cx": 1516.7996338784476,
+        "cz": -1132.8234317793506
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "innovation-center",
+    "triangles": 2334,
+    "objects": 10,
+    "zMin": 0.0,
+    "zMax": 320.0
+  },
+  {
+    "id": "venture-east-wall",
+    "originRaw": [
+      917.1958333333333,
+      -559.40625
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      1258,
+      1259
+    ],
+    "heightM": 162.9,
+    "members": [
+      {
+        "name": "数字音频大厦",
+        "w": 58.01043009666455,
+        "d": 49.796734745569665,
+        "height": 100.0,
+        "cx": 876.3438907230159,
+        "cz": -560.0278744862877
+      },
+      {
+        "name": "高技术示范大厦",
+        "w": 55.007629880643435,
+        "d": 42.57735718516369,
+        "height": 162.9,
+        "cx": 949.8622685856247,
+        "cz": -556.4008403392183
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "venture-east-wall",
+    "triangles": 1040,
+    "objects": 9,
+    "zMin": 0.0,
+    "zMax": 166.10000610351562
+  },
+  {
+    "id": "venture-neighbors",
+    "originRaw": [
+      644.9541666666667,
+      -564.2458333333333
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      403,
+      409,
+      402,
+      424
+    ],
+    "heightM": 130.0,
+    "members": [
+      {
+        "name": "三诺智慧大厦",
+        "w": 58.230666852554805,
+        "d": 50.20636849949187,
+        "height": 100.0,
+        "cx": 561.3499999999999,
+        "cz": -565.2
+      },
+      {
+        "name": "A8音乐大厦",
+        "w": 72.13781923721308,
+        "d": 50.042332436639526,
+        "height": 100.0,
+        "cx": 729.4499999999998,
+        "cz": -560.4499999999999
+      },
+      {
+        "name": "赛西科技大厦",
+        "w": 50.20358552932248,
+        "d": 46.30386406648694,
+        "height": 100.0,
+        "cx": 485.84972147278205,
+        "cz": -571.0766965561022
+      },
+      {
+        "name": "盈峰大厦",
+        "w": 60.32395875603652,
+        "d": 57.622212992647064,
+        "height": 130.0,
+        "cx": 800.861930815778,
+        "cz": -557.2496636420096
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "venture-neighbors",
+    "triangles": 2086,
+    "objects": 7,
+    "zMin": 0.0,
+    "zMax": 130.5
+  },
+  {
+    "id": "xunlei-tower",
+    "originRaw": [
+      1506.02,
+      -1653.52
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      782
+    ],
+    "heightM": 119.0,
+    "members": [
+      {
+        "name": "迅雷大厦",
+        "w": 65.24669830108132,
+        "d": 34.6827388497436,
+        "height": 119.0,
+        "cx": 1509.3404065289226,
+        "cz": -1653.2894381269327
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "xunlei-tower",
+    "triangles": 760,
+    "objects": 9,
+    "zMin": 0.0,
+    "zMax": 122.19999694824219
+  },
+  {
+    "id": "hisense-south",
+    "originRaw": [
+      882.0,
+      537.0600000000001
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      619
+    ],
+    "heightM": 160.0,
+    "members": [
+      {
+        "name": "海信南方大厦",
+        "w": 70.57057129451005,
+        "d": 54.456454591794,
+        "height": 160.0,
+        "cx": 885.2514145118757,
+        "cz": 543.5446229813472
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "hisense-south",
+    "triangles": 616,
+    "objects": 7,
+    "zMin": 0.0,
+    "zMax": 164.39999389648438
+  },
+  {
+    "id": "bytedance-houhai",
+    "originRaw": [
+      976.925,
+      563.85
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      1675
+    ],
+    "heightM": 150.0,
+    "members": [
+      {
+        "name": "深圳字节跳动后海中心",
+        "w": 53.48701717566928,
+        "d": 50.720301592653016,
+        "height": 150.0,
+        "cx": 976.9000000000001,
+        "cz": 563.85
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "bytedance-houhai",
+    "triangles": 672,
+    "objects": 10,
+    "zMin": 0.0,
+    "zMax": 154.39999389648438
+  },
+  {
+    "id": "haide-office-wall",
+    "originRaw": [
+      1184.1026739926742,
+      -196.90322344322345
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      902,
+      638,
+      637,
+      899,
+      897,
+      895,
+      635
+    ],
+    "heightM": 188.7,
+    "members": [
+      {
+        "name": "深圳工商银行大厦",
+        "w": 75.65604998037065,
+        "d": 62.56038763760711,
+        "height": 188.7,
+        "cx": 1273.1999999999998,
+        "cz": -19.80000000000001
+      },
+      {
+        "name": "深圳海德酒店",
+        "w": 46.69829873900869,
+        "d": 37.42564488265111,
+        "height": 163.0,
+        "cx": 1066.6,
+        "cz": -91.75
+      },
+      {
+        "name": "鹏润达商业广场西座",
+        "w": 46.62296540173463,
+        "d": 37.71603236222825,
+        "height": 163.0,
+        "cx": 976.1999999999999,
+        "cz": -115.1
+      },
+      {
+        "name": "阳光金融大厦",
+        "w": 62.655708344432014,
+        "d": 31.512608082560064,
+        "height": 150.0,
+        "cx": 1230.0275809177988,
+        "cz": -305.15196581731675
+      },
+      {
+        "name": "五矿金融大厦",
+        "w": 56.581151229872376,
+        "d": 30.676918448604056,
+        "height": 145.6,
+        "cx": 1114.85,
+        "cz": -360.1499999999999
+      },
+      {
+        "name": "大成基金总部大厦",
+        "w": 72.47051523078585,
+        "d": 63.336562226630974,
+        "height": 130.0,
+        "cx": 1305.9890812762144,
+        "cz": -137.82999805217582
+      },
+      {
+        "name": "舜远金融大厦",
+        "w": 49.03397590991091,
+        "d": 36.37841676690027,
+        "height": 119.0,
+        "cx": 1331.3999999999999,
+        "cz": -344.30000000000007
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "haide-office-wall",
+    "triangles": 3902,
+    "objects": 9,
+    "zMin": 0.0,
+    "zMax": 191.89999389648438
+  },
+  {
+    "id": "venture-capital",
+    "originRaw": [
+      640.71,
+      -548.1500000000001
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      630
+    ],
+    "heightM": 202.4,
+    "members": [
+      {
+        "name": "深圳湾创业投资大厦",
+        "w": 58.804156869828375,
+        "d": 57.624569548882505,
+        "height": 202.4,
+        "cx": 560.656800203323,
+        "cz": 639.7407265622517
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "venture-capital",
+    "triangles": 678,
+    "objects": 8,
+    "zMin": 0.0,
+    "zMax": 211.39999389648438
+  },
+  {
+    "id": "rongchao-hq",
+    "originRaw": [
+      1182.9363636363635,
+      -878.9454545454547
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      450
+    ],
+    "heightM": 230.0,
+    "members": [
+      {
+        "name": "荣超高新区联合总部大厦",
+        "w": 76.61542804021519,
+        "d": 64.64705032112795,
+        "height": 230.0,
+        "cx": 1190.7861457705876,
+        "cz": -877.6662851733929
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "rongchao-hq",
+    "triangles": 844,
+    "objects": 10,
+    "zMin": 0.0,
+    "zMax": 233.1999969482422
+  },
+  {
+    "id": "cnooc-twins",
+    "originRaw": [
+      768.9083333333333,
+      560.05
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      620,
+      605
+    ],
+    "heightM": 210.0,
+    "members": [
+      {
+        "name": "中海油大厦A座",
+        "w": 68.11735770795337,
+        "d": 38.45359870347693,
+        "height": 210.0,
+        "cx": -510.45571139099695,
+        "cz": 781.8620942429177
+      },
+      {
+        "name": "中海油大厦B座",
+        "w": 68.94192053149936,
+        "d": 38.47900415263484,
+        "height": 210.0,
+        "cx": -610.8632553935396,
+        "cz": 755.7601126385633
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "cnooc-twins",
+    "triangles": 1420,
+    "objects": 9,
+    "zMin": 0.0,
+    "zMax": 213.1999969482422
+  },
+  {
+    "id": "aerospace-plaza",
+    "originRaw": [
+      1064.45,
+      -231.8125
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      633,
+      631
+    ],
+    "heightM": 232.1,
+    "members": [
+      {
+        "name": "航天科技广场A座",
+        "w": 47.91881673413377,
+        "d": 43.02600379770956,
+        "height": 232.1,
+        "cx": 1060.4,
+        "cz": -278.45000000000005
+      },
+      {
+        "name": "航天科技广场B座",
+        "w": 52.29719108051529,
+        "d": 30.05085364990606,
+        "height": 130.0,
+        "cx": 1068.5500000000002,
+        "cz": -185.20000000000007
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "aerospace-plaza",
+    "triangles": 984,
+    "objects": 10,
+    "zMin": 0.0,
+    "zMax": 235.3000030517578
+  },
+  {
+    "id": "capital-plaza",
+    "originRaw": [
+      1391.275,
+      -121.025
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      896
+    ],
+    "heightM": 261.3,
+    "members": [
+      {
+        "name": "深创投广场",
+        "w": 44.687246516785535,
+        "d": 43.54595272523079,
+        "height": 261.3,
+        "cx": 1391.3000000000002,
+        "cz": -121.0
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "capital-plaza",
+    "triangles": 462,
+    "objects": 8,
+    "zMin": 0.0,
+    "zMax": 274.1000061035156
+  },
+  {
+    "id": "hytera-hq",
+    "originRaw": [
+      756.925,
+      1088.625
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      1541
+    ],
+    "heightM": 258.0,
+    "members": [
+      {
+        "name": "海能达全球总部大厦",
+        "w": 95.41891845960095,
+        "d": 48.20836448641546,
+        "height": 258.0,
+        "cx": 756.9494031699867,
+        "cz": 1088.6200328509121
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "hytera-hq",
+    "triangles": 912,
+    "objects": 10,
+    "zMin": 0.0,
+    "zMax": 264.3999938964844
+  },
+  {
+    "id": "szu-performance",
+    "originRaw": [
+      259.15357142857147,
+      -1802.4214285714286
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      2404
+    ],
+    "heightM": 24.0,
+    "members": [
+      {
+        "name": "深圳大学演会中心",
+        "w": 64.08159578314803,
+        "d": 56.12877262406846,
+        "height": 24.0,
+        "cx": 259.1883106332746,
+        "cz": -1801.976546375395,
+        "heightNote": "OSM 3.2m 为损坏值；沿用页面的 24m，待用户核对"
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "szu-performance",
+    "triangles": 252,
+    "objects": 6,
+    "zMin": 0.0,
+    "zMax": 28.399999618530273
+  },
+  {
+    "id": "poly-complex",
+    "originRaw": [
+      694.1607843137256,
+      67.66127450980392
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      118,
+      117
+    ],
+    "heightM": 35.8,
+    "members": [
+      {
+        "name": "深圳保利剧院",
+        "w": 114.34512768795923,
+        "d": 78.22249975342945,
+        "height": 35.8,
+        "cx": 733.3188682833926,
+        "cz": 103.59740577538248
+      },
+      {
+        "name": "保利文化广场",
+        "w": 269.2319330463531,
+        "d": 122.97337419770501,
+        "height": 25.0,
+        "cx": 684.2754272706663,
+        "cz": 40.34580421665231
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "poly-complex",
+    "triangles": 284,
+    "objects": 9,
+    "zMin": 0.0,
+    "zMax": 36.51599884033203
+  },
+  {
+    "id": "coastal-city",
+    "originRaw": [
+      565.4041666666667,
+      -101.19583333333333
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      119,
+      121
+    ],
+    "heightM": 25.6,
+    "members": [
+      {
+        "name": "海岸城东座",
+        "w": 111.33902508055507,
+        "d": 75.58671506363747,
+        "height": 25.6,
+        "cx": 637.6,
+        "cz": -87.25
+      },
+      {
+        "name": "海岸城西座",
+        "w": 91.64307018791851,
+        "d": 75.75881259980423,
+        "height": 25.6,
+        "cx": 507.00000000000006,
+        "cz": -103.55
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "coastal-city",
+    "triangles": 332,
+    "objects": 7,
+    "zMin": 0.0,
+    "zMax": 30.0
+  },
+  {
+    "id": "cr-neighbours",
+    "originRaw": [
+      1435.5613095238095,
+      180.0404761904762
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      422,
+      670
+    ],
+    "heightM": 153.7,
+    "members": [
+      {
+        "name": "万家大厦",
+        "w": 54.17818850785898,
+        "d": 49.80062408348863,
+        "height": 145.0,
+        "cx": 1425.0032761814812,
+        "cz": 236.0827316647899
+      },
+      {
+        "name": "宝格丽",
+        "w": 48.596409870972366,
+        "d": 36.1384876001012,
+        "height": 153.7,
+        "cx": 1443.501295196978,
+        "cz": 126.27490555855368
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "cr-neighbours",
+    "triangles": 1074,
+    "objects": 7,
+    "zMin": 0.0,
+    "zMax": 154.1999969482422
+  },
+  {
+    "id": "xiaomi-shenzhen",
+    "originRaw": [
+      1639.675,
+      154.675
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      1670
+    ],
+    "heightM": 41.6,
+    "members": [
+      {
+        "name": "深圳小米大厦",
+        "w": 88.32043931050163,
+        "d": 47.12997390520286,
+        "height": 41.6,
+        "cx": 1640.3090963399782,
+        "cz": 152.36000358951344
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "xiaomi-shenzhen",
+    "triangles": 756,
+    "objects": 9,
+    "zMin": 0.0,
+    "zMax": 42.099998474121094
+  },
+  {
+    "id": "dajia",
+    "originRaw": [
+      861.7249999999999,
+      313.0083333333333
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      880
+    ],
+    "heightM": 273.0,
+    "members": [
+      {
+        "name": "",
+        "w": 50.77977609617193,
+        "d": 50.094263253159056,
+        "height": 273.0,
+        "cx": 861.6373196448391,
+        "cz": 313.0563540510544,
+        "heightNote": "沿用页面已采用的官方口径 273m/57层；OSM 为 314m/62层"
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "dajia",
+    "triangles": 600,
+    "objects": 4,
+    "zMin": 0.0,
+    "zMax": 275.3999938964844
+  },
+  {
+    "id": "lenovo-houhai",
+    "originRaw": [
+      958.0166666666669,
+      123.43333333333334
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      878,
+      879
+    ],
+    "heightM": 203.5,
+    "members": [
+      {
+        "name": "联想后海中心A座",
+        "w": 61.15926244345076,
+        "d": 49.22894069813228,
+        "height": 203.5,
+        "cx": 902.6504223820901,
+        "cz": 129.53825987168818
+      },
+      {
+        "name": "联想后海中心B座",
+        "w": 68.63778337075166,
+        "d": 46.73995340531883,
+        "height": 132.7,
+        "cx": 1006.3014666519192,
+        "cz": 113.97016701692297
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "lenovo-houhai",
+    "triangles": 1270,
+    "objects": 10,
+    "zMin": 0.0,
+    "zMax": 206.6999969482422
+  },
+  {
+    "id": "andaz",
+    "originRaw": [
+      1612.79,
+      240.16
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      421
+    ],
+    "heightM": 246.0,
+    "members": [
+      {
+        "name": "瑞府",
+        "w": 39.48001890519092,
+        "d": 39.13465616423014,
+        "height": 246.0,
+        "cx": 1616.0203737732302,
+        "cz": 240.9964418458969
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "andaz",
+    "triangles": 276,
+    "objects": 8,
+    "zMin": 0.0,
+    "zMax": 250.39999389648438
+  },
+  {
+    "id": "shenzhen-bay-one",
+    "originRaw": [
+      1123.5916666666667,
+      1155.6375
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      476,
+      477,
+      478,
+      479,
+      486,
+      487
+    ],
+    "heightM": 341.4,
+    "members": [
+      {
+        "name": "T7",
+        "w": 60.317164155558885,
+        "d": 50.00009708221933,
+        "height": 341.4,
+        "cx": 1096.25,
+        "cz": 1274.3999999999999
+      },
+      {
+        "name": "T8",
+        "w": 31.48348386607131,
+        "d": 27.745995092171825,
+        "height": 125.4,
+        "cx": 1192.05,
+        "cz": 1286.0
+      },
+      {
+        "name": "T5",
+        "w": 38.312402046722354,
+        "d": 33.60014656828639,
+        "height": 196.0,
+        "cx": 1089.65,
+        "cz": 1136.7999999999997
+      },
+      {
+        "name": "T6",
+        "w": 33.59999999999991,
+        "d": 27.699999999999818,
+        "height": 136.0,
+        "cx": 1086.75,
+        "cz": 1190.7
+      },
+      {
+        "name": "T4",
+        "w": 41.18330564861276,
+        "d": 21.711640561066247,
+        "height": 84.5,
+        "cx": 1189.15,
+        "cz": 1023.9499999999998
+      },
+      {
+        "name": "T2",
+        "w": 38.50818099189689,
+        "d": 27.40456160377903,
+        "height": 125.4,
+        "cx": 1086.05,
+        "cz": 1022.1999999999999
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "shenzhen-bay-one",
+    "triangles": 1796,
+    "objects": 10,
+    "zMin": 0.0,
+    "zMax": 350.3999938964844
+  },
+  {
+    "id": "tencent-hq",
+    "originRaw": [
+      824.3,
+      -2218.9
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [],
+    "heightM": 193.2,
+    "members": [
+      {
+        "name": "腾讯大厦",
+        "w": 78.0,
+        "d": 40.0,
+        "height": 193.2,
+        "cx": 824.3,
+        "cz": -2218.9
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "tencent-hq",
+    "triangles": 152,
+    "objects": 4,
+    "zMin": 0.0,
+    "zMax": 212.5
+  },
+  {
+    "id": "mixc",
+    "originRaw": [
+      1441.3,
+      544.6
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [],
+    "heightM": 28,
+    "members": [
+      {
+        "name": "万象城示意",
+        "w": 90,
+        "d": 48,
+        "height": 22,
+        "cx": 1371.3,
+        "cz": 524.6
+      },
+      {
+        "name": "万象城示意",
+        "w": 70,
+        "d": 40,
+        "height": 28,
+        "cx": 1471.3,
+        "cz": 514.6
+      },
+      {
+        "name": "万象城示意",
+        "w": 80,
+        "d": 36,
+        "height": 16,
+        "cx": 1421.3,
+        "cz": 584.6
+      },
+      {
+        "name": "万象城示意",
+        "w": 40,
+        "d": 32,
+        "height": 18,
+        "cx": 1501.3,
+        "cz": 580.6
+      }
+    ],
+    "blenderVersion": "5.0.1",
+    "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
+    "file": "mixc",
+    "triangles": 596,
+    "objects": 6,
+    "zMin": 0.0,
+    "zMax": 28.5
+  },
+  {
+    "id": "china-resources",
+    "kept": true,
+    "triangles": 36036,
+    "originRaw": [
+      1525.1735294117648,
+      281.1411764705882
     ],
     "heightM": 392.5,
-    "caution": "392.5m height, centre and radial envelope preserved from supplied baseline. 56-to-28 framework based on KPF design description. Panel layouts, section sizes and door positions are architectural interpretation, not measured reconstruction.",
-    "blenderVersion": "5.0.1"
+    "note": "Existing Blender asset retained; not regenerated."
   }
 ]

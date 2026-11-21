@@ -13,7 +13,7 @@
 - `src/yuehai.js` — 场景、建筑、夜景、标签调度
 - `src/yuehai.roam.js` — 独立自由漫游控制器（WASD / 拖动转向 / 退出恢复）
 - `src/yuehai.lod.js` — 静态分块合批的普通楼近/中/远附加几何 LOD
-- `src/yuehai.refined.js`、`landmarks/` — 两座 Blender 资产及日夜/环境接入，JSON与适配器内联
+- `src/yuehai.refined.js`、`landmarks/` — 标名地标的 Blender 资产及日夜/环境接入，JSON 与适配器内联。腾讯滨海已重做；华润沿用原资产。说明见 `landmarks/ASSET_NOTES.md`。
 - `src/yuehai.css` — UI / 标签样式
 - `src/yuehai.shell.html` — HTML 外壳与设置面板
 - `data/yuehai-osm.json` — OSM 建筑/道路源数据
@@ -38,7 +38,7 @@ SHA256：`9274bbcec8d96168626c732b5d31c775aa8cfb7eaa0599bec0c175908a2c1ce2`
 
 - 深圳大学校园统一化已回退：`szu-campus` 被禁用，演会中心 2404 使用原版本。
 - 全城住宅统一化已回退：`city-residential` 被禁用，住宅使用主站通用外观。
-- 已建精模/准精模保留。
+- 标名地标改为 Blender 资产，旧的专用 JS 构建体已停用，避免重叠。深圳大学校园和全城住宅仍是通用楼。
 - 标签系统包含：
   - 一级/二级/三级标签；
   - 相机距离分档、最多 14 个；

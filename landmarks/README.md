@@ -1,21 +1,18 @@
-# 本包内的 Blender 地标
+# 标名地标的 Blender 资产
 
-- `assets/tencent-binhai.blend`、`assets/china-resources.blend`：Blender 5.0.1 可编辑源模型。
-- `assets/*.glb`：Y-up 米制的独立建筑组，不含外部纹理；浏览器运行不直接读取它们。
-- `assets/*.inline.json`：与资产几何对应的离线运行数据。
-- `inline-loader.js`：r128 适配器，无 GLTFLoader / 网络请求；由上级 build_page.py 内联。
-- `manifest.json`：原始资产统计、原点与准确性边界。
-- `generate_landmarks.py`、`source-buildings.json`：原生成脚本与原始三栋 OSM 轮廓快照。
-- `ASSET_NOTES.md`：制作方完整交接档案，其中预览、独立测试脚本、报告路径不是本包文件索引。
+- `assets/<id>.blend`：Blender 5.0.1 可编辑源。中国华润大厦沿用上一版，没有重新生成。
+- `assets/*.glb`：Y-up 米制建筑组，不含外部图像。浏览器不读取 GLB。
+- `assets/*.inline.json`：离线运行几何，格式 `yuehai-inline-mesh-v1`。
+- `inline-loader.js`：Three.js r128 适配器，无 GLTFLoader、无网络请求。由 `scripts/build_page.py` 内联。
+- `generate_landmarks.py`：本轮的可复现生成脚本。读取 `data/yuehai-osm.json`（可用环境变量 `YUEHAI_OSM` 改路径）。`ONLY=tencent-binhai` 只生成一栋。
+- `generate_legacy.py`：上一版只生成腾讯滨海和华润的脚本，保留作对照，不要再用它覆盖新资产。
+- `manifest.json`：每份资产的三角面、原点和高度。
+- `ASSET_NOTES.md`：每栋建筑的来源、简化和近似说明。
 
-本包未收录制作过程照片/第三方参考图，也未用它们作纹理；不包含制作方预览PNG或临时备份 .blend1。
-设计方参考链接及造型边界见交接档案。所有门窗/构件为解释性外观精修，不是测绘/BIM。
+相距超过约 450 米的同一地标会分成 `id-1`、`id-2` 两个文件，元数据 id 仍相同，拾取仍是同一地标。
 
-运行映射：原点 raw X/Z 乘 .058、地坪 .09；比例(.058,.112,.058)只应用一次，勿再旋转已烘焙 OBB。
+运行映射只做一次：`position=(rawX*.058,.09,rawZ*.058)`，`scale=(.058,.112,.058)`。OBB 朝向已经烘焙进顶点，不要再旋转。
 
-如从生成脚本重建，需要 Blender 5.0.1 或其 bpy 环境；脚本会覆盖 assets/ 内成品。
-**手工编辑 .blend 后不要直接重跑生成脚本，否则会覆盖修改。** 现有脚本是程序化生成，不是任意已编辑 .blend 的自动导出器。
-手改 .blend 不会自动更新 .glb/.inline.json，网页只读取构建时内联的 JSON。
-若使用原生成脚本，输入路径缺失时会回退到同目录 source-buildings.json；也可设置 YUEHAI_BASE 指向原包。
+重新运行生成脚本会覆盖除华润以外的 `.blend` / `.glb` / `.inline.json`。手改 `.blend` 不会自动写回网页；网页只使用构建时内联的 JSON。
 
-上级 README 给出本次整合后的控制方式、明确限制和浏览器验收路线。
+本目录不收录参考照片，也不使用第三方模型。

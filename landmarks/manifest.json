@@ -1,0 +1,111 @@
+[
+  {
+    "id": "tencent-binhai",
+    "triangles": 28748,
+    "objects": 25,
+    "materials": 7,
+    "glbBytes": 1570952,
+    "inlineBytes": 1384144,
+    "boundsBlenderM": {
+      "min": [
+        -59.22060775756836,
+        -59.8126220703125,
+        0.0
+      ],
+      "max": [
+        66.884765625,
+        66.53964233398438,
+        245.8000030517578
+      ]
+    },
+    "originRaw": [
+      371.58649574693254,
+      -605.0937312176508
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "buildings": [
+      {
+        "cx": 387.7635799814802,
+        "cz": -572.4196948085225,
+        "w": 95.4267512218218,
+        "d": 32.45389601694177,
+        "angle": -0.20809033924674808,
+        "height": 245.8,
+        "levels": 50,
+        "name": "南塔"
+      },
+      {
+        "cx": 355.40941151238496,
+        "cz": -637.767767626779,
+        "w": 79.30566634391187,
+        "d": 30.60212428920164,
+        "angle": 2.6371975095325286,
+        "height": 194.8,
+        "levels": 38,
+        "name": "北塔"
+      }
+    ],
+    "baselineBuildingIndices": [
+      602,
+      603
+    ],
+    "bridgeLevelsM": [
+      {
+        "name": "Podium_link",
+        "bottom": 14.748000000000001,
+        "top": 29.496000000000002
+      },
+      {
+        "name": "Health_link",
+        "bottom": 103.236,
+        "top": 122.9
+      },
+      {
+        "name": "Knowledge_link",
+        "bottom": 172.06,
+        "top": 186.80800000000002
+      }
+    ],
+    "caution": "Building heights/OBB from supplied OSM and existing JS. Mid/top bridge levels interpret B+H L21-25/L35-38 using south tower average floor height; lowest link L3-6 is illustrative. Not survey dimensions.",
+    "blenderVersion": "5.0.1"
+  },
+  {
+    "id": "china-resources",
+    "triangles": 36036,
+    "objects": 15,
+    "materials": 7,
+    "glbBytes": 1975348,
+    "inlineBytes": 1727739,
+    "boundsBlenderM": {
+      "min": [
+        -37.18912887573242,
+        -37.18912887573242,
+        0.0
+      ],
+      "max": [
+        37.18912887573242,
+        37.18912887573242,
+        392.5
+      ]
+    },
+    "originRaw": [
+      1525.1735294117648,
+      281.1411764705882
+    ],
+    "scale": [
+      0.058,
+      0.112,
+      0.058
+    ],
+    "baselineBuildingIndices": [
+      423
+    ],
+    "heightM": 392.5,
+    "caution": "392.5m height, centre and radial envelope preserved from supplied baseline. 56-to-28 framework based on KPF design description. Panel layouts, section sizes and door positions are architectural interpretation, not measured reconstruction.",
+    "blenderVersion": "5.0.1"
+  }
+]

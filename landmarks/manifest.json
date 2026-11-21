@@ -36,8 +36,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "tencent-binhai",
-    "triangles": 2158,
-    "objects": 18,
+    "triangles": 5326,
+    "objects": 23,
     "zMin": 0.0,
     "zMax": 246.3000030517578
   },
@@ -80,10 +80,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "baidu-intl",
-    "triangles": 1248,
-    "objects": 11,
+    "triangles": 4220,
+    "objects": 12,
     "zMin": 0.0,
-    "zMax": 184.1999969482422
+    "zMax": 190.9550018310547
   },
   {
     "id": "software-base",
@@ -248,7 +248,7 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "software-base-1",
-    "triangles": 3440,
+    "triangles": 11752,
     "objects": 12,
     "zMin": 0.0,
     "zMax": 90.0999984741211
@@ -290,8 +290,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "software-base-2",
-    "triangles": 348,
-    "objects": 9,
+    "triangles": 1552,
+    "objects": 10,
     "zMin": 0.0,
     "zMax": 70.9000015258789
   },
@@ -332,7 +332,7 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "spring-cocoon",
-    "triangles": 2210,
+    "triangles": 1898,
     "objects": 3,
     "zMin": 0.0,
     "zMax": 52.77794647216797
@@ -488,7 +488,7 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "szbay-port-2",
-    "triangles": 256,
+    "triangles": 1096,
     "objects": 5,
     "zMin": 0.0,
     "zMax": 13.300000190734863
@@ -521,10 +521,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "excellence-houhai",
-    "triangles": 748,
-    "objects": 8,
+    "triangles": 2428,
+    "objects": 9,
     "zMin": 0.0,
-    "zMax": 213.1999969482422
+    "zMax": 221.5500030517578
   },
   {
     "id": "youxian-tower",
@@ -554,8 +554,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "youxian-tower",
-    "triangles": 560,
-    "objects": 7,
+    "triangles": 984,
+    "objects": 8,
     "zMin": 0.0,
     "zMax": 90.0999984741211
   },
@@ -587,10 +587,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "ketong-tower",
-    "triangles": 558,
+    "triangles": 1192,
     "objects": 9,
     "zMin": 0.0,
-    "zMax": 104.0
+    "zMax": 106.0
   },
   {
     "id": "bupt-tower",
@@ -620,8 +620,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "bupt-tower",
-    "triangles": 618,
-    "objects": 7,
+    "triangles": 1192,
+    "objects": 8,
     "zMin": 0.0,
     "zMax": 100.5
   },
@@ -653,8 +653,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "caixun-tower",
-    "triangles": 672,
-    "objects": 7,
+    "triangles": 1704,
+    "objects": 8,
     "zMin": 0.0,
     "zMax": 160.5
   },
@@ -695,8 +695,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "lite3-1",
-    "triangles": 1344,
-    "objects": 7,
+    "triangles": 2696,
+    "objects": 8,
     "zMin": 0.0,
     "zMax": 99.5
   },
@@ -728,8 +728,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "lite3-2",
-    "triangles": 468,
-    "objects": 7,
+    "triangles": 1512,
+    "objects": 8,
     "zMin": 0.0,
     "zMax": 150.5
   },
@@ -761,10 +761,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "yihua-tower",
-    "triangles": 700,
-    "objects": 8,
+    "triangles": 1760,
+    "objects": 9,
     "zMin": 0.0,
-    "zMax": 150.1999969482422
+    "zMax": 155.0850067138672
   },
   {
     "id": "china-overseas",
@@ -794,10 +794,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "china-overseas",
-    "triangles": 234,
+    "triangles": 1192,
     "objects": 9,
     "zMin": 0.0,
-    "zMax": 103.19999694824219
+    "zMax": 106.0
   },
   {
     "id": "tsinghua-research",
@@ -836,8 +836,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "tsinghua-research",
-    "triangles": 924,
-    "objects": 8,
+    "triangles": 2396,
+    "objects": 9,
     "zMin": 0.0,
     "zMax": 102.9000015258789
   },
@@ -905,8 +905,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "innovation-center",
-    "triangles": 2334,
-    "objects": 10,
+    "triangles": 8564,
+    "objects": 11,
     "zMin": 0.0,
     "zMax": 320.0
   },
@@ -947,10 +947,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "venture-east-wall",
-    "triangles": 1040,
-    "objects": 9,
+    "triangles": 2992,
+    "objects": 10,
     "zMin": 0.0,
-    "zMax": 166.10000610351562
+    "zMax": 171.8594970703125
   },
   {
     "id": "venture-neighbors",
@@ -1007,8 +1007,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "venture-neighbors",
-    "triangles": 2086,
-    "objects": 7,
+    "triangles": 5356,
+    "objects": 8,
     "zMin": 0.0,
     "zMax": 130.5
   },
@@ -1040,10 +1040,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "xunlei-tower",
-    "triangles": 760,
-    "objects": 9,
+    "triangles": 1468,
+    "objects": 10,
     "zMin": 0.0,
-    "zMax": 122.19999694824219
+    "zMax": 125.54499816894531
   },
   {
     "id": "hisense-south",
@@ -1073,10 +1073,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "hisense-south",
-    "triangles": 616,
-    "objects": 7,
+    "triangles": 1852,
+    "objects": 9,
     "zMin": 0.0,
-    "zMax": 164.39999389648438
+    "zMax": 166.39999389648438
   },
   {
     "id": "bytedance-houhai",
@@ -1106,10 +1106,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "bytedance-houhai",
-    "triangles": 672,
+    "triangles": 1652,
     "objects": 10,
     "zMin": 0.0,
-    "zMax": 154.39999389648438
+    "zMax": 156.39999389648438
   },
   {
     "id": "haide-office-wall",
@@ -1193,10 +1193,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "haide-office-wall",
-    "triangles": 3902,
-    "objects": 9,
+    "triangles": 11772,
+    "objects": 10,
     "zMin": 0.0,
-    "zMax": 191.89999389648438
+    "zMax": 199.07850646972656
   },
   {
     "id": "venture-capital",
@@ -1226,8 +1226,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "venture-capital",
-    "triangles": 678,
-    "objects": 8,
+    "triangles": 2256,
+    "objects": 9,
     "zMin": 0.0,
     "zMax": 211.39999389648438
   },
@@ -1259,10 +1259,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "rongchao-hq",
-    "triangles": 844,
-    "objects": 10,
+    "triangles": 2644,
+    "objects": 9,
     "zMin": 0.0,
-    "zMax": 233.1999969482422
+    "zMax": 242.64999389648438
   },
   {
     "id": "cnooc-twins",
@@ -1301,10 +1301,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "cnooc-twins",
-    "triangles": 1420,
-    "objects": 9,
+    "triangles": 4556,
+    "objects": 10,
     "zMin": 0.0,
-    "zMax": 213.1999969482422
+    "zMax": 221.5500030517578
   },
   {
     "id": "aerospace-plaza",
@@ -1343,10 +1343,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "aerospace-plaza",
-    "triangles": 984,
-    "objects": 10,
+    "triangles": 3716,
+    "objects": 11,
     "zMin": 0.0,
-    "zMax": 235.3000030517578
+    "zMax": 244.86549377441406
   },
   {
     "id": "capital-plaza",
@@ -1376,8 +1376,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "capital-plaza",
-    "triangles": 462,
-    "objects": 8,
+    "triangles": 2280,
+    "objects": 9,
     "zMin": 0.0,
     "zMax": 274.1000061035156
   },
@@ -1409,8 +1409,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "hytera-hq",
-    "triangles": 912,
-    "objects": 10,
+    "triangles": 2784,
+    "objects": 9,
     "zMin": 0.0,
     "zMax": 264.3999938964844
   },
@@ -1443,10 +1443,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "szu-performance",
-    "triangles": 252,
-    "objects": 6,
+    "triangles": 692,
+    "objects": 7,
     "zMin": 0.0,
-    "zMax": 28.399999618530273
+    "zMax": 30.399999618530273
   },
   {
     "id": "poly-complex",
@@ -1485,7 +1485,7 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "poly-complex",
-    "triangles": 284,
+    "triangles": 864,
     "objects": 9,
     "zMin": 0.0,
     "zMax": 36.51599884033203
@@ -1527,10 +1527,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "coastal-city",
-    "triangles": 332,
-    "objects": 7,
+    "triangles": 1516,
+    "objects": 8,
     "zMin": 0.0,
-    "zMax": 30.0
+    "zMax": 32.0
   },
   {
     "id": "cr-neighbours",
@@ -1569,8 +1569,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "cr-neighbours",
-    "triangles": 1074,
-    "objects": 7,
+    "triangles": 3328,
+    "objects": 8,
     "zMin": 0.0,
     "zMax": 154.1999969482422
   },
@@ -1602,8 +1602,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "xiaomi-shenzhen",
-    "triangles": 756,
-    "objects": 9,
+    "triangles": 860,
+    "objects": 8,
     "zMin": 0.0,
     "zMax": 42.099998474121094
   },
@@ -1636,10 +1636,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "dajia",
-    "triangles": 600,
-    "objects": 4,
+    "triangles": 1680,
+    "objects": 5,
     "zMin": 0.0,
-    "zMax": 275.3999938964844
+    "zMax": 277.0
   },
   {
     "id": "lenovo-houhai",
@@ -1678,10 +1678,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "lenovo-houhai",
-    "triangles": 1270,
-    "objects": 10,
+    "triangles": 3840,
+    "objects": 11,
     "zMin": 0.0,
-    "zMax": 206.6999969482422
+    "zMax": 214.6925048828125
   },
   {
     "id": "andaz",
@@ -1711,10 +1711,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "andaz",
-    "triangles": 276,
-    "objects": 8,
+    "triangles": 2280,
+    "objects": 9,
     "zMin": 0.0,
-    "zMax": 250.39999389648438
+    "zMax": 252.39999389648438
   },
   {
     "id": "shenzhen-bay-one",
@@ -1789,8 +1789,8 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "shenzhen-bay-one",
-    "triangles": 1796,
-    "objects": 10,
+    "triangles": 9240,
+    "objects": 9,
     "zMin": 0.0,
     "zMax": 350.3999938964844
   },
@@ -1820,10 +1820,10 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "tencent-hq",
-    "triangles": 152,
-    "objects": 4,
+    "triangles": 240,
+    "objects": 5,
     "zMin": 0.0,
-    "zMax": 212.5
+    "zMax": 213.1999969482422
   },
   {
     "id": "mixc",
@@ -1875,7 +1875,7 @@
     "blenderVersion": "5.0.1",
     "caution": "OSM footprint and height unless heightNote says otherwise. Façade modules, crowns and link floors marked approximate in landmarks/ASSET_NOTES.md. Not a survey.",
     "file": "mixc",
-    "triangles": 596,
+    "triangles": 2360,
     "objects": 6,
     "zMin": 0.0,
     "zMax": 28.5

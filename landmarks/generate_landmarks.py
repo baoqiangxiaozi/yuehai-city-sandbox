@@ -29,13 +29,14 @@ TAU = math.tau
 
 # color, metalness, roughness, night
 MATS = {
-    'glass': ('#8ea6a8', 0.42, 0.24, False),
-    'glass_alt': ('#6e908a', 0.36, 0.28, False),
-    'metal': ('#c2cac3', 0.82, 0.30, False),
-    'bronze': ('#8d6a3e', 0.70, 0.36, False),
-    'stone': ('#3c4b42', 0.04, 0.84, False),
-    'roof': ('#18241e', 0.22, 0.68, False),
-    'dark': ('#4a4036', 0.48, 0.46, False),
+    # Glass stays light enough that mullions and the dark links read in daylight.
+    'glass': ('#c5d2d0', 0.22, 0.16, False),
+    'glass_alt': ('#9eb6b0', 0.20, 0.22, False),
+    'metal': ('#d5ddd6', 0.72, 0.28, False),
+    'bronze': ('#c9a15a', 0.62, 0.34, False),
+    'stone': ('#6d746c', 0.04, 0.78, False),
+    'roof': ('#2a3330', 0.18, 0.62, False),
+    'dark': ('#3e3832', 0.35, 0.48, False),
     'white': ('#e4ebe6', 0.12, 0.38, False),
     'night': ('#2a2418', 0.05, 0.45, True),
 }
@@ -214,6 +215,58 @@ def rounded_ring(w, d, rad, segs=3):
     return ring
 
 
+def curtain(B, xf, w, d, h, style, taper):
+    """Long-face mullions and floor rails. Not a survey of the real module."""
+    floor = style.get('floor') or 4.2
+    base = style.get('pilotis', 0) or 0
+    top = h - 1.0
+    if top - base < 8:
+        return
+    # Module is coarser than a real curtain wall so the grid still reads when
+    # a whole tower fits in one sandbox frame. Not a measured façade module.
+    rows = max(3, min(36, int((top - base) / max(floor, 6.5))))
+    cols = max(4, min(14, int(w / max(style.get('fin', 6.5), 6.5))))
+    depth = max(style.get('fin_d', 0.7), 0.65)
+    rail_h = 0.9
+    for k in range(1, rows + 1):
+        z = base + (top - base) * k / (rows + 1)
+        shrink = 1 - (1 - taper) * (z / h)
+        for side in (-1, 1):
+            B.box('floor_bands:metal', (0, side * (d * shrink / 2 + 0.08), z),
+                  (w * shrink * 0.98, 0.28, rail_h), xf)
+            B.box('floor_bands:metal', (side * (w * shrink / 2 + 0.08), 0, z),
+                  (0.28, d * shrink * 0.96, rail_h), xf)
+    z_mid = (base + top) / 2
+    span_h = top - base - 1
+    for side in (-1, 1):
+        shrink = 1 - (1 - taper) * 0.5
+        for i in range(cols):
+            x = -w / 2 + (i + 0.5) * w / cols
+            B.box('fins:metal', (x * shrink, side * (d * shrink / 2 + depth * 0.5), z_mid),
+                  (0.62, depth, span_h), xf)
+        cols_s = max(3, min(8, int(d / 8)))
+        for i in range(cols_s):
+            y = -d / 2 + (i + 0.5) * d / cols_s
+            B.box('fins:metal', (side * (w * shrink / 2 + depth * 0.5), y * shrink, z_mid),
+                  (depth, 0.55, span_h), xf)
+    # Night panes sit on the same grid, every other bay, so the lit façade
+    # matches the rails instead of floating as random squares.
+    if h >= 16:
+        for side in (-1, 1):
+            for r in range(1, rows, 2):
+                z = base + (top - base) * (r + 0.5) / (rows + 1)
+                shrink = 1 - (1 - taper) * (z / h)
+                for c in range(0, cols, 2):
+                    x = (-w / 2 + (c + 0.5) * w / cols) * shrink
+                    hw, hz = min(1.6, w / cols * 0.34), min(1.8, max(floor, 6.5) * 0.32)
+                    B.face('night_windows:night', [xf(p) for p in (
+                        (x - hw, side * (d * shrink / 2 + 0.12), z - hz),
+                        (x + hw, side * (d * shrink / 2 + 0.12), z - hz),
+                        (x + hw, side * (d * shrink / 2 + 0.12), z + hz),
+                        (x - hw, side * (d * shrink / 2 + 0.12), z + hz),
+                    )][::1 if side < 0 else -1])
+
+
 def slab(B, spec, origin, style, h):
     """Footprint extrusion plus façade, crown and a short podium. Not a bare box."""
     w, d = spec['w'], spec['d']
@@ -229,8 +282,10 @@ def slab(B, spec, origin, style, h):
     B.box('roof_deck:roof', (0, 0, h - 0.35), (tw * 0.9, td * 0.9, 0.5), xf)
     crown = style.get('crown', 'flat' if h < 80 else 'step')
     if crown == 'step':
-        B.box('crown_step:metal', (0, 0, h * 0.975), (tw * 0.62, td * 0.62, h * 0.05), xf)
-        B.box('crown_screen:metal', (0, 0, h + 1.6), (tw * 0.28, td * 0.28, 3.2), xf)
+        # Setback mechanical penthouse. The setback is large enough to read
+        # at city scale; the exact profile is not a measured crown.
+        B.box('crown_step:metal', (0, 0, h + h * 0.012), (tw * 0.72, td * 0.72, max(2.4, h * 0.028)), xf)
+        B.box('crown_screen:glass_alt', (0, 0, h + max(4.0, h * 0.035)), (tw * 0.42, td * 0.42, max(3.5, h * 0.04)), xf)
     elif crown == 'frame':
         for y in (-td * 0.38, td * 0.38):
             B.box('crown_frame:metal', (0, y, h + 4.5), (tw * 0.78, 0.6, 0.6), xf)
@@ -243,30 +298,15 @@ def slab(B, spec, origin, style, h):
         B.box('crown_slant:metal', (tw * 0.12, 0, h + 3.2), (tw * 0.55, td * 0.7, 6.4), xf)
         B.box('crown_slant:glass_alt', (-tw * 0.16, 0, h + 1.2), (tw * 0.42, td * 0.55, 2.4), xf)
     elif crown == 'box':
-        B.box('crown_box:metal', (0, 0, h + 2.2), (tw * 0.46, td * 0.46, 4.4), xf)
+        B.box('crown_box:metal', (0, 0, h + 2.4), (tw * 0.78, td * 0.62, 1.4), xf)
+        B.box('crown_box:glass_alt', (0, 0, h + 4.6), (tw * 0.48, td * 0.40, 3.6), xf)
     else:
         B.box('parapet:metal', (0, d * 0.46, h - 0.15), (tw * 0.92, 0.4, 1.3), xf)
         B.box('parapet:metal', (0, -d * 0.46, h - 0.15), (tw * 0.92, 0.4, 1.3), xf)
-    # vertical fins on the two long faces, full height, so the shaft is not a flat prism
-    fins = style.get('fins', 'v' if h >= 70 else 'h')
-    if fins in ('v', 'grid') and h >= 18:
-        gap = style.get('fin', 4.2 if w > 40 else 3.4)
-        n = max(4, min(26, int(w / gap)))
-        depth = style.get('fin_d', 0.7 if h >= 120 else 0.45)
-        z0 = style.get('pilotis', 0) + 1
-        for side in (-1, 1):
-            for i in range(n):
-                x = -w / 2 + (i + 0.5) * w / n
-                # alternate depth so a long façade reads as a rhythm, not a comb of identical sticks
-                dep = depth * (1.35 if (i % 5 == 2) else 0.75)
-                B.box('fins:metal', (x * (0.5 + 0.5 * taper), side * (d / 2 + dep / 2), (z0 + h * 0.9) / 2),
-                      (0.22, dep, h * 0.9 - z0), xf)
-    if fins in ('h', 'grid') or h < 70:
-        bands = style.get('bands', 6 if h >= 80 else 4)
-        for k in range(1, bands + 1):
-            z = h * k / (bands + 1)
-            B.box('floor_bands:bronze' if k % 2 == 0 else 'floor_bands:metal',
-                  (0, 0, z), (w * 1.02, d * 1.02, 0.35), xf)
+    # Curtain wall: a floor rail and a mullion on the long faces. Spacing follows
+    # the storey height when it is known, otherwise about 4.2 m. This is a
+    # reading of a glass tower, not a measured module.
+    curtain(B, xf, w, d, h, style, taper)
     belt = style.get('belt')
     if belt:
         B.box('refuge_belt:stone', (0, 0, h * belt), (w * 1.06, d * 1.06, max(1.2, h * 0.018)), xf)
@@ -281,22 +321,6 @@ def slab(B, spec, origin, style, h):
         B.box('podium:stone', (0, 0, pod / 2), (w + style.get('podium_extra', min(10, w * 0.18)),
                                                d + style.get('podium_extra', min(8, d * 0.18)), pod), xf)
         B.box('lobby:glass_alt', (0, -d / 2 - 0.2, pod * 0.45), (w * 0.46, 1.4, pod * 0.72), xf)
-    # sparse night panes on the long faces only
-    if h >= 16:
-        rows = min(10, max(3, floors // 4))
-        cols = min(8, max(3, int(w / 8)))
-        for side in (-1, 1):
-            for r in range(rows):
-                for c in range(cols):
-                    if (r * 5 + c * 3 + (0 if side > 0 else 2)) % 4 == 0:
-                        continue
-                    x = -w * 0.36 + c * (w * 0.72) / max(1, cols - 1)
-                    z = h * (0.18 + 0.7 * (r + 0.5) / rows)
-                    B.face('night_windows:night', [xf(p) for p in (
-                        (x - 0.7, side * (d / 2 + 0.15), z - 0.9),
-                        (x + 0.7, side * (d / 2 + 0.15), z - 0.9),
-                        (x + 0.7, side * (d / 2 + 0.15), z + 0.9),
-                        (x - 0.7, side * (d / 2 + 0.15), z + 0.9))][::1 if side < 0 else -1])
 
 
 def round_tower(B, spec, origin, style, h):
@@ -324,7 +348,17 @@ def round_tower(B, spec, origin, style, h):
             rr = r + 0.45 + y
             return (*bl(cx + math.cos(a) * rr - math.sin(a) * x, cz + math.sin(a) * rr + math.cos(a) * x, origin), z)
         B.box('ribs:metal', (0, 0, h * 0.5), (0.45, 0.55, h * 0.9), xf)
-    B.box('crown_ring:metal', (*bl(cx, cz, origin), h + 1.2), (r * 0.55, r * 0.55, 2.4), None)
+    for k in range(2, rings, 2):
+        t = k / rings
+        rr = rad(t) + 0.15
+        for i in range(seg):
+            a = TAU * (i + 0.5) / seg
+            def ring_xf(p, a=a, rr=rr):
+                x, y, z = p
+                return (*bl(cx + math.cos(a) * (rr + y) - math.sin(a) * x,
+                            cz + math.sin(a) * (rr + y) + math.cos(a) * x, origin), z)
+            B.box('floor_bands:metal', (0, 0, h * t), (1.15, 0.22, 0.22), ring_xf)
+    B.box('crown_ring:metal', (*bl(cx, cz, origin), h + 2.4), (r * 0.62, r * 0.62, 3.2), None)
     # night ring of panes
     for k in range(3, rings - 1, 2):
         t = k / rings
@@ -411,7 +445,10 @@ def build_tencent(B, buildings, origin):
     for spec in specs:
         # Sharp glass slabs. Street photos show a regular curtain-wall grid,
         # not a deep sawtooth; fins stay shallow so the silhouette stays a slab.
-        slab(B, spec, origin, dict(fins='grid', fin=3.6, fin_d=0.42, crown='flat', podium=0, bands=8), spec['height'])
+        levels = spec['levels'] or 50
+        slab(B, spec, origin, dict(
+            fins='grid', fin=3.6, fin_d=0.38, crown='flat', podium=0,
+            floor=spec['height'] / levels), spec['height'])
         xf = frame_xf(spec, origin)
         B.box('lobby:glass_alt', (0, 0, 7), (spec['w'] * 0.62, spec['d'] * 0.7, 14), xf)
     south, north = specs
@@ -426,12 +463,17 @@ def build_tencent(B, buildings, origin):
     )
     for name, z0, z1 in links:
         xf, dist = add_span(B, name + ':dark', origin, south, north, z0, z1, 42.0, 30.0)
-        # bronze rim so the bar reads as a framed volume, not a hole in the towers
+        # Bronze frame, proud of the dark bar, so each link reads against the glass.
         L = dist + 30
-        for y in (-21.4, 21.4):
-            B.box(name + '_rim:bronze', (0, y, z0), (L, 0.8, 0.8), xf)
-            B.box(name + '_rim:bronze', (0, y, z1), (L, 0.8, 0.8), xf)
-        B.box(name + '_terrace:stone', (0, 0, z1 + 0.45), (L * 0.72, 28, 0.7), xf)
+        for y in (-21.8, 21.8):
+            B.box(name + '_rim:bronze', (0, y, z0), (L, 2.2, 2.2), xf)
+            B.box(name + '_rim:bronze', (0, y, z1), (L, 2.2, 2.2), xf)
+        for x in (-L * 0.5, L * 0.5):
+            for y in (-21.8, 21.8):
+                B.box(name + '_post:bronze', (x, y, (z0 + z1) / 2), (2.2, 2.2, (z1 - z0) + 2.4), xf)
+        for y in (-20.4, 20.4):
+            B.box(name + '_glass:glass', (0, y, (z0 + z1) / 2), (L * 0.84, 0.35, (z1 - z0) * 0.62), xf)
+        B.box(name + '_terrace:stone', (0, 0, z1 + 0.55), (L * 0.72, 30, 0.8), xf)
         B.face('night_bridge:night', [xf(p) for p in (
             (-L * 0.4, -20.6, z0 + 1.2), (L * 0.4, -20.6, z0 + 1.2),
             (L * 0.4, -20.6, z0 + 2.4), (-L * 0.4, -20.6, z0 + 2.4))])
@@ -476,7 +518,7 @@ def build_cocoon(B, buildings, origin):
         prev = None
         for i in range(nu + 1):
             p, r, u, v = pt(i, j)
-            if r > 0.98 or oculus(u, v, p[2]):
+            if r > 0.80 or p[2] < 4 or oculus(u, v, p[2]):
                 prev = None
                 continue
             if prev is not None:
@@ -486,7 +528,7 @@ def build_cocoon(B, buildings, origin):
         prev = None
         for j in range(nv + 1):
             p, r, u, v = pt(i, j)
-            if r > 0.98 or oculus(u, v, p[2]):
+            if r > 0.80 or p[2] < 4 or oculus(u, v, p[2]):
                 prev = None
                 continue
             if prev is not None:
@@ -605,16 +647,17 @@ def build_anchor_shuttle(B, origin, h, w, d):
         z = h * k / 10
         kw = 1 - 0.28 * (z / h)
         B.box('horizontal_fins:metal', (0, 0, z), (w * kw * 1.04, d * 1.05, 0.45), xf)
-    # arched crown, published roof-garden structure about 19.3 m
-    nx = 10
+    # Closed arch segments. A single open skin read as floating chips once
+    # back faces were culled. 19.3 m is the published roof-garden height.
+    B.box('roof_garden_beam:metal', (0, 0, h + 1.1), (w * 0.50, d * 0.62, 2.2), xf)
+    nx = 8
     for i in range(nx):
-        quad = []
-        for ii, side in ((i, -1), (i + 1, -1), (i + 1, 1), (i, 1)):
-            u = ii / nx
-            x = -w * 0.22 + w * 0.44 * u
-            z = h + 19.3 * math.sin(math.pi * u)
-            quad.append(xf((x, side * d * 0.28, z)))
-        B.face('roof_garden:glass_alt', quad)
+        u0, u1 = i / nx, (i + 1) / nx
+        z0 = h + 19.3 * math.sin(math.pi * u0)
+        z1 = h + 19.3 * math.sin(math.pi * u1)
+        x = -w * 0.22 + w * 0.44 * (u0 + u1) / 2
+        B.box('roof_garden:glass_alt', (x, 0, (z0 + z1) / 2),
+              (w * 0.44 / nx + 0.6, d * 0.46, max(2.6, abs(z1 - z0) + 1.4)), xf)
     B.box('podium:stone', (0, 0, 6), (w * 1.15, d * 1.25, 12), xf)
     return spec
 

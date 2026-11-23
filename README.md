@@ -186,17 +186,17 @@ python scripts/build_page.py
 页面上每一处有具体建筑的标名地标都换成了 Blender 资产，挂在 `buildingsGroup` 上，并关掉了原来的专用 JS 构建体，避免新旧几何重叠。科技园片区只有范围标签、没有体量；深圳大学校园仍是通用楼，只单独做了演会中心。这些模型是可编辑的外观，不是 BIM、测绘或施工模型。
 
 - **腾讯滨海大厦已重做**，不再使用上一版的锯齿幕墙、大裙楼和暴露桁架。南塔 245.8 米、北塔 194.8 米仍用 OSM 高度和轮廓，朝向已烘焙。三条连廊是深色带铜框的水平体：低连廊约 22–58 米（按街景，不是“2–5 层”），中连廊取南塔 21–25 层，高连廊取南塔 35–38 层。层位和连廊出挑是近似。幕墙格子按沙盘尺度加粗，不是实测模数。
-- **中国华润大厦保留**上一版 Blender 资产（392.5 米，36036 三角面），本轮没有重新生成。近景里它是收分的深色尖塔；细竖线在日光截图里并不清楚，不能把柱距说成已核对。
-- 其余标名建筑按 OSM 轮廓和高度生成，立面分格、冠部和低层连接体都是近似。百度国际大厦用公开高度替换了 OSM 的 12.8 米占位。腾讯大厦和深圳湾万象城没有 OSM 轮廓，分别是锚点处的梭形示意和低层商业示意。
-- 全部资产合计 158576 三角面。这是几何计数，不是整场景 draw call 或帧率。
+- **中国华润大厦保留**上一版网格（392.5 米，36036 三角面），没有重生成。玻璃和外柱调亮之后，日光近景能看到竖向分格。柱距仍不是测绘值。
+- 其余标名建筑按 OSM 轮廓和高度生成，立面分格、冠部和低层连接体都是近似。百度国际大厦用公开高度替换了 OSM 的 12.8 米占位。腾讯大厦和深圳湾万象城没有 OSM 轮廓，分别是锚点处的梭形示意和低层商业示意。长短边对调时包围盒中心要跟着转，否则竖梃会离开楼体。中海油和留学生创业大厦已按修正后的位置重新看过。
+- 全部资产合计 158338 三角面。这是几何计数，不是整场景 draw call 或帧率，也不能据此说每一栋都是精模。
 - 日夜走 `setNight`，建筑图层关闭时整组隐藏。新材质标记为 `blenderRefined`，不会被全场材质修正覆盖。
 - 模型在漫游起点检查范围内，但**没有逐帧碰撞**。视高固定，可以穿过建筑和水面。
 
 内联数据是米制 Y-up，OBB 朝向已烘焙。运行时只映射一次：`position=(rawX*.058,.09,rawZ*.058)`，`scale=(.058,.112,.058)`。
 `landmarks/inline-loader.js` 和 `landmarks/assets/*.inline.json` 由构建脚本嵌进 HTML，没有 fetch、GLTFLoader 或 CDN。
-重新生成：`/opt/yh/bpyenv/bin/python landmarks/generate_landmarks.py`（会覆盖除华润以外的资产）。来源和逐栋说明见 `landmarks/ASSET_NOTES.md` 与 `docs/验收报告.md`。
+重新生成需要 Blender 5.0.1 的 Python 模块：`python landmarks/generate_landmarks.py`（会覆盖除华润以外的资产；华润只改过材质颜色）。来源和逐栋说明见 `landmarks/ASSET_NOTES.md` 与 `docs/验收报告.md`。
 
-本轮用无头 Chrome 打开 `file://` 页面，并拦截一切非 file/data/blob 请求。近景截图在 `/opt/cursor/artifacts/yuehai-qa/close/`。腾讯双塔加三条连廊的完整侧向画面是 `tencent-binhai-32-a.png` 与 `tencent-binhai-32-b.png`，用的是资产本身的颜色，没有临时改色。无头 SwiftShader 上自动画质掉到了低档，帧率约 2，这不能当成桌面显卡的成绩。细节见 `docs/验收报告.md`。
+本轮用无头 Chrome 打开 `file://` 页面，并拦截一切非 file/data/blob 请求。验收截图在 `/opt/cursor/artifacts/yuehai-qa/final/`。腾讯滨海的正面和斜向是 `tencent-gap.png` 与 `tencent-gap-oblique.png`，城市环境是 `tencent-city.png`。上一轮侧向的 `close/tencent-binhai-32-a.png` 看起来像线框，不再作为验收画面。细节见 `docs/验收报告.md`。
 
 ```bash
 node tests/landmarks.test.js

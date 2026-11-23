@@ -25,6 +25,15 @@
       var mat = new THREE.MeshStandardMaterial({color: spec.color, metalness: spec.metalness, roughness: spec.roughness, envMap: options.envMap || null, envMapIntensity: 1});
       mat.name = data.metadata.id + '-' + key;
       mat.userData.surface = (key === 'metal' || key === 'bronze') ? 'metal' : key;
+      // Opaque on both sides. Inverted winding was culling the wall and leaving
+      // only the mullion cage, which reads as a see-through frame. This is not
+      // the night-window layer and it does not turn the glass into a void.
+      if (key === 'glass' || key === 'glass_alt' || key === 'white') {
+        mat.side = THREE.DoubleSide;
+        mat.transparent = false;
+        mat.opacity = 1;
+        mat.depthWrite = true;
+      }
       if (spec.night) {
         mat.emissive = new THREE.Color(0xffbf72); mat.emissiveIntensity = 1.5;
         mat.transparent = true; mat.opacity = 0; mat.depthWrite = false;

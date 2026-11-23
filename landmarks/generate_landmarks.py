@@ -30,9 +30,10 @@ TAU = math.tau
 # color, metalness, roughness, night
 MATS = {
     # Glass stays light enough that mullions and the dark links read in daylight.
-    'glass': ('#c5d2d0', 0.22, 0.16, False),
-    'glass_alt': ('#9eb6b0', 0.20, 0.22, False),
-    'metal': ('#d5ddd6', 0.72, 0.28, False),
+    # Low metalness and higher roughness: a solid curtain wall, not a void you see through.
+    'glass': ('#c5d0cc', 0.04, 0.58, False),
+    'glass_alt': ('#9eb6b0', 0.06, 0.5, False),
+    'metal': ('#4a5552', 0.42, 0.48, False),
     'bronze': ('#c9a15a', 0.62, 0.34, False),
     'stone': ('#6d746c', 0.04, 0.78, False),
     'roof': ('#2a3330', 0.18, 0.62, False),
@@ -106,7 +107,7 @@ class Builder:
             me.update()
             bm = bmesh.new()
             bm.from_mesh(me)
-            bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+            _outward_normals(bm)
             bm.to_mesh(me)
             bm.free()
             me.update()
@@ -117,6 +118,47 @@ class Builder:
             ob['material_key'] = mat
             obs.append(ob)
         return obs
+
+
+def _outward_normals(bm):
+    """Weld the shell, then point each connected piece away from its own centre.
+
+    Faces are built from duplicated corners, so a per-face centroid test sees a
+    dot product of zero and leaves inward walls in place. Those walls are culled
+    and the mullion cage on the far side shows through. Twin towers share one
+    mesh, so the centre is computed per welded island and not for the gap.
+    """
+    bmesh.ops.remove_doubles(bm, verts=list(bm.verts), dist=0.02)
+    bmesh.ops.recalc_face_normals(bm, faces=list(bm.faces))
+    seen = set()
+    for seed in list(bm.faces):
+        if seed in seen:
+            continue
+        stack = [seed]
+        island = []
+        while stack:
+            face = stack.pop()
+            if face in seen:
+                continue
+            seen.add(face)
+            island.append(face)
+            for edge in face.edges:
+                for other in edge.link_faces:
+                    if other not in seen:
+                        stack.append(other)
+        verts = {v for face in island for v in face.verts}
+        if not verts:
+            continue
+        cx = sum(v.co.x for v in verts) / len(verts)
+        cy = sum(v.co.y for v in verts) / len(verts)
+        cz = sum(v.co.z for v in verts) / len(verts)
+        acc = 0.0
+        for face in island:
+            c = face.calc_center_median()
+            acc += face.normal.x * (c.x - cx) + face.normal.y * (c.y - cy) + face.normal.z * (c.z - cz)
+        if acc < 0:
+            bmesh.ops.reverse_faces(bm, faces=island)
+    bm.normal_update()
 
 
 def ring_of(b):
@@ -141,8 +183,13 @@ def obb(b):
             best = (w * d, ang, w, d, (max(xs) + min(xs)) / 2, (max(zs) + min(zs)) / 2)
     _, ang, w, d, lx, lz = best
     if w < d:
+        # The centre (lx, lz) is still in the pre-swap frame. Rotating the
+        # stored angle by 90 degrees without rotating that centre parks the
+        # mullions and crown a kilometre off the footprint. The glass shell
+        # uses the ring, so it stayed put and the façade read as a blank slab.
         w, d = d, w
         ang += math.pi / 2
+        lx, lz = lz, -lx
     return dict(
         cx=lx * math.cos(ang) - lz * math.sin(ang),
         cz=lx * math.sin(ang) + lz * math.cos(ang),
@@ -169,11 +216,15 @@ def extrude(B, key, ring, z0, z1, origin, taper=1.0):
     n = len(ring)
     cx = sum(x for x, _ in ring) / n
     cz = sum(z for _, z in ring) / n
+    if isinstance(taper, tuple):
+        kx, kz = taper
+    else:
+        kx = kz = taper
 
-    def conv(x, z, zz, k):
-        return (*bl(cx + (x - cx) * k, cz + (z - cz) * k, origin), zz)
-    a = [conv(x, z, z0, 1) for x, z in ring]
-    b = [conv(x, z, z1, taper) for x, z in ring]
+    def conv(x, z, zz, kx, kz):
+        return (*bl(cx + (x - cx) * kx, cz + (z - cz) * kz, origin), zz)
+    a = [conv(x, z, z0, 1, 1) for x, z in ring]
+    b = [conv(x, z, z1, kx, kz) for x, z in ring]
     B.face(key, a[::-1])
     B.face(key, b)
     for i in range(n):
@@ -282,10 +333,14 @@ def slab(B, spec, origin, style, h):
     B.box('roof_deck:roof', (0, 0, h - 0.35), (tw * 0.9, td * 0.9, 0.5), xf)
     crown = style.get('crown', 'flat' if h < 80 else 'step')
     if crown == 'step':
-        # Setback mechanical penthouse. The setback is large enough to read
-        # at city scale; the exact profile is not a measured crown.
-        B.box('crown_step:metal', (0, 0, h + h * 0.012), (tw * 0.72, td * 0.72, max(2.4, h * 0.028)), xf)
-        B.box('crown_screen:glass_alt', (0, 0, h + max(4.0, h * 0.035)), (tw * 0.42, td * 0.42, max(3.5, h * 0.04)), xf)
+        # Stacked on the roof. The earlier screen sat clear of the parapet and
+        # read as a loose block. The profile itself is still not a measured crown.
+        step_h = max(2.4, h * 0.028)
+        step_z = h + step_h * 0.5 - 0.2
+        B.box('crown_step:metal', (0, 0, step_z), (tw * 0.72, td * 0.72, step_h), xf)
+        screen_h = max(3.2, h * 0.035)
+        screen_z = step_z + step_h * 0.5 + screen_h * 0.5 - 0.35
+        B.box('crown_screen:glass_alt', (0, 0, screen_z), (tw * 0.42, td * 0.42, screen_h), xf)
     elif crown == 'frame':
         for y in (-td * 0.38, td * 0.38):
             B.box('crown_frame:metal', (0, y, h + 4.5), (tw * 0.78, 0.6, 0.6), xf)
@@ -298,8 +353,11 @@ def slab(B, spec, origin, style, h):
         B.box('crown_slant:metal', (tw * 0.12, 0, h + 3.2), (tw * 0.55, td * 0.7, 6.4), xf)
         B.box('crown_slant:glass_alt', (-tw * 0.16, 0, h + 1.2), (tw * 0.42, td * 0.55, 2.4), xf)
     elif crown == 'box':
-        B.box('crown_box:metal', (0, 0, h + 2.4), (tw * 0.78, td * 0.62, 1.4), xf)
-        B.box('crown_box:glass_alt', (0, 0, h + 4.6), (tw * 0.48, td * 0.40, 3.6), xf)
+        lip_h, cap_h = 1.6, 3.2
+        lip_z = h + lip_h * 0.5 - 0.15
+        cap_z = lip_z + lip_h * 0.5 + cap_h * 0.5 - 0.25
+        B.box('crown_box:metal', (0, 0, lip_z), (tw * 0.78, td * 0.62, lip_h), xf)
+        B.box('crown_box:glass_alt', (0, 0, cap_z), (tw * 0.48, td * 0.40, cap_h), xf)
     else:
         B.box('parapet:metal', (0, d * 0.46, h - 0.15), (tw * 0.92, 0.4, 1.3), xf)
         B.box('parapet:metal', (0, -d * 0.46, h - 0.15), (tw * 0.92, 0.4, 1.3), xf)
@@ -513,27 +571,39 @@ def build_cocoon(B, buildings, origin):
             if oculus(u00, v00, p00[2]):
                 continue
             B.face('shell_skin:white', [p00, p10, p11, p01])
-    # ribs
+    ox, oy = bl(cx, cz, origin)
+
+    def inside(p, r, u, v):
+        # Keep the beam under the skin and short of the rim. A beam centred on
+        # the surface sticks out past the shell edge.
+        if r > 0.70 or p[2] < 6 or oculus(u, v, p[2]):
+            return None
+        dx, dy = p[0] - ox, p[1] - oy
+        dist = math.hypot(dx, dy) or 1.0
+        return (p[0] - dx / dist * 2.4, p[1] - dy / dist * 2.4, p[2] - 1.1)
+
     for j in range(0, nv + 1, 1):
         prev = None
         for i in range(nu + 1):
             p, r, u, v = pt(i, j)
-            if r > 0.80 or p[2] < 4 or oculus(u, v, p[2]):
+            q = inside(p, r, u, v)
+            if q is None:
                 prev = None
                 continue
             if prev is not None:
-                _beam(B, 'shell_ribs:white', prev, p, 1.1)
-            prev = p
+                _beam(B, 'shell_ribs:white', prev, q, 0.55)
+            prev = q
     for i in range(0, nu + 1, 2):
         prev = None
         for j in range(nv + 1):
             p, r, u, v = pt(i, j)
-            if r > 0.80 or p[2] < 4 or oculus(u, v, p[2]):
+            q = inside(p, r, u, v)
+            if q is None:
                 prev = None
                 continue
             if prev is not None:
-                _beam(B, 'shell_ribs:white', prev, p, 0.8)
-            prev = p
+                _beam(B, 'shell_ribs:white', prev, q, 0.45)
+            prev = q
     # low plinths so the halls still sit on the ground under the shell
     for spec in specs:
         extrude(B, 'hall_plinth:stone', spec['ring'], 0, 8, origin)
@@ -566,7 +636,9 @@ def build_port(B, buildings, indices, origin):
         specs.append(spec)
         if i == 190:
             extrude(B, 'terminal_wall:glass', spec['ring'], 0, 9, origin)
-            _wave_roof(B, spec, origin, 8.5, spec['height'] + 4)
+            # Crest is raised so the wave reads in a side view. The extra height
+            # is not a surveyed roof dimension.
+            _wave_roof(B, spec, origin, 6.0, spec['height'] + 16)
         elif spec['height'] <= 6:
             extrude(B, 'canopy:roof', spec['ring'], max(0, spec['height'] - 0.6), spec['height'], origin)
             # posts
@@ -640,13 +712,15 @@ def build_anchor_shuttle(B, origin, h, w, d):
                 name='腾讯大厦', pts=4, ring=[
                     (origin[0] - w / 2, origin[1] - d / 2), (origin[0] + w / 2, origin[1] - d / 2),
                     (origin[0] + w / 2, origin[1] + d / 2), (origin[0] - w / 2, origin[1] + d / 2)])
-    # One closed shaft. The long axis tapers (published shuttle / 梭形). Plan is approximate.
-    extrude(B, 'envelope:glass', spec['ring'], 0, h, origin, 0.72)
+    # Long axis tapers to 0.62, short axis only to 0.90, so the shuttle reads
+    # from the long side. 0.72 on both axes was real in the mesh and invisible
+    # in a short-side photo. Plan 78×40 remains approximate.
+    extrude(B, 'envelope:glass', spec['ring'], 0, h, origin, (0.62, 0.90))
     xf = frame_xf(spec, origin)
     for k in range(1, 10):
         z = h * k / 10
-        kw = 1 - 0.28 * (z / h)
-        B.box('horizontal_fins:metal', (0, 0, z), (w * kw * 1.04, d * 1.05, 0.45), xf)
+        kw = 1 - 0.38 * (z / h)
+        B.box('horizontal_fins:metal', (0, 0, z), (w * kw * 1.02, d * 0.96, 0.9), xf)
     # Closed arch segments. A single open skin read as floating chips once
     # back faces were culled. 19.3 m is the published roof-garden height.
     B.box('roof_garden_beam:metal', (0, 0, h + 1.1), (w * 0.50, d * 0.62, 2.2), xf)

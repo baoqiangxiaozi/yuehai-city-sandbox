@@ -1,6 +1,6 @@
 # 粤海：山海之间的科技城（当前主页 · 单文件版）
 
-> v3 新增第一人称自由漫游，v4 增加普通楼程序化附加几何 LOD，并整体接入腾讯滨海/华润两座 Blender 精修资产；入口、键位、距离阈值和限制见根 `README.md`。以下开发历史不作为新功能验收。
+> 下文是开发历史。当前页面已经去掉第一人称漫游，镜头和标名建筑的现状见根 `README.md`。以下内容不作为新功能验收。
 
 > 本文件记录粤海单文件版的实现细节和开发过程。当前可运行入口是根目录的 `index.html`。
 > 本包不含前海升级版（`qianhai.html`、`README-qianhai.md` 等），也不含 `artifacts/` 验收截图；
@@ -1546,7 +1546,7 @@ window.__YUEHAI__.innovation()          // 创新科技中心 311/247 m、1,008 
 - `data/yuehai-osm.json` — 压缩后的投影数据
 - `vendor/three.min.js` — 固定版本 Three.js r128，构建时内联进 `index.html`
 - `scripts/build_page.py` — 把数据、源码和 vendor 合成单文件
-- `src/` — 可维护的 CSS / HTML / JS 源片段，含新增 `yuehai.roam.js` 自由漫游控制器
+- `src/` — 可维护的 CSS / HTML / JS 源片段。当前页面没有第一人称漫游控制器。
 - `README.md` — 本包实际文件与打开 / 构建方式
 
 本包不含 `scripts/build_yuehai_data.py`，也不含前海版文件或 `artifacts/` 截图。

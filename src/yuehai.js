@@ -1134,111 +1134,6 @@ class OrbitControls {
   }
 }
 const controls = new OrbitControls(camera, canvas);
-// Only one controller owns camera motion at a time. Roaming uses meters * PLAN
-// on X/Z and 1.7 m * HS for the eye offset above a fixed road-height floor.
-let roamSnapshot = null;
-const roam = window.YuehaiRoam.create({
-  canvas, camera, plan: PLAN, eyeY: ROAD_Y + .02 + 1.7 * HS,
-  bounds: { minX: -2500 * PLAN, maxX: 2500 * PLAN, minZ: -2500 * PLAN, maxZ: 2300 * PLAN },
-  hud: $('roamHud'), pad: $('roamPad'), status: $('roamStatus'),
-  entryButton: $('enterRoam'), exitButton: $('roamExit'),
-  overviewButton: $('roamOverview'), resetButton: $('roamReset'),
-  getSpawn: findRoamSpawn,
-  onUnavailable: () => showCardNotice('暂未找到安全道路起点，请返回总览后重试。', 6000),
-  onEnter: () => {
-    roamSnapshot = {
-      mode: state.camera, target: controls.target.clone(),
-      theta: controls.theta, phi: controls.phi, radius: controls.radius,
-      autoRotate: controls.autoRotate, autoSpeed: controls.autoSpeed,
-      near: camera.near, fov: camera.fov
-    };
-    for (const id of controls.pointers.keys()) {
-      if (canvas.hasPointerCapture(id)) canvas.releasePointerCapture(id);
-    }
-    controls.pointers.clear(); controls.down = null; controls.dragging = false; controls.mode = null;
-    canvas.classList.remove('is-grabbing', 'is-hovering');
-    controls.enabled = false; controls.autoRotate = false;
-    state.camera = 'roam';
-    setImmersive(false);
-    $('tooltip').classList.remove('is-visible');
-    camera.near = .015; camera.fov = 65; camera.updateProjectionMatrix();
-    document.querySelectorAll('#cameraSeg button').forEach(b => b.classList.remove('is-active'));
-    $('enterRoam').setAttribute('aria-pressed', 'true');
-  },
-  onMove: (pos) => { controls.target.set(pos.x, 0, pos.z); }, // shadow focus, not orbital motion
-  onExit: (overview) => {
-    const saved = roamSnapshot;
-    controls.enabled = true;
-    camera.near = saved.near; camera.fov = saved.fov; camera.updateProjectionMatrix();
-    controls.autoPauseAt = 0;
-    if (overview) {
-      controls.reset();
-      state.camera = 'free';
-    } else {
-      controls.thetaGoal = saved.theta; controls.phiGoal = saved.phi;
-      controls.radiusGoal = saved.radius; controls.targetGoal.copy(saved.target);
-      controls.autoRotate = saved.autoRotate; controls.autoSpeed = saved.autoSpeed;
-      state.camera = saved.mode;
-    }
-    controls.theta = controls.thetaGoal; controls.phi = controls.phiGoal;
-    controls.radius = controls.radiusGoal; controls.target.copy(controls.targetGoal);
-    controls.update(0);
-    document.querySelectorAll('#cameraSeg button').forEach(b => b.classList.toggle('is-active', b.dataset.camera === state.camera));
-    $('enterRoam').setAttribute('aria-pressed', 'false');
-    updateLabels();
-  }
-});
-
-function findRoamSpawn() {
-  // Try road centerline samples near Keyuan South Road first. No external data.
-  // Avoid OSM footprints AND actual visible bespoke geometry (e.g. podiums).
-  const candidates = [];
-  for (const road of DATA.roads) {
-    if (!['primary','secondary','tertiary','residential'].includes(road.c)) continue;
-    const pts = road.p || [];
-    for (let i = 0; i + 3 < pts.length; i += 2) {
-      const [ax, az, bx, bz] = pts.slice(i, i + 4);
-      if (Math.hypot(bx - ax, bz - az) < 25) continue;
-      const x = (ax + bx) / 2, z = (az + bz) / 2;
-      if (x < -2450 || x > 2450 || z < -2450 || z > 2200) continue;
-      candidates.push({ x: wx(x), z: wz(z), yaw: Math.atan2(-(bx - ax), -(bz - az)), score: Math.hypot(x - 1460, z + 450) });
-    }
-  }
-  candidates.sort((a,b) => a.score - b.score);
-  scene.updateMatrixWorld(true);
-  const meshes = [];
-  // Check hidden building layer too: entering roam must not spawn inside it.
-  function collect(obj) {
-    for (const child of obj.children) {
-      if (!child.visible && !child.userData.roamSpawnCheck) continue;
-      if (child.isMesh) meshes.push(child);
-      collect(child);
-    }
-  }
-  collect(buildingsGroup);
-  const probe = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0,-1,0), 0, 600);
-  function inFootprint(x, z, polygon) {
-    let inside = false;
-    for (let i = 0, j = polygon.length - 2; i < polygon.length; j = i, i += 2) {
-      const ax = polygon[i], az = polygon[i + 1], bx = polygon[j], bz = polygon[j + 1];
-      if ((az > z) !== (bz > z) && x < (bx - ax) * (z - az) / (bz - az) + ax) inside = !inside;
-    }
-    return inside;
-  }
-  // A small 5-point safety buffer at the start only; movement has NO collision.
-  const offsets = [[0,0],[.17,0],[-.17,0],[0,.17],[0,-.17]];
-  for (const c of candidates.slice(0, 120)) {
-    let occupied = false;
-    for (const [dx,dz] of offsets) {
-      const x = c.x + dx, z = c.z + dz;
-      if (DATA.buildings.some(b => inFootprint(x / PLAN, z / PLAN, b.p || []))) { occupied = true; break; }
-      probe.ray.origin.set(x, 500, z);
-      if (probe.intersectObjects(meshes, false).some(h => h.point.y >= BUILD_Y)) { occupied = true; break; }
-    }
-    if (!occupied) return c;
-  }
-  return null;
-}
 
 // ── lights ───────────────────────────────────────────────────
 const hemi = new THREE.HemisphereLight(0x9bb9aa, 0x1a2418, 0.55);
@@ -5993,7 +5888,6 @@ function pickScreen(x, y) {
   return null;
 }
 function handleTap(x, y) {
-  if (roam.active) return;
   const pick = pickScreen(x, y);
   hoverLabelId = null; hoverBuildingIdx = null;
   if (pick && (pick.kind === 'landmark' || pick.kind === 'approx')) hoverLabelId = pick.id;
@@ -6010,7 +5904,6 @@ function handleTap(x, y) {
 }
 controls.onTap = handleTap;
 function handleHover(x, y) {
-  if (roam.active) return;
   if (controls.dragging) { tooltip.classList.remove('is-visible'); canvas.classList.remove('is-hovering'); return; }
   const pick = pickScreen(x, y);
   hoverLabelId = null; hoverBuildingIdx = null;
@@ -6167,9 +6060,7 @@ function updateLabels() {
   }
 }
 function setCameraMode(mode, silent) {
-  if (mode === 'roam') { roam.enter(); return; }
   if (!['free', 'orbit', 'follow'].includes(mode)) return;
-  if (roam.active) roam.exit(false);
   state.camera = mode;
   controls.autoPauseAt = 0;
   document.querySelectorAll('#cameraSeg button').forEach(b => b.classList.toggle('is-active', b.dataset.camera === mode));
@@ -6314,7 +6205,6 @@ function populateFollowSelect() {
   dom.followSelect.value = state.followLandmarkId;
 }
 function setImmersive(on) {
-  if (roam.active && on) return;
   state.immersive = !!on;
   document.body.classList.toggle('is-immersive', state.immersive);
   if (dom.immerseExit) dom.immerseExit.hidden = !state.immersive;
@@ -6506,7 +6396,6 @@ document.querySelectorAll('#cameraSeg button').forEach(b => b.addEventListener('
 document.querySelectorAll('#lightModeSeg button').forEach(b => b.addEventListener('click', () => setLightMode(b.dataset.light)));
 document.querySelectorAll('#qualitySeg button').forEach(b => b.addEventListener('click', () => setQuality(b.dataset.quality)));
 $('resetCamera').addEventListener('click', () => {
-  if (roam.active) roam.exit(true);
   controls.reset();
   controls.autoRotate = false;
   controls.autoPauseAt = 0;
@@ -6520,7 +6409,6 @@ dom.followSelect.addEventListener('change', () => {
 $('placeClose').addEventListener('click', closeCard);
 $('closePlace').addEventListener('click', closeCard);
 $('followPlace').addEventListener('click', () => {
-  if (roam.active) roam.exit(false);
   if (!followTarget) return;
   if (followTarget.type === 'landmark') {
     state.followLandmarkId = followTarget.id;
@@ -6665,8 +6553,7 @@ function animate(now) {
       item.group.children[1].scale.setScalar(s);
     }
   }
-  if (roam.active) roam.update(dt);
-  else controls.update(dt);
+  controls.update(dt);
   if (ordinaryLOD) ordinaryLOD.update(camera.position,now);
   updateSunShadow(sunKeyDir);
   renderer.render(scene, camera);
@@ -6683,7 +6570,7 @@ function animate(now) {
 }
 // Expose a small debug/test API (also useful for tweaking the sandbox).
 window.__YUEHAI__ = {
-  DATA, state, scene, camera, controls, renderer, roam,
+  DATA, state, scene, camera, controls, renderer,
   ordinaryLOD, refinedLandmarks,
   setTime, setWeather, setCameraMode, setLightMode, setQuality, setImmersive,
   updateEnvironment,

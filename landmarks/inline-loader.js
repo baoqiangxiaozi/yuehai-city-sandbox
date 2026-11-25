@@ -28,11 +28,15 @@
       // Opaque on both sides. Inverted winding was culling the wall and leaving
       // only the mullion cage, which reads as a see-through frame. This is not
       // the night-window layer and it does not turn the glass into a void.
-      if (key === 'glass' || key === 'glass_alt' || key === 'white') {
+      if (key.indexOf('glass') === 0 || key === 'white') {
         mat.side = THREE.DoubleSide;
         mat.transparent = false;
         mat.opacity = 1;
         mat.depthWrite = true;
+      }
+      if (spec.emissive && !spec.night) {
+        mat.emissive = new THREE.Color(spec.emissive);
+        mat.emissiveIntensity = spec.emissiveIntensity == null ? 0.5 : spec.emissiveIntensity;
       }
       if (spec.night) {
         mat.emissive = new THREE.Color(0xffbf72); mat.emissiveIntensity = 1.5;

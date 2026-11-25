@@ -20,7 +20,7 @@ class HTML(HTMLParser):
     def handle_data(self,s):
         if self.current is not None:self.current[1]+=s
 p=HTML();p.feed(a.decode());assert len(p.ids)==len(set(p.ids))
-assert len(p.scripts)==9,(len(p.scripts),'expected watchdog/Three/2JSON/loader/refined/roam/LOD/app')
+assert len(p.scripts)==8,(len(p.scripts),'expected watchdog/Three/2JSON/loader/refined/LOD/app')
 asset_dir=ROOT/'landmarks/assets'
 assets=[json.loads(path.read_text()) for path in sorted(asset_dir.glob('*.inline.json'))]
 expected={'osm-data':json.loads((ROOT/'data/yuehai-osm.json').read_text()),'landmark-assets':assets}
@@ -32,7 +32,9 @@ for attrs,text in p.scripts:
 text=a.decode()
 for token in ['/*__THREE__*/','/*__ROAM__*/','/*__LOD__*/','/*__REFINED__*/','/*__LANDMARK_LOADER__*/','/*__CSS__*/','/*__JS__*/','__OSM_DATA__','/*__LANDMARK_JSON__*/','__TENCENT_ASSET__','__CR_ASSET__','实时统计','实时间隔']:
     assert token not in text,token
-for label in ['模拟车流量','模拟均速','普通楼程序化示意','进入第一人称 · 自由漫游','返回总览']:assert label in text,label
+for label in ['模拟车流量','模拟均速','普通楼程序化示意']:assert label in text,label
+for gone in ['进入第一人称','自由漫游','YuehaiRoam','id="enterRoam"','id="roamHud"','id="roamPad"','data-roam-dir','WASD']:
+    assert gone not in text, gone
 assert hashlib.sha256((ROOT/'vendor/three.min.js').read_bytes()).hexdigest()=='9274bbcec8d96168626c732b5d31c775aa8cfb7eaa0599bec0c175908a2c1ce2'
 assert hashlib.sha256((ROOT/'data/yuehai-osm.json').read_bytes()).hexdigest()=='8b621052a50f7ce7c66328f8d9532a5dd521296f8416d199ddbdf6a80f8e670d'
 print('PASS deterministic build, every inline script parsed, OSM and landmark JSON equal source, unique IDs, no external script tags, simulation labels, r128/data hashes')

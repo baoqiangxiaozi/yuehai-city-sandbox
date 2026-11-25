@@ -161,7 +161,8 @@ check('raycast keeps the landmark id and the mesh sits in the building layer', (
     assert.equal(hit.object.userData.customLandmarkId, a.metadata.id);
     assert.ok(fixture.buildingsGroup.children.includes(a.group));
   }
-  assert.ok(source.includes('collect(buildingsGroup)'));
+  assert.ok(!source.includes('YuehaiRoam'));
+  assert.ok(!source.includes('enterRoam'));
 });
 
 check('screen picker uses the Tencent mesh and follows the building-layer visibility', () => {

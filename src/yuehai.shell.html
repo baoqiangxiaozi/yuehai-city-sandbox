@@ -175,8 +175,6 @@
         <label for="followSelect">跟随地标</label>
         <select id="followSelect" aria-label="跟随地标"></select>
       </div>
-      <button class="camera-reset roam-enter" id="enterRoam" type="button" aria-pressed="false">进入第一人称 · 自由漫游</button>
-      <div class="section-note">WASD / 方向键移动 · 拖动画面转向 · 无建筑碰撞</div>
       <button class="camera-reset" id="resetCamera" type="button">重置镜头视角</button>
     </section>
 
@@ -199,20 +197,6 @@
   WORLD
 </button>
 <button class="immerse-exit" id="immerseExit" type="button" hidden>退出沉浸 <kbd>ESC</kbd></button>
-
-<section id="roamHud" class="roam-hud glass" aria-label="第一人称漫游控制" hidden>
-  <div class="roam-heading"><strong>第一人称 · 自由漫游</strong><span id="roamStatus" role="status">拖动画面转向</span></div>
-  <p>WASD / 方向键移动 · 按住画面拖动转向 · Shift 加速 · R 复位 · Esc 退出<br>固定视高 / 有地图边界 / 无建筑碰撞，可穿过建筑及水面；普通楼细节为程序化示意；车流与天气仍为模拟。</p>
-  <div class="roam-actions">
-    <button id="roamReset" type="button">复位到起点</button>
-    <button id="roamExit" type="button">退出漫游</button>
-    <button id="roamOverview" type="button">返回总览</button>
-  </div>
-</section>
-<div id="roamPad" class="roam-pad glass" aria-label="触控漫游方向键" hidden>
-  <button type="button" data-roam-dir="forward" aria-label="向前移动">前</button>
-  <div><button type="button" data-roam-dir="left" aria-label="向左移动">左</button><button type="button" data-roam-dir="back" aria-label="向后移动">后</button><button type="button" data-roam-dir="right" aria-label="向右移动">右</button></div>
-</div>
 
 <div class="labels" id="labels" aria-label="地标标注"></div>
 <div class="labels" id="stationLabels" aria-label="地铁站标注"></div>
@@ -301,9 +285,6 @@
 </script>
 <script>
 /*__REFINED__*/
-</script>
-<script>
-/*__ROAM__*/
 </script>
 <script>
 /*__LOD__*/

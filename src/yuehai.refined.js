@@ -17,7 +17,9 @@
         const next=want?env:null;
         if(!!mat.envMap!==!!next)mat.needsUpdate=true;
         mat.envMap=next;
-        mat.envMapIntensity=key.startsWith('glass')?1.2:(key==='metal'||key==='bronze')?1:.25;
+        // glass_tower is the pale Tencent shaft. A full-strength city reflection
+        // pulls that face back toward black. Other glass keeps the darker look.
+        mat.envMapIntensity=key==='glass_tower'?0.12:key.startsWith('glass')?1.2:(key==='metal'||key==='bronze')?1:.25;
       }
     }
     function stats(){return assets.map(a=>({id:a.metadata.id,originRaw:a.metadata.originRaw.slice(),scale:a.group.scale.toArray(),meshCount:a.group.children.length,

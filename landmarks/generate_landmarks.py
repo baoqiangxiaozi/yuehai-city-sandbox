@@ -29,10 +29,15 @@ TAU = math.tau
 
 # color, metalness, roughness, night
 MATS = {
-    # Glass stays light enough that mullions and the dark links read in daylight.
-    # Low metalness and higher roughness: a solid curtain wall, not a void you see through.
-    'glass': ('#c5d0cc', 0.04, 0.58, False),
-    'glass_alt': ('#9eb6b0', 0.06, 0.5, False),
+    # Named models other than Tencent Binhai: dark gray-blue curtain glass.
+    # Metal, bronze, stone, roof and white stay as they are.
+    'glass': ('#24343c', 0.20, 0.38, False),
+    'glass_alt': ('#1c2c34', 0.16, 0.42, False),
+    # Tencent shaft only. Pale, low metal, and emissive so a morning shadow
+    # face does not fall into the hemisphere ground color and read as a black wall.
+    'glass_tower': ('#d7e4de', 0.05, 0.46, False),
+    'metal_tower': ('#d2dbd6', 0.22, 0.40, False),
+    'link_body': ('#6a7872', 0.08, 0.52, False),
     'metal': ('#4a5552', 0.42, 0.48, False),
     'bronze': ('#c9a15a', 0.62, 0.34, False),
     'stone': ('#6d746c', 0.04, 0.78, False),
@@ -40,6 +45,10 @@ MATS = {
     'dark': ('#3e3832', 0.35, 0.48, False),
     'white': ('#e4ebe6', 0.12, 0.38, False),
     'night': ('#2a2418', 0.05, 0.45, True),
+}
+# Non-night fill so Tencent's pale glass stays a solid wall on the shadow side.
+EMISSIVE = {
+    'glass_tower': ('#e7f0ec', 1.05),
 }
 
 # Published heights that replace a bad OSM value. OSM value stays in the note.
@@ -72,6 +81,9 @@ def reset(col_name):
         if night:
             p.inputs['Emission Color'].default_value = (1, 0.64, 0.27, 1)
             p.inputs['Emission Strength'].default_value = 0.25
+        elif name in EMISSIVE:
+            p.inputs['Emission Color'].default_value = rgba(EMISSIVE[name][0])
+            p.inputs['Emission Strength'].default_value = EMISSIVE[name][1]
     return col
 
 
@@ -268,6 +280,7 @@ def rounded_ring(w, d, rad, segs=3):
 
 def curtain(B, xf, w, d, h, style, taper):
     """Long-face mullions and floor rails. Not a survey of the real module."""
+    metal = style.get('metal', 'metal')
     floor = style.get('floor') or 4.2
     base = style.get('pilotis', 0) or 0
     top = h - 1.0
@@ -283,9 +296,9 @@ def curtain(B, xf, w, d, h, style, taper):
         z = base + (top - base) * k / (rows + 1)
         shrink = 1 - (1 - taper) * (z / h)
         for side in (-1, 1):
-            B.box('floor_bands:metal', (0, side * (d * shrink / 2 + 0.08), z),
+            B.box('floor_bands:' + metal, (0, side * (d * shrink / 2 + 0.08), z),
                   (w * shrink * 0.98, 0.28, rail_h), xf)
-            B.box('floor_bands:metal', (side * (w * shrink / 2 + 0.08), 0, z),
+            B.box('floor_bands:' + metal, (side * (w * shrink / 2 + 0.08), 0, z),
                   (0.28, d * shrink * 0.96, rail_h), xf)
     z_mid = (base + top) / 2
     span_h = top - base - 1
@@ -293,12 +306,12 @@ def curtain(B, xf, w, d, h, style, taper):
         shrink = 1 - (1 - taper) * 0.5
         for i in range(cols):
             x = -w / 2 + (i + 0.5) * w / cols
-            B.box('fins:metal', (x * shrink, side * (d * shrink / 2 + depth * 0.5), z_mid),
+            B.box('fins:' + metal, (x * shrink, side * (d * shrink / 2 + depth * 0.5), z_mid),
                   (0.62, depth, span_h), xf)
         cols_s = max(3, min(8, int(d / 8)))
         for i in range(cols_s):
             y = -d / 2 + (i + 0.5) * d / cols_s
-            B.box('fins:metal', (side * (w * shrink / 2 + depth * 0.5), y * shrink, z_mid),
+            B.box('fins:' + metal, (side * (w * shrink / 2 + depth * 0.5), y * shrink, z_mid),
                   (depth, 0.55, span_h), xf)
     # Night panes sit on the same grid, every other bay, so the lit façade
     # matches the rails instead of floating as random squares.
@@ -325,6 +338,7 @@ def slab(B, spec, origin, style, h):
     taper = style.get('taper', 1.0)
     floors = spec['levels'] or max(4, round(h / 4.0))
     glass = style.get('glass', 'glass')
+    metal = style.get('metal', 'metal')
     if style.get('round'):
         round_tower(B, spec, origin, style, h)
         return
@@ -359,8 +373,8 @@ def slab(B, spec, origin, style, h):
         B.box('crown_box:metal', (0, 0, lip_z), (tw * 0.78, td * 0.62, lip_h), xf)
         B.box('crown_box:glass_alt', (0, 0, cap_z), (tw * 0.48, td * 0.40, cap_h), xf)
     else:
-        B.box('parapet:metal', (0, d * 0.46, h - 0.15), (tw * 0.92, 0.4, 1.3), xf)
-        B.box('parapet:metal', (0, -d * 0.46, h - 0.15), (tw * 0.92, 0.4, 1.3), xf)
+        B.box('parapet:' + metal, (0, d * 0.46, h - 0.15), (tw * 0.92, 0.4, 1.3), xf)
+        B.box('parapet:' + metal, (0, -d * 0.46, h - 0.15), (tw * 0.92, 0.4, 1.3), xf)
     # Curtain wall: a floor rail and a mullion on the long faces. Spacing follows
     # the storey height when it is known, otherwise about 4.2 m. This is a
     # reading of a glass tower, not a measured module.
@@ -506,9 +520,10 @@ def build_tencent(B, buildings, origin):
         levels = spec['levels'] or 50
         slab(B, spec, origin, dict(
             fins='grid', fin=3.6, fin_d=0.38, crown='flat', podium=0,
-            floor=spec['height'] / levels), spec['height'])
+            floor=spec['height'] / levels,
+            glass='glass_tower', metal='metal_tower'), spec['height'])
         xf = frame_xf(spec, origin)
-        B.box('lobby:glass_alt', (0, 0, 7), (spec['w'] * 0.62, spec['d'] * 0.7, 14), xf)
+        B.box('lobby:glass_tower', (0, 0, 7), (spec['w'] * 0.62, spec['d'] * 0.7, 14), xf)
     south, north = specs
     floor = south['height'] / (south['levels'] or 50)
     # Low link follows the exterior photos (a thick bar over a tall portal),
@@ -520,8 +535,8 @@ def build_tencent(B, buildings, origin):
         ('Knowledge_link', 35 * floor, 38 * floor),
     )
     for name, z0, z1 in links:
-        xf, dist = add_span(B, name + ':dark', origin, south, north, z0, z1, 42.0, 30.0)
-        # Bronze frame, proud of the dark bar, so each link reads against the glass.
+        xf, dist = add_span(B, name + ':link_body', origin, south, north, z0, z1, 42.0, 30.0)
+        # Bronze frame on a mid-gray bar, so each link still reads against the pale shaft.
         L = dist + 30
         for y in (-21.8, 21.8):
             B.box(name + '_rim:bronze', (0, y, z0), (L, 2.2, 2.2), xf)
@@ -530,7 +545,7 @@ def build_tencent(B, buildings, origin):
             for y in (-21.8, 21.8):
                 B.box(name + '_post:bronze', (x, y, (z0 + z1) / 2), (2.2, 2.2, (z1 - z0) + 2.4), xf)
         for y in (-20.4, 20.4):
-            B.box(name + '_glass:glass', (0, y, (z0 + z1) / 2), (L * 0.84, 0.35, (z1 - z0) * 0.62), xf)
+            B.box(name + '_glass:glass_tower', (0, y, (z0 + z1) / 2), (L * 0.84, 0.35, (z1 - z0) * 0.62), xf)
         B.box(name + '_terrace:stone', (0, 0, z1 + 0.55), (L * 0.72, 30, 0.8), xf)
         B.face('night_bridge:night', [xf(p) for p in (
             (-L * 0.4, -20.6, z0 + 1.2), (L * 0.4, -20.6, z0 + 1.2),
@@ -876,7 +891,9 @@ def export_inline(obs, meta, path):
         'format': 'yuehai-inline-mesh-v1',
         'axis': 'X=baseline east, Y=up, Z=baseline south; metres',
         'metadata': meta,
-        'materials': {k: {'color': v[0], 'metalness': v[1], 'roughness': v[2], 'night': v[3]} for k, v in MATS.items()},
+        'materials': {k: dict({'color': v[0], 'metalness': v[1], 'roughness': v[2], 'night': v[3]}, **(
+            {'emissive': EMISSIVE[k][0], 'emissiveIntensity': EMISSIVE[k][1]} if k in EMISSIVE else {}))
+            for k, v in MATS.items()},
         'meshes': meshes}
     path.write_text(json.dumps(payload, ensure_ascii=False, separators=(',', ':')))
     return tri

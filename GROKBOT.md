@@ -11,7 +11,6 @@
 不要直接改成品 HTML；改以下源文件：
 
 - `src/yuehai.js` — 场景、建筑、夜景、标签调度
-- `src/yuehai.roam.js` — 独立自由漫游控制器（WASD / 拖动转向 / 退出恢复）
 - `src/yuehai.lod.js` — 静态分块合批的普通楼近/中/远附加几何 LOD
 - `src/yuehai.refined.js`、`landmarks/` — 标名地标的 Blender 资产及日夜/环境接入，JSON 与适配器内联。腾讯滨海已重做；华润沿用原资产。说明见 `landmarks/ASSET_NOTES.md`。
 - `src/yuehai.css` — UI / 标签样式
@@ -58,12 +57,9 @@ python -m http.server 8000
 
 访问 `http://127.0.0.1:8000/`。
 
-## v3 / T-2 漫游
+## 镜头
 
-入口位于右侧世界控制面板的「镜头」区，按钮「进入第一人称 · 自由漫游」。
-无 Pointer Lock 依赖，脱机拖动可用。WASD / 方向键移动，Shift 加速，R 复位，Esc 退出。
-独立漫游 HUD 始终保留退出和返回总览；触屏提供方向键。固定视高和地图边界，**无建筑碰撞**。
-详见根 README。`node tests/roam.test.js` 是纯逻辑/模拟 DOM 测试，不代表浏览器验收或实测性能。
+只有俯瞰轨道相机：自由观察、自动环绕、跟随地标、重置镜头。第一人称漫游已经从页面、快捷键和说明里去掉。`node tests/roam.test.js` 确认没有漫游入口。
 
 ## v4 / T-3 普通楼分层
 
@@ -73,13 +69,12 @@ python -m http.server 8000
 所有几何初始化缓存；远处隐藏细节，但缓存内存仍保留。
 `__YUEHAI__.ordinaryLOD.stats()` / `debugChunks()` 可核对逻辑计数，不是实测FPS。
 `node tests/lod.test.js` 覆盖LOD与通用几何；有v3路径时额外比较基础/窗灯/拾取映射不变。
-漫游起点探针也检查暂时不可见的LOD细节，避免只看远景就把人放进后续出现的装饰里。
 
 ## 最终合并：腾讯滨海 / 华润 Blender 资产
 
 两个旧专用 IIFE 已整个移除，不叠旧裙楼、连廊或塔体。保留通用楼跳过索引、地标ID、原卡片和拾取登记。
-新模型位于 buildingsGroup，参与漫游起点检查；仍无逐帧碰撞。
+新模型位于 buildingsGroup。页面没有第一人称漫游。
 夜景/反射用 `refinedLandmarks` 的统一策略，不能再依赖旧 cr/tencent 单材质变量（它们保留为null兼容守卫）。
 场景材质遍历须跳过 `material.userData.blenderRefined` 以保留资产PBR。
 `landmarks/assets/` 含可编辑 .blend/GLB 与实际运行的 inline JSON；改 .blend 不会自动同步网页。
-`node tests/landmarks.test.js` 是 Node 几何与策略测试，最终 file:// / 漫游 / 窄屏 / 反射/夜景视觉必须浏览器验收。
+`node tests/landmarks.test.js` 是 Node 几何与策略测试，最终 file:// / 反射 / 夜景视觉必须浏览器验收。

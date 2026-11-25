@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#050d09" />
+<title>粤海：山海之间的科技城 · 3D 城市沙盘</title>
+<meta name="description" content="深圳市南山区粤海街道 3D 互动城市沙盘。使用 OpenStreetMap 真实建筑轮廓与路网数据，Three.js 程序化生成。" />
+<style>
+/*__CSS__*/
+</style>
+<script>
+(function () {
+  window.__YUEHAI_BOOT_DEADLINE__ = setTimeout(function () {
+    if (window.__YUEHAI_BOOTED__) return;
+    var boot = document.getElementById('boot');
+    var err = document.getElementById('bootError');
+    var status = document.getElementById('bootStatus');
+    if (!boot) return;
+    boot.classList.remove('is-done');
+    if (status) status.textContent = '无法启动城市沙盘';
+    if (err) {
+      err.classList.remove('hidden');
+      err.textContent = window.THREE
+        ? '城市沙盘启动超时。请尝试刷新页面。'
+        : 'Three.js 未能载入。请打开本包构建出的单文件 index.html，无需访问外部网络。';
+    }
+  }, 20000);
+})();
+</script>
+</head>
+<body>
+<canvas id="scene" aria-label="粤海街道三维城市沙盘"></canvas>
+<div class="vignette"></div>
+<div class="grain"></div>
+<div class="rain-overlay" id="rainOverlay"></div>
+<div class="flash-overlay" id="flashOverlay"></div>
+
+<div class="boot" id="boot">
+  <div class="boot-inner">
+    <div class="boot-kicker">YUEHAI · NANSHAN · SHENZHEN</div>
+    <h1>粤海：山海之间的科技城</h1>
+    <p>以 OpenStreetMap 真实建筑与路网，搭建一座可呼吸的城市沙盘</p>
+    <div class="boot-line"></div>
+    <div class="boot-status" id="bootStatus">正在启动城市沙盘…</div>
+    <div class="boot-error hidden" id="bootError"></div>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-kicker"><span class="rule"></span> YUEHAI URBAN MODEL / 粤海城市观察</div>
+    <h1>粤海<span class="slash">：</span>山海之间的科技城</h1>
+    <div class="brand-sub">
+      <span>深圳市南山区 · 粤海街道</span><span class="sep"></span>
+      <span>OSM 数据派生 · 低多边形沙盘</span><span class="sep"></span>
+      <em>示意比例 · 非精确地图</em>
+    </div>
+    <div class="brand-meta">
+      <span class="live">SIMULATION RUNNING</span>
+      <span>ORIGIN&nbsp; N22.52033° / E113.92678°</span>
+      <span>DATA&nbsp; <b id="brandDataTime">2026-10-28</b></span>
+    </div>
+  </div>
+
+  <div class="data-rail" aria-label="模拟数据栏">
+    <div class="metric" id="metricVehicles">
+      <div class="metric-label"><span>模拟车流量</span><em>SIM</em></div>
+      <div class="metric-value"><span id="statVehicles">0</span><span class="unit">辆</span></div>
+      <div class="metric-footer"><span class="trend" id="trendVehicles">当前活跃</span><span>同屏模拟</span></div>
+    </div>
+    <div class="metric" id="metricAvgSpeed">
+      <div class="metric-label"><span>模拟均速</span><em>SIM</em></div>
+      <div class="metric-value"><span id="statAvgSpeed">0.0</span><span class="unit">km/h</span></div>
+      <div class="metric-footer"><span class="trend" id="trendAvgSpeed">长度加权</span><span>模拟路网</span></div>
+    </div>
+    <div class="metric" id="metricCongestion">
+      <div class="metric-label"><span>模拟拥堵指数</span><em>SIM</em></div>
+      <div class="metric-value"><span id="statCongestion">0.0</span><span class="unit">/ 10</span></div>
+      <div class="metric-footer"><span class="trend" id="trendCongestion">通畅</span><span>由通畅度换算</span></div>
+    </div>
+    <div class="metric" id="metricCongested">
+      <div class="metric-label"><span>模拟拥堵路段</span><em>SIM</em></div>
+      <div class="metric-value"><span id="statCongested">0</span><span class="unit">条</span></div>
+      <div class="metric-footer"><span class="trend" id="trendCongested">通畅度 &lt; 0.4</span><span>模拟统计</span></div>
+    </div>
+  </div>
+</header>
+
+<aside class="world-panel glass" id="worldPanel" aria-label="世界控制面板">
+  <div class="world-head">
+    <div><div class="eyebrow">WORLD STATE</div><h2>世界控制</h2></div>
+    <div class="world-head-actions">
+      <button class="immerse-btn" id="immerseBtn" type="button" title="隐藏界面，只留场景">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.15"><path d="M1.8 8s2.3-4 6.2-4 6.2 4 6.2 4-2.3 4-6.2 4S1.8 8 1.8 8Z"/><circle cx="8" cy="8" r="1.8"/></svg>沉浸视角
+      </button>
+      <button class="collapse-btn" id="collapsePanel" type="button" aria-label="收起世界控制面板" title="收起面板">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M6 3l5 5-5 5"/></svg>
+      </button>
+    </div>
+  </div>
+  <div class="world-scroll">
+    <section class="world-section">
+      <div class="section-label"><span>光阴</span><em>DAY / NIGHT</em></div>
+      <div class="world-clock"><span>当前</span><strong id="worldTime">08:10</strong><em id="sunMessage">晨光 · 模拟东南风</em></div>
+      <div class="seg-control time-quick" id="dayNightSeg" role="group" aria-label="昼夜快捷切换">
+        <button type="button" data-time="12">白天<small>12:00</small></button>
+        <button type="button" data-time="21">夜晚<small>21:00</small></button>
+      </div>
+      <input class="range" id="worldRange" type="range" min="0" max="24" step="0.02" value="8.166" aria-label="世界时间">
+      <div class="range-notes"><span>00:00</span><span>06:30 日出</span><span>18:30 日落</span><span>24:00</span></div>
+    </section>
+
+    <section class="world-section">
+      <div class="section-label"><span>天气</span><em>ATMOSPHERE</em></div>
+      <div class="weather-grid" id="weatherGrid" role="group" aria-label="天气">
+        <button type="button" data-weather="clear" class="is-active">
+          <svg class="wx-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor"><circle cx="8" cy="8" r="2.6"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3 3l1.5 1.5M11.5 11.5 13 13M13 3l-1.5 1.5M4.5 11.5 3 13"/></svg>晴朗
+        </button>
+        <button type="button" data-weather="cloudy">
+          <svg class="wx-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor"><path d="M4 11.5h7.5a2.2 2.2 0 0 0 .2-4.4A3.2 3.2 0 0 0 5.5 6 2.8 2.8 0 0 0 4 11.5Z"/></svg>多云
+        </button>
+        <button type="button" data-weather="rain">
+          <svg class="wx-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor"><path d="M4 9.5h7.5a2.2 2.2 0 0 0 .2-4.4A3.2 3.2 0 0 0 5.5 4 2.8 2.8 0 0 0 4 9.5Z"/><path d="M5 11.5 4 14M8 11.5 7 14M11 11.5 10 14"/></svg>小雨
+        </button>
+        <button type="button" data-weather="storm">
+          <svg class="wx-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor"><path d="M4 8.5h7.5a2.2 2.2 0 0 0 .2-4.4A3.2 3.2 0 0 0 5.5 3 2.8 2.8 0 0 0 4 8.5Z"/><path d="m8.5 9-2 3h2.2l-1.2 3 3.5-4H8.8l1-2Z"/></svg>暴雨
+        </button>
+        <button type="button" data-weather="fog">
+          <svg class="wx-icon" viewBox="0 0 16 16" fill="none" stroke="currentColor"><path d="M2 5h9M4 8h10M2 11h9"/></svg>雾天
+        </button>
+      </div>
+    </section>
+
+    <section class="world-section">
+      <div class="section-label"><span>灯光</span><em>LIGHTING</em></div>
+      <div class="seg-control cols-3" id="lightModeSeg" role="group" aria-label="灯光模式">
+        <button type="button" data-light="auto" class="is-active">自动</button>
+        <button type="button" data-light="on">开启</button>
+        <button type="button" data-light="off">关闭</button>
+      </div>
+      <div class="section-note" id="lightModeNote">自动 · 跟随昼夜与窗灯时刻表</div>
+    </section>
+
+    <section class="world-section">
+      <div class="section-label"><span>图层</span><em>LAYERS</em></div>
+      <div class="world-layer-grid">
+        <label class="layer-row"><span class="layer-swatch" style="color:#d7c294"></span><span class="layer-copy"><strong>建筑</strong></span><input type="checkbox" id="layerBuildings" checked><span class="switch"></span></label>
+        <label class="layer-row"><span class="layer-swatch" style="color:#9d8d70"></span><span class="layer-copy"><strong>路网</strong></span><input type="checkbox" id="layerRoads" checked><span class="switch"></span></label>
+        <label class="layer-row"><span class="layer-swatch" style="color:#69e5d3"></span><span class="layer-copy"><strong>地铁</strong></span><input type="checkbox" id="layerMetro" checked><span class="switch"></span></label>
+        <label class="layer-row"><span class="layer-swatch" style="color:#e8b06f"></span><span class="layer-copy"><strong>车流</strong></span><input type="checkbox" id="layerTraffic" checked><span class="switch"></span></label>
+        <label class="layer-row"><span class="layer-swatch tri"></span><span class="layer-copy"><strong>拥堵色带</strong></span><input type="checkbox" id="layerCongestion" checked><span class="switch"></span></label>
+        <label class="layer-row"><span class="layer-swatch" style="color:#ca7358"></span><span class="layer-copy"><strong>信号灯</strong></span><input type="checkbox" id="layerSignals" checked><span class="switch"></span></label>
+        <label class="layer-row"><span class="layer-swatch" style="color:#f1d39a"></span><span class="layer-copy"><strong>夜景灯光</strong></span><input type="checkbox" id="layerNight" checked><span class="switch"></span></label>
+        <label class="layer-row"><span class="layer-swatch" style="color:#78d0a8"></span><span class="layer-copy"><strong>停车占用</strong></span><input type="checkbox" id="layerParking"><span class="switch"></span></label>
+        <label class="layer-row"><span class="layer-swatch" style="color:#d9b97e"></span><span class="layer-copy"><strong>地标标注</strong></span><input type="checkbox" id="layerLabels" checked><span class="switch"></span></label>
+      </div>
+      <div class="section-label label-density-title"><span>标签密度</span><em>LABEL DENSITY</em></div>
+      <div class="seg-control cols-3 label-density" id="labelDensitySeg" role="group" aria-label="标签密度">
+        <button type="button" data-density="minimal">精简</button>
+        <button type="button" data-density="standard" class="is-active">标准</button>
+        <button type="button" data-density="all">全部</button>
+      </div>
+      <div class="layer-foot"><span id="roadGraphLabel">NODES — · EDGES —</span><a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OSM</a></div>
+    </section>
+
+    <section class="world-section">
+      <div class="section-label"><span>镜头</span><em>CAMERA</em></div>
+      <div class="seg-control cols-3" id="cameraSeg" role="group" aria-label="镜头模式">
+        <button type="button" data-camera="free" class="is-active">自由观察</button>
+        <button type="button" data-camera="orbit">自动环绕</button>
+        <button type="button" data-camera="follow">跟随地标</button>
+      </div>
+      <div class="follow-row" id="followRow">
+        <label for="followSelect">跟随地标</label>
+        <select id="followSelect" aria-label="跟随地标"></select>
+      </div>
+      <button class="camera-reset" id="resetCamera" type="button">重置镜头视角</button>
+    </section>
+
+    <section class="world-section">
+      <div class="section-label"><span>画质</span><em>QUALITY</em></div>
+      <div class="seg-control cols-4" id="qualitySeg" role="group" aria-label="画质">
+        <button type="button" data-quality="auto" class="is-active">自动</button>
+        <button type="button" data-quality="low">流畅</button>
+        <button type="button" data-quality="medium">均衡</button>
+        <button type="button" data-quality="high">精美</button>
+      </div>
+      <div class="section-note">普通楼程序化示意：近景细节 / 中景屋顶 / 远景基础体量（自动 LOD）</div>
+      <div class="section-note" id="qualityNote">自动 · 精美 · 阴影开 · 2,048 阴影</div>
+    </section>
+  </div>
+  <div class="control-hint"><b>拖动</b>旋转 · <b>滚轮</b>缩放 · <b>右键</b>平移<br><b>点击</b>建筑 / 地标 / 道路 · 面板内滚动查看更多设置。</div>
+</aside>
+<button class="panel-tab" id="panelTab" type="button" aria-label="展开世界控制面板">
+  <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M10 3L5 8l5 5"/></svg>
+  WORLD
+</button>
+<button class="immerse-exit" id="immerseExit" type="button" hidden>退出沉浸 <kbd>ESC</kbd></button>
+
+<div class="labels" id="labels" aria-label="地标标注"></div>
+<div class="labels" id="stationLabels" aria-label="地铁站标注"></div>
+
+<aside class="place-card glass" id="placeCard" aria-live="polite">
+  <div class="place-head">
+    <div>
+      <div class="place-kicker"><span id="placeKicker">LANDMARK</span><span class="badge" id="placeSourceBadge">OSM</span></div>
+      <h2 id="placeName">地标</h2>
+      <div class="place-en" id="placeEn">LANDMARK</div>
+    </div>
+    <button class="place-close" id="placeClose" type="button" aria-label="关闭详情">×</button>
+  </div>
+  <div class="place-body">
+    <p class="place-desc" id="placeDesc"></p>
+    <div class="place-note" id="placeNote"></div>
+    <div class="place-stats">
+      <div class="place-stat"><span id="statLabelA">OSM 轮廓</span><strong id="placeStatA">—</strong></div>
+      <div class="place-stat"><span id="statLabelB">最高点</span><strong id="placeStatB">—</strong></div>
+      <div class="place-stat"><span id="statLabelC">类型</span><strong id="placeStatC">—</strong></div>
+    </div>
+    <div class="place-actions"><button class="gold-btn" id="followPlace" type="button">镜头跟随</button><button class="ghost-btn" id="closePlace" type="button">关闭</button></div>
+  </div>
+</aside>
+
+<aside class="parking-panel glass" id="parkingPanel" aria-label="智慧停车诱导">
+  <div class="parking-head">
+    <div><div class="eyebrow">SMART PARKING</div><h2>停车诱导</h2></div>
+    <div class="p-badge">P</div>
+  </div>
+  <div class="parking-list" id="parkingList"></div>
+  <div class="parking-foot"><span>空余车位 · 实时模拟</span><span id="parkingUpdated">—</span></div>
+</aside>
+
+<section class="moment-card" aria-label="当前时段与路况">
+  <div class="moment-head"><span id="momentKicker">CURRENT PERIOD</span><span id="momentWeather">CLEAR · 晴朗</span></div>
+  <div class="moment-main"><strong id="momentPeriod">早高峰</strong><time id="momentTime">08:10</time></div>
+  <div class="moment-road" id="momentRoad"><span class="pill">缓行</span>早高峰 · 科苑路方向缓行</div>
+  <div class="moment-foot"><span class="sig"><i></i><span id="momentSignal">跟车与信号联动中</span></span><span id="momentMeta">工作日 · 模拟</span><button class="moment-back" id="momentClear" type="button" hidden>返回时段</button></div>
+</section>
+
+<footer class="timeline glass" aria-label="城市时间轴">
+  <div class="tl-left">
+    <button class="play-btn" id="playBtn" type="button" aria-label="播放时间"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M4.5 2.8v10.4l8.5-5.2z"/></svg></button>
+    <div class="tl-time"><strong id="clockReadout">08:10</strong><span id="periodTiny">早高峰 · 向东行驶</span></div>
+  </div>
+  <div class="scrub">
+    <div class="scrub-head"><span>00:00</span><span class="mid">城市时间轴 / YUEHAI 24H</span><span>24:00</span></div>
+    <div class="range-wrap">
+      <div class="peak-zone" id="peakMorning" style="left:31.25%;width:8.33%"></div>
+      <div class="peak-zone" id="peakEvening" style="left:72.92%;width:8.33%"></div>
+      <input class="range" id="timeRange" type="range" min="0" max="24" step="0.02" value="8.166" aria-label="城市时间">
+    </div>
+    <div class="ticks"><span>00</span><span>03</span><span>06</span><span>09</span><span>12</span><span>15</span><span>18</span><span>21</span><span>24</span></div>
+  </div>
+  <div class="tl-right">
+    <div class="speed-label"><span>播放倍速</span><em>1× = 1 分钟/秒</em></div>
+    <div class="speed-group" id="speedGroup" role="group" aria-label="播放倍速">
+      <button type="button" data-speed="1" class="is-active">1×</button>
+      <button type="button" data-speed="10">10×</button>
+      <button type="button" data-speed="60">60×</button>
+    </div>
+  </div>
+</footer>
+
+<div class="corner-meta">
+  <span class="sim">模拟演示，非真实数据</span>
+  <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">© OpenStreetMap contributors · ODbL 1.0</a>
+  <span id="osmMeta">建筑轮廓 / 路网 / 地铁 / 水域 · 2026-10-28</span>
+</div>
+<div class="traffic-legend" id="trafficLegend" aria-label="路况图例">
+  <span class="legend-label">模拟路况</span>
+  <span class="legend-item"><i style="background:#67ce96"></i>通畅</span>
+  <span class="legend-item"><i style="background:#e7c45b"></i>缓行</span>
+  <span class="legend-item"><i style="background:#e14d32"></i>拥堵</span>
+</div>
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+/*__THREE__*/
+</script>
+<script type="application/json" id="osm-data">__OSM_DATA__</script>
+<script type="application/json" id="landmark-assets">/*__LANDMARK_JSON__*/</script>
+<script>
+/*__LANDMARK_LOADER__*/
+</script>
+<script>
+/*__REFINED__*/
+</script>
+<script>
+/*__LOD__*/
+</script>
+<script>
+/*__JS__*/
+</script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+# 粤海城市沙盘 — 修改说明
+
+## 直接打开
+
+- 成品：`index.html`（单文件，已内联 CSS、JS、OSM 数据和 Three.js r128）
+- GitHub Pages 需要的隐藏文件：`.nojekyll`
+- 构建后的页面**没有运行时 CDN 依赖**，可以脱机打开。Three.js 来自本包 `vendor/three.min.js`（r128），不是浏览时再去下载。
+
+## 修改源码（推荐）
+
+不要直接改成品 HTML；改以下源文件：
+
+- `src/yuehai.js` — 场景、建筑、夜景、标签调度
+- `src/yuehai.lod.js` — 静态分块合批的普通楼近/中/远附加几何 LOD
+- `src/yuehai.refined.js`、`landmarks/` — 标名地标的 Blender 资产及日夜/环境接入，JSON 与适配器内联。腾讯滨海已重做；华润沿用原资产。说明见 `landmarks/ASSET_NOTES.md`。
+- `src/yuehai.css` — UI / 标签样式
+- `src/yuehai.shell.html` — HTML 外壳与设置面板
+- `data/yuehai-osm.json` — OSM 建筑/道路源数据
+- `vendor/three.min.js` — 固定版本 Three.js r128
+- `scripts/build_page.py` — 将上述文件组装为单文件 `index.html`
+
+修改后重新构建：
+
+```bash
+python scripts/build_page.py
+```
+
+构建会覆盖根目录 `index.html`，并把 `vendor/three.min.js` 内联进去。需要 Python 3，构建脚本只用标准库。
+
+Three.js r128 来源：`https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js`  
+SHA256：`9274bbcec8d96168626c732b5d31c775aa8cfb7eaa0599bec0c175908a2c1ce2`  
+详见 `vendor/README.md`。不要换成其他版本。
+
+若 Three.js 未能载入或 20 秒内没有完成启动，启动屏会显示中文错误，而不会一直停在「正在启动城市沙盘…」。
+
+## 当前状态备注
+
+- 深圳大学校园统一化已回退：`szu-campus` 被禁用，演会中心 2404 使用原版本。
+- 全城住宅统一化已回退：`city-residential` 被禁用，住宅使用主站通用外观。
+- 标名地标改为 Blender 资产，旧的专用 JS 构建体已停用，避免重叠。深圳大学校园和全城住宅仍是通用楼。
+- 标签系统包含：
+  - 一级/二级/三级标签；
+  - 相机距离分档、最多 14 个；
+  - 40% 屏幕重叠避让；
+  - 悬停/点选强制显示；
+  - 标签密度“精简 / 标准 / 全部”，存 `localStorage`。
+- 标签密度请求写死在 `src/yuehai.js` 的 `LABEL_TIER1 / LABEL_TIER2` 名称清单中。
+- 顶栏车流、均速、拥堵和路段悬停/路段卡已标明「模拟」；不要把这些数字当成真实路况。
+
+## 验证
+
+打开 `index.html`（可脱机），或本地启动：
+
+```bash
+python -m http.server 8000
+```
+
+访问 `http://127.0.0.1:8000/`。
+
+## 镜头
+
+只有俯瞰轨道相机：自由观察、自动环绕、跟随地标、重置镜头。第一人称漫游已经从页面、快捷键和说明里去掉。`node tests/roam.test.js` 确认没有漫游入口。
+
+## v4 / T-3 普通楼分层
+
+普通楼细节为程序化示意。160米分块，250ms节流，近景180米进入/240米退出，
+中景600米进入/720米退出；保留原基础体量/幕墙/窗灯，迁移原屋顶设备而不重复绘制。
+新近景只加入口基座、既有窗灯面板细框、缺设备屋顶的小机箱格栅，不替换重点地标。
+所有几何初始化缓存；远处隐藏细节，但缓存内存仍保留。
+`__YUEHAI__.ordinaryLOD.stats()` / `debugChunks()` 可核对逻辑计数，不是实测FPS。
+`node tests/lod.test.js` 覆盖LOD与通用几何；有v3路径时额外比较基础/窗灯/拾取映射不变。
+
+## 最终合并：腾讯滨海 / 华润 Blender 资产
+
+两个旧专用 IIFE 已整个移除，不叠旧裙楼、连廊或塔体。保留通用楼跳过索引、地标ID、原卡片和拾取登记。
+新模型位于 buildingsGroup。页面没有第一人称漫游。
+夜景/反射用 `refinedLandmarks` 的统一策略，不能再依赖旧 cr/tencent 单材质变量（它们保留为null兼容守卫）。
+场景材质遍历须跳过 `material.userData.blenderRefined` 以保留资产PBR。
+`landmarks/assets/` 含可编辑 .blend/GLB 与实际运行的 inline JSON；改 .blend 不会自动同步网页。
+`node tests/landmarks.test.js` 是 Node 几何与策略测试，最终 file:// / 反射 / 夜景视觉必须浏览器验收。
